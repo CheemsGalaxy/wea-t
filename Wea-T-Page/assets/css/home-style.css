@@ -3,7 +3,7 @@
     margin: 0;
 }
 
-body {
+body { 
     background: url(/assets/image/background/home-bg-wallpaper.png) no-repeat fixed center / cover;
     font-family: Arial, Helvetica, sans-serif;
     height: auto;
@@ -100,23 +100,21 @@ body {
 
   
 #footer {
-    width: 100%;
+    
     height: 400px;
     background: linear-gradient(0deg, rgba(53,134,255,0.7) 0%, rgba(53,134,255,1) 50%, rgba(53,134,255,0.7027603277639181) 100%);
     display: flex;
-    justify-content: space-evenly;
-    position: absolute;
-    left: 0;
-    bottom: 0;
+    justify-content: center;
     position: relative;
 }
 
-#footer .center-item {
+#footer .center-item {    
     display: flex;
+    flex: 1;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
-
 #footer p {
     padding-bottom: 16px;
     color: rgb(254, 166, 3);
@@ -223,10 +221,10 @@ body {
     }
 
     #footer p{
-        font-size: 8px;
+        font-size: 12px;
     }
     #footer a{
-        font-size: 6px;
+        font-size: 10px;
         line-height: 1;
 
     }
