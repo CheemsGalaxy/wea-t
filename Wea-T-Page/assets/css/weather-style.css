@@ -1,0 +1,151 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: url(https://4kwallpapers.com/images/walls/thumbs_3t/7862.jpg) no-repeat fixed center / cover;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 50px;
+}
+
+#nav-bar {
+    height: 50px;
+    width: 100%;
+    background-color: black;
+    position: fixed;
+    z-index: 999;
+
+}
+
+#nav-bar #content-nav-bar {
+    display: flex;
+}
+
+#nav-bar #content-nav-bar li {
+    list-style-type: none;
+    padding: 0 10px;
+}
+
+#nav-bar #content-nav-bar li:first-child {
+    background-color: rgb(255, 0, 0);
+}
+
+#nav-bar #content-nav-bar li:first-child:hover {
+    background-color: rgba(255, 0, 0, 0.694);
+}
+#nav-bar #content-nav-bar li:hover {
+    background-color: rgba(175, 175, 175, 0.322);
+}
+
+#nav-bar #content-nav-bar li a:hover {
+    color: aquamarine;
+}
+
+#nav-bar #content-nav-bar a {
+  text-decoration: none;
+  color: ghostwhite;
+  line-height: 50px;
+  text-transform: uppercase;
+}
+
+
+#weather-card {
+    height: 100vh;
+    position: relative;
+    
+}
+#weather-card .sub-text-search-btn {
+    position:absolute;
+    color: rgb(64, 76, 236);
+    font-weight: 700;
+    width: 220px;
+    height: 24px;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -111px;
+    border-radius: 10px 0 10px 0;
+}
+
+#weather-card input {
+    position:absolute;
+    background-color: #ffffff51;
+    width: 220px;
+    height: 24px;
+    top: 50%;
+    left: 50%;
+    margin-top: -180px;
+    margin-left: -111px;
+    border-radius: 10px 0 10px 0;
+    outline: none;
+    transition: 1s;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+#weather-card input:focus {
+    background-color: #ffffffad;
+    border-radius: 0 10px 0 10px;
+    transition: 1s;
+    cursor: text;
+}
+#weather-card .content-weather-card {
+    position:absolute;
+    background-color: #fff;
+    width: 220px;
+    height: 270px;
+    top: 50%;
+    left: 50%;
+    margin-top: -135px;
+    margin-left: -110px;
+    border-radius: 10px;
+    box-shadow: rgba(237, 0, 0, 0.2) 0px 0px 0px 5px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 5px;
+}
+
+#weather-card .location-text {
+    text-align: center;
+    font-size: large;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 1.2rem;
+    padding-top: 5px;
+
+}
+
+#weather-card .temp-text {
+    text-align: center;
+}
+
+#weather-card .icon-text {
+    padding-top: 20px;
+    font-size: 24px;
+    text-align: center;
+}
+
+#weather-card .weather-status {
+    padding-top: 15px;
+    font-size: 16px;
+    font-weight: 200;
+    text-decoration: underline;
+}
+
+#weather-card .info-weather {
+    font-family: sans-serif;
+}
+
+#weather-card .symbol-ico-weather {
+    padding: 16px;
+    text-align: center;
+}
+#weather-card .weather-symbol-text {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+@media (max-width: 475px) {
+    #nav-bar #content-nav-bar a{
+        font-size: 10px;
+    }
+}
