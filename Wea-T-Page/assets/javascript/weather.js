@@ -44,9 +44,3 @@ search.addEventListener('keypress', function(e){
   }
 });
 
-
-search.addEventListener('keydown', function(e) {
-  if(e.key === 'Enter') {
-    e.changWeatherUI();
-  }
-});
