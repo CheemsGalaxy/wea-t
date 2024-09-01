@@ -34,7 +34,7 @@ async function dateUI() {
   const year = timeUTC.getFullYear();
   var realTime = (`${day} / ${month} / ${year}`);
   utcTime.innerText = realTime;
-}
+};
 
 dateUI()
 
@@ -42,4 +42,11 @@ search.addEventListener('keypress', function(e){
   if(e.code === 'Enter') {
     changWeatherUI()
   }
-})
+});
+
+
+search.addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') {
+    e.changWeatherUI();
+  }
+});
