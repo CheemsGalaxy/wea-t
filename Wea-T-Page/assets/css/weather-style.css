@@ -148,4 +148,32 @@ body {
     #nav-bar #content-nav-bar a{
         font-size: 10px;
     }
+
+    
+#weather-card input{
+    position:absolute;
+    font-weight: 700;
+    width: 150px;
+    height: 24px;
+   }
+
+   #weather-card #search-btn {
+    position: absolute;
+    width: 66px;
+    height: 24px;
+    top: 50%;
+    left: 50%;
+    margin-top: -180px;
+    margin-left: 46px;
+    border-radius: 5px;
+    background-color: #00BFFF;
+    border: none;
+    box-shadow: rgba(0, 191, 255, 0.35) 0 5px 5px;
+    }
+}
+
+@media (min-width: 475px){
+   #weather-card #search-btn {
+    display: none;
+   }
 }
