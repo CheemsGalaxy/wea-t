@@ -9,7 +9,8 @@ var visibility = document.querySelector('.info-visibility');
 
 async function changWeatherUI() {
   let capitalSearch = search.value.trim();
-  let apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${capitalSearch}&appid=6a8fc30989f23512670b83cbdf2f238f`
+  let apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${capitalSearch}&appid=fc741bf6700fe5bf89478157cf433aeb
+`
 
   let data  = await fetch(apiURL).then(res => res.json())
   if(data.cod = 200) {
