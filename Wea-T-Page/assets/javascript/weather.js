@@ -1,4 +1,5 @@
-var search = document.querySelector('#search_box');
+var search = document.querySelector('#search-box');
+var searchBtn = document.querySelector('#search-btn');
 var locationText = document.querySelector('.location-text');
 var tempText = document.querySelector('.temp-text');
 var weatherStatus = document.querySelector('.weather-status');
