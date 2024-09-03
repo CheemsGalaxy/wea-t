@@ -8,7 +8,7 @@ var windSpeed = document.querySelector('.info-wind-speed');
 var humidity = document.querySelector('.info-humidity');
 var visibility = document.querySelector('.info-visibility');
 
-async function changWeatherUI() {
+async function changeWeatherUI() {
   let capitalSearch = search.value.trim();
   let apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${capitalSearch}&appid=fc741bf6700fe5bf89478157cf433aeb
 `
@@ -27,7 +27,7 @@ async function changWeatherUI() {
   }
 }
 
-changWeatherUI()
+changeWeatherUI()
 
 async function dateUI() {
   const timeUTC = new Date();
@@ -42,7 +42,12 @@ dateUI()
 
 search.addEventListener('keypress', function(e){
   if(e.code === 'Enter') {
-    changWeatherUI()
+    changeWeatherUI()
   }
 });
 
+function touchBtn() {
+  if(search) {
+    changeWeatherUI()
+  }
+}
