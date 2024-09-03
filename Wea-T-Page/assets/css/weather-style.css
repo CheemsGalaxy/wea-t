@@ -170,6 +170,11 @@ body {
     border: none;
     box-shadow: rgba(0, 191, 255, 0.35) 0 5px 5px;
     }
+    
+   #weather-card #search-btn:hover {
+    background-color: #fff;
+    color: #000;
+   }
 }
 
 @media (min-width: 475px){
