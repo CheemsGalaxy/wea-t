@@ -1,7 +1,3 @@
-Chắc chắn! Dưới đây là phiên bản README đã được bổ sung thêm các icon để làm cho nó sinh động hơn:
-
----
-
 # Wea-T 🌤️
 
 Wea-T là một dự án web cung cấp các công cụ tiện ích trong một trang web duy nhất. Hiện tại, dự án cung cấp chức năng dự báo thời tiết, và trong tương lai sẽ mở rộng thêm các công cụ như máy tính và ghi chú tạm thời.
