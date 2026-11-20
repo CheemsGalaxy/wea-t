@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Wea-T — Unified Personal Tech Studio</title>
+    <meta name="description" content="Wea-T Studio: Thời tiết & AQI, Bo tròn góc ảnh hàng loạt, Nén ảnh thông minh, YouTube & Cobalt Direct Download, Chuyển đổi 30+ định dạng và QR & Barcode Studio.">
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- JSZip for Batch ZIP Export & EPUB Packaging -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- QRCode Matrix Generator, JsBarcode & jsQR Scanner -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('studio-theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        studio: {
+                            bg: '#F8F9FA',
+                            panel: '#FFFFFF',
+                            border: '#E4E4E7',
+                            text: '#18181B',
+                            muted: '#71717A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F8F9FA;
+            color: #18181B;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        html.dark body {
+            background-color: #09090B;
+            color: #F4F4F5;
+        }
+
+        .bg-checkerboard {
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(45deg, #F1F5F9 25%, transparent 25%), 
+                linear-gradient(-45deg, #F1F5F9 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #F1F5F9 75%), 
+                linear-gradient(-45deg, transparent 75%, #F1F5F9 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+        html.dark .bg-checkerboard {
+            background-color: #121215;
+            background-image: 
+                linear-gradient(45deg, #1E1E22 25%, transparent 25%), 
+                linear-gradient(-45deg, #1E1E22 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #1E1E22 75%), 
+                linear-gradient(-45deg, transparent 75%, #1E1E22 75%);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 4px;
+            border-radius: 999px;
+            background: #E4E4E7;
+        }
+        html.dark input[type="range"]::-webkit-slider-runnable-track {
+            background: #27272A;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #18181B;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            margin-top: -5px;
+            transition: transform 0.1s ease;
+        }
+        html.dark input[type="range"]::-webkit-slider-thumb {
+            background: #FAFAFA;
+            border: 2px solid #18181B;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A1A1AA; }
+        html.dark ::-webkit-scrollbar-thumb { background: #27272A; }
+        html.dark ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900 transition-colors duration-150">
+
+    <!-- ===================================================================== -->
+    <!-- UNIFIED 3-COLUMN TOPBAR NAVIGATION                                    -->
+    <!-- ===================================================================== -->
+    <header class="h-14 bg-white dark:bg-zinc-900 border-b border-studio-border dark:border-zinc-800 px-4 lg:px-6 grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-3 shrink-0 z-30 transition-colors duration-150">
+        <!-- Left: Brand Identity -->
+        <div class="flex items-center gap-2.5 min-w-0">
+            <button type="button" onclick="switchView('home')" class="flex items-center gap-2.5 text-left group focus:outline-none">
+                <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-xs shrink-0 transition-transform group-hover:scale-105">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+                <span class="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Wea-T</span>
+            </button>
+            <span id="headerModuleBadge" class="hidden xl:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/80 truncate">
+                PERSONAL TECH STUDIO
+            </span>
+        </div>
+
+        <!-- Center: Synchronized Navigation Pill Bar -->
+        <nav class="flex items-center justify-self-center gap-0.5 max-w-full overflow-x-auto no-scrollbar p-1 border border-zinc-200 dark:border-zinc-800 rounded-[10px] bg-zinc-50 dark:bg-zinc-800/60" aria-label="Điều hướng chính">
+            <button type="button" data-nav="home" onclick="switchView('home')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 shadow-xs transition-all shrink-0">
+                <i data-lucide="home" class="w-3.5 h-3.5"></i>
+                <span>Home</span>
+            </button>
+            <button type="button" data-nav="weather" onclick="switchView('weather')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+                <i data-lucide="cloud-sun" class="w-3.5 h-3.5"></i>
+                <span>Weather</span>
+            </button>
+            <button type="button" data-nav="studio" onclick="switchView('studio')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+                <i data-lucide="crop" class="w-3.5 h-3.5"></i>
+                <span>Rounder</span>
+            </button>
+            <button type="button" data-nav="compress" onclick="switchView('compress')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+                <i data-lucide="package" class="w-3.5 h-3.5"></i>
+                <span>Compress</span>
+            </button>
+            <button type="button" data-nav="youtube" onclick="switchView('youtube')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+                <i data-lucide="play-square" class="w-3.5 h-3.5"></i>
+                <span>YouTube</span>
+            </button>
+            <button type="button" data-nav="convert" onclick="switchView('convert')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+                <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                <span>Convert</span>
+            </button>
+            <button type="button" data-nav="qr" onclick="switchView('qr')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                <span>QR Studio</span>
+            </button>
+        </nav>
+
+        <!-- Right: Status & Theme Toggle -->
+        <div class="flex items-center justify-self-end gap-2">
+            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 font-mono text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>ONLINE</span>
+            </span>
+            <button type="button" id="themeToggleBtn" onclick="toggleTheme()" title="Chuyển đổi giao diện Sáng / Tối" class="w-8 h-8 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700/80 flex items-center justify-center transition-colors shrink-0">
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-zinc-700"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: HOME STUDIO DASHBOARD                                         -->
+    <!-- ===================================================================== -->
+    <div id="view-home" class="app-view flex-1 overflow-y-auto p-4 lg:p-8">
+        <div class="max-w-5xl mx-auto space-y-6">
+            <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-6 lg:p-8 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="space-y-3 max-w-2xl">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 font-mono text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                        100% CLIENT-SIDE · COBALT COMMUNITY API
+                    </span>
+                    <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Wea-T Personal Tech Studio</h1>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        Không gian công cụ đa năng cho cả máy tính & điện thoại: theo dõi thời tiết & chất lượng không khí, bo tròn góc ảnh hàng loạt, nén ảnh siêu nhẹ, tải video YouTube trực tiếp qua Cobalt Directory, chuyển đổi 30+ định dạng và QR Studio.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 shrink-0">
+                    <button type="button" onclick="switchView('youtube')" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                        <i data-lucide="play-square" class="w-4 h-4"></i>
+                        <span>Tải YouTube (Mobile/PC)</span>
+                    </button>
+                    <button type="button" onclick="switchView('studio')" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+                        <i data-lucide="crop" class="w-4 h-4"></i>
+                        <span>Mở Rounder</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <button type="button" onclick="switchView('weather')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="cloud-sun" class="w-4 h-4"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Weather & AQI Studio</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Thời tiết trực tiếp, dự báo 24h & 5 ngày, chỉ số bụi mịn PM2.5/PM10 và chu kỳ Mặt trời.</p>
+                </button>
+
+                <button type="button" onclick="switchView('studio')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="crop" class="w-4 h-4"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Corner Rounder</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Bo tròn góc ảnh hàng loạt chuẩn Circular & iOS Squircle, thêm viền, nền và xuất ZIP.</p>
+                </button>
+
+                <button type="button" onclick="switchView('compress')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="package" class="w-4 h-4"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Smart Image Compressor</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Nén siêu nhẹ không giới hạn số lượng file, xóa EXIF và soi độ nét Before/After.</p>
+                </button>
+
+                <button type="button" onclick="switchView('youtube')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="play-square" class="w-4 h-4"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">YouTube & Cobalt Direct</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Tải trực tiếp MP4/MP3 trên điện thoại & PC qua mạng lưới Cobalt Directory + lệnh Termux/PC.</p>
+                </button>
+
+                <button type="button" onclick="switchView('convert')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="repeat" class="w-4 h-4"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Universal Converter</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Chuyển đổi 30+ định dạng Ảnh, Audio, Video, PDF, EPUB, DXF, ZIP.</p>
+                </button>
+
+                <button type="button" onclick="switchView('qr')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="qr-code" class="w-4 h-4"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">QR & Barcode Studio</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Tạo mã QR tùy biến sâu (chấm, mắt, gradient, logo, VietQR, Wi-Fi), Barcode & Quét mã.</p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: WEATHER & AQI STUDIO                                          -->
+    <!-- ===================================================================== -->
+    <div id="view-weather" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-studio-bg dark:bg-zinc-950">
+            <div class="max-w-4xl mx-auto space-y-4">
+                <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-6 shadow-2xs space-y-6">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
+                                <span>LIVE METEOROLOGY</span>
+                                <span>·</span>
+                                <span id="wLocalTime">--:--</span>
+                            </div>
+                            <h2 id="wCityTitle" class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">Hà Nội, VN</h2>
+                            <p id="wDescText" class="text-xs text-zinc-500 dark:text-zinc-400 capitalize mt-0.5">Đang tải dữ liệu...</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
+                                <i id="wMainIcon" data-lucide="cloud-sun" class="w-6 h-6"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl font-bold font-mono tracking-tight text-zinc-900 dark:text-zinc-100">
+                                    <span id="wTempVal">--</span><span id="wTempUnit" class="text-xl text-zinc-400">°C</span>
+                                </div>
+                                <div class="text-[11px] font-mono text-zinc-500">Cảm giác <span id="wFeelsVal">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                            <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="droplets" class="w-3 h-3"></i>Độ ẩm</span>
+                            <strong id="wHumidity" class="block text-sm font-mono font-semibold mt-1">--</strong>
+                        </div>
+                        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                            <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="wind" class="w-3 h-3"></i>Gió</span>
+                            <strong id="wWind" class="block text-sm font-mono font-semibold mt-1">--</strong>
+                        </div>
+                        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                            <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="compass" class="w-3 h-3"></i>Hướng gió</span>
+                            <strong id="wWindDir" class="block text-sm font-mono font-semibold mt-1">--</strong>
+                        </div>
+                        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                            <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i>Tầm nhìn</span>
+                            <strong id="wVisibility" class="block text-sm font-mono font-semibold mt-1">--</strong>
+                        </div>
+                        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                            <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="gauge" class="w-3 h-3"></i>Áp suất</span>
+                            <strong id="wPressure" class="block text-sm font-mono font-semibold mt-1">--</strong>
+                        </div>
+                        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                            <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="cloud" class="w-3 h-3"></i>Mây che</span>
+                            <strong id="wClouds" class="block text-sm font-mono font-semibold mt-1">--</strong>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-800 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-mono">
+                            <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400"><i data-lucide="sunrise" class="w-3.5 h-3.5"></i>Bình minh: <strong id="wSunrise">--:--</strong></span>
+                            <span class="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400"><i data-lucide="sunset" class="w-3.5 h-3.5"></i>Hoàng hôn: <strong id="wSunset">--:--</strong></span>
+                        </div>
+                        <div class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                            <div id="wSunProgress" class="h-full bg-amber-500 rounded-full transition-all" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i>Dự báo 24 giờ tới</span>
+                        <span class="text-[11px] font-mono text-zinc-400">3H INTERVAL</span>
+                    </div>
+                    <div id="wHourlyList" class="grid grid-cols-4 sm:grid-cols-8 gap-2"></div>
+                </section>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Dự báo 5 ngày</span>
+                        <div id="wDailyList" class="divide-y divide-zinc-100 dark:divide-zinc-800"></div>
+                    </section>
+
+                    <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="wind" class="w-3.5 h-3.5"></i>Chất lượng không khí (AQI)</span>
+                            <span id="wAqiBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">--</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                                <span class="text-[11px] font-mono text-zinc-400">PM2.5</span>
+                                <strong id="wPm25" class="block text-sm font-mono mt-0.5">-- µg/m³</strong>
+                            </div>
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                                <span class="text-[11px] font-mono text-zinc-400">PM10</span>
+                                <strong id="wPm10" class="block text-sm font-mono mt-0.5">-- µg/m³</strong>
+                            </div>
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                                <span class="text-[11px] font-mono text-zinc-400">O₃ (Ozone)</span>
+                                <strong id="wO3" class="block text-sm font-mono mt-0.5">-- µg/m³</strong>
+                            </div>
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
+                                <span class="text-[11px] font-mono text-zinc-400">NO₂</span>
+                                <strong id="wNo2" class="block text-sm font-mono mt-0.5">-- µg/m³</strong>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <aside class="w-full lg:w-[340px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
+            <div class="space-y-5">
+                <div class="space-y-2.5">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tra cứu thành phố</span>
+                    <form onsubmit="event.preventDefault(); fetchWeatherByCity(document.getElementById('wSearchInput').value);" class="flex gap-1.5">
+                        <input type="text" id="wSearchInput" placeholder="Ha Noi, Tokyo, Seoul..." class="flex-1 px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 focus:outline-none">
+                        <button type="submit" class="px-3.5 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold">Tìm</button>
+                    </form>
+                    <button type="button" onclick="fetchWeatherByGPS()" class="w-full py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
+                        <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i>
+                        <span>Dùng vị trí GPS hiện tại</span>
+                    </button>
+                </div>
+
+                <div class="space-y-2">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Thành phố phổ biến</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" onclick="fetchWeatherByCity('Ha Noi')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">Hà Nội</button>
+                        <button type="button" onclick="fetchWeatherByCity('Ho Chi Minh City')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">TP.HCM</button>
+                        <button type="button" onclick="fetchWeatherByCity('Da Nang')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">Đà Nẵng</button>
+                        <button type="button" onclick="fetchWeatherByCity('Tokyo')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">Tokyo</button>
+                        <button type="button" onclick="fetchWeatherByCity('London')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">London</button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Đơn vị nhiệt độ</span>
+                    <div class="grid grid-cols-2 gap-1 p-1 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                        <button type="button" id="wUnitC" onclick="setWeatherUnit('metric')" class="py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 shadow-2xs">Độ C (°C)</button>
+                        <button type="button" id="wUnitF" onclick="setWeatherUnit('imperial')" class="py-1.5 rounded-md text-xs font-medium text-zinc-500">Độ F (°F)</button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" onclick="fetchWeatherByCity(currentCity)" class="mt-4 w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                <span>Làm mới dữ liệu</span>
+            </button>
+        </aside>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 3: CORNER ROUNDER STUDIO                                         -->
+    <!-- ===================================================================== -->
+    <div id="view-studio" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
+            <div id="statusBar" class="hidden h-10 bg-white/80 dark:bg-zinc-900/80 border-b border-studio-border dark:border-zinc-800 px-4 lg:px-6 items-center justify-between text-xs text-zinc-500 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span class="font-medium text-zinc-900 dark:text-zinc-100"><span id="statCount" class="font-mono">0</span> ảnh</span>
+                    <span>|</span>
+                    <span id="statSummary" class="font-mono text-[11px] truncate">Bo góc: 32px · Circular</span>
+                </div>
+                <span class="hidden sm:inline font-mono text-[11px]">CLIENT-SIDE RENDER</span>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 lg:p-6">
+                <div id="emptyDropzone" class="h-full min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center">
+                    <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
+                        <i data-lucide="image-plus" class="w-6 h-6 stroke-[1.75]"></i>
+                    </div>
+                    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Kéo thả ảnh vào đây hoặc chọn từ máy</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mb-6 leading-relaxed">
+                        Hỗ trợ xử lý hàng loạt JPG, PNG, WebP. Bạn cũng có thể nhấn <kbd class="px-1.5 py-0.5 text-[11px] font-mono bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded">Ctrl + V</kbd> để dán ảnh trực tiếp.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center gap-2.5">
+                        <button type="button" onclick="document.getElementById('fileInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                            <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                            <span>Chọn nhiều ảnh</span>
+                        </button>
+                        <button type="button" onclick="loadSampleImages()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700/70 transition-colors">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-zinc-500"></i>
+                            <span>Dùng 4 ảnh mẫu thử nghiệm</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="previewGrid" class="hidden grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-24"></div>
+            </div>
+
+            <div id="floatingActionDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
+                <button type="button" onclick="document.getElementById('fileInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span>Thêm ảnh</span>
+                </button>
+                <div class="w-px h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                <button type="button" onclick="clearAllImages()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 rounded-full hover:bg-red-50 dark:hover:bg-red-950/50">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Xóa tất cả</span>
+                </button>
+            </div>
+        </main>
+
+        <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col shrink-0 h-[50vh] lg:h-full">
+            <div class="flex-1 overflow-y-auto divide-y divide-studio-border dark:divide-zinc-800">
+                <div class="p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Kiểu bo góc</span>
+                        <span class="text-[11px] font-mono text-zinc-400" id="curveBadge">Circular</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                        <button type="button" id="btnCurveCircular" onclick="setCurveType('circular')" class="py-1.5 px-2.5 text-xs font-medium rounded-md bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs">Bo tròn chuẩn</button>
+                        <button type="button" id="btnCurveSquircle" onclick="setCurveType('squircle')" class="py-1.5 px-2.5 text-xs font-medium rounded-md text-zinc-600 dark:text-zinc-400">iOS Squircle G2</button>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1.5">
+                        <button type="button" onclick="applyPreset(12, 'px', 'circular', this)" class="preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-200 dark:border-zinc-700 rounded-md text-center">Nhẹ<br><span class="font-mono text-[10px] text-zinc-400">12px</span></button>
+                        <button type="button" onclick="applyPreset(32, 'px', 'circular', this)" class="preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-center">Vừa<br><span class="font-mono text-[10px]">32px</span></button>
+                        <button type="button" onclick="applyPreset(64, 'px', 'circular', this)" class="preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-200 dark:border-zinc-700 rounded-md text-center">Lớn<br><span class="font-mono text-[10px] text-zinc-400">64px</span></button>
+                        <button type="button" onclick="applyPreset(22, '%', 'squircle', this)" class="preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-200 dark:border-zinc-700 rounded-md text-center">Icon<br><span class="font-mono text-[10px] text-zinc-400">22%</span></button>
+                        <button type="button" onclick="applyPreset(50, '%', 'circular', this)" class="preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-200 dark:border-zinc-700 rounded-md text-center">Tròn<br><span class="font-mono text-[10px] text-zinc-400">50%</span></button>
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Bán kính bo góc</span>
+                        <div class="flex items-center gap-1.5">
+                            <div class="inline-flex rounded-md border border-zinc-200 dark:border-zinc-700 p-0.5 bg-zinc-50 dark:bg-zinc-800 text-[11px] font-mono">
+                                <button type="button" id="unitPx" onclick="setUnit('px')" class="px-1.5 py-0.5 rounded bg-white dark:bg-zinc-700 font-semibold">px</button>
+                                <button type="button" id="unitPct" onclick="setUnit('%')" class="px-1.5 py-0.5 rounded text-zinc-500">%</button>
+                            </div>
+                            <button type="button" id="btnToggleIndividual" onclick="toggleIndividualCorners()" title="Chỉnh từng góc" class="p-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400">
+                                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="uniformControl" class="flex items-center gap-3">
+                        <input type="range" id="uniformSlider" min="0" max="300" value="32" class="flex-1" oninput="updateUniformRadius(this.value)">
+                        <div class="flex items-center border border-zinc-200 dark:border-zinc-700 rounded-md bg-zinc-50 dark:bg-zinc-800 px-2 py-1 w-20">
+                            <input type="number" id="uniformInput" min="0" max="2000" value="32" class="w-full text-xs font-mono text-right bg-transparent focus:outline-none" oninput="updateUniformRadius(this.value)">
+                            <span id="uniformUnitLabel" class="text-[11px] font-mono text-zinc-400 ml-1">px</span>
+                        </div>
+                    </div>
+
+                    <div id="individualControl" class="hidden grid-cols-2 gap-2">
+                        <input type="number" id="radTL" value="32" placeholder="TL" oninput="updateCornerRadius('tl', this.value)" class="px-2.5 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md">
+                        <input type="number" id="radTR" value="32" placeholder="TR" oninput="updateCornerRadius('tr', this.value)" class="px-2.5 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md">
+                        <input type="number" id="radBL" value="32" placeholder="BL" oninput="updateCornerRadius('bl', this.value)" class="px-2.5 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md">
+                        <input type="number" id="radBR" value="32" placeholder="BR" oninput="updateCornerRadius('br', this.value)" class="px-2.5 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md">
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Nền & Viền khung</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="setBgMode('transparent')" id="bgBtnTransparent" class="h-7 px-2.5 rounded-md border-2 border-zinc-900 dark:border-zinc-100 bg-checkerboard text-[11px] font-medium">Trong suốt</button>
+                        <button type="button" onclick="setBgMode('color', '#FFFFFF')" class="w-7 h-7 rounded-md border border-zinc-300 bg-white"></button>
+                        <button type="button" onclick="setBgMode('color', '#09090B')" class="w-7 h-7 rounded-md border border-zinc-300 bg-zinc-950"></button>
+                        <input type="color" id="bgColorPicker" value="#FFFFFF" onchange="setBgMode('color', this.value)" class="w-7 h-7 rounded border border-zinc-300 cursor-pointer bg-transparent">
+                    </div>
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-xs text-zinc-600 dark:text-zinc-300">Thêm viền (Border)</span>
+                        <input type="checkbox" id="borderToggle" onchange="toggleBorder(this.checked)" class="rounded border-zinc-300">
+                    </div>
+                    <div id="borderControls" class="hidden flex items-center gap-2">
+                        <input type="range" id="borderWidthSlider" min="1" max="40" value="4" class="flex-1" oninput="updateBorderWidth(this.value)">
+                        <input type="color" id="borderColorPicker" value="#18181B" oninput="updateBorderColor(this.value)" class="w-7 h-7 rounded border border-zinc-200 bg-transparent">
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-2.5">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Định dạng xuất</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="exportFormat" onchange="updateExportFormat(this.value)" class="text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2.5 py-1.5">
+                            <option value="image/png">PNG (Trong suốt)</option>
+                            <option value="image/webp">WebP (Nhẹ)</option>
+                            <option value="image/jpeg">JPEG (Nền đặc)</option>
+                        </select>
+                        <input type="text" id="fileSuffix" value="-rounded" class="text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2.5 py-1.5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-zinc-50/80 dark:bg-zinc-900/90 border-t border-studio-border dark:border-zinc-800 shrink-0">
+                <button id="btnExportZip" type="button" onclick="handlePrimaryExport()" disabled class="w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
+                    <i id="btnExportIcon" data-lucide="download" class="w-4 h-4"></i>
+                    <span id="btnExportLabel">Tải xuống</span>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 4: SMART IMAGE COMPRESSOR                                        -->
+    <!-- ===================================================================== -->
+    <div id="view-compress" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
+            <div class="flex-1 overflow-y-auto p-4 lg:p-6">
+                <div id="compressEmptyState" onclick="document.getElementById('compressInput').click()" class="cursor-pointer h-full min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
+                        <i data-lucide="package" class="w-6 h-6 stroke-[1.75]"></i>
+                    </div>
+                    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Kéo thả hoặc chọn ảnh cần nén siêu nhẹ</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mb-6">Không giới hạn số lượng file hay dung lượng 5MB · Xóa EXIF tự động · Xử lý 100% Client-Side</p>
+                    <button type="button" onclick="event.stopPropagation(); document.getElementById('compressInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg">
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                        <span>Chọn nhiều ảnh</span>
+                    </button>
+                </div>
+
+                <div id="compressList" class="hidden space-y-2.5 pb-24"></div>
+            </div>
+
+            <div id="compressFloatingDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
+                <button type="button" onclick="document.getElementById('compressInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Thêm ảnh</span>
+                </button>
+                <div class="w-px h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                <button type="button" onclick="clearCompressQueue()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-950/50">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Xóa tất cả</span>
+                </button>
+            </div>
+        </main>
+
+        <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col justify-between p-4 shrink-0">
+            <div class="space-y-4">
+                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/70 dark:border-zinc-800 flex items-center justify-between">
+                    <div>
+                        <span class="block text-[11px] font-mono text-zinc-400">TỔNG TIẾT KIỆM</span>
+                        <strong id="compTotalSavedText" class="text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400">0 KB (0%)</strong>
+                    </div>
+                    <span id="compCountBadge" class="text-xs font-mono px-2 py-1 rounded bg-zinc-200/70 dark:bg-zinc-700">0 ảnh</span>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="font-medium text-zinc-700 dark:text-zinc-300">Chất lượng nén</span>
+                        <span id="compQualityLabel" class="font-mono font-semibold">78%</span>
+                    </div>
+                    <input type="range" id="compQualitySlider" min="20" max="98" value="78" class="w-full" oninput="document.getElementById('compQualityLabel').textContent=this.value+'%'; recompressAll();">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Định dạng đầu ra</label>
+                    <select id="compTargetFormat" onchange="recompressAll()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2">
+                        <option value="auto">Giữ nguyên định dạng gốc</option>
+                        <option value="image/webp">Chuyển sang WebP (Siêu nhẹ)</option>
+                        <option value="image/jpeg">Chuyển sang JPEG</option>
+                        <option value="image/png">Giữ PNG</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btnDownloadCompressed" type="button" onclick="downloadCompressedBatch()" disabled class="w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>Tải ảnh đã nén</span>
+            </button>
+        </aside>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 5: YOUTUBE & COBALT DIRECT STUDIO (MOBILE + DESKTOP)             -->
+    <!-- ===================================================================== -->
+    <div id="view-youtube" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-studio-bg dark:bg-zinc-950">
+            <div class="max-w-4xl mx-auto space-y-4">
+                <!-- URL Input & Instant Cobalt Direct Download -->
+                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tải Video / Nhạc YouTube (Điện thoại & Máy tính)</span>
+                        <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">COBALT DIRECTORY API</span>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="flex-1 flex items-center bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3">
+                            <input type="text" id="ytUrlInput" value="https://www.youtube.com/watch?v=kTJczUoc26U" oninput="updateYtCommand()" placeholder="Dán link YouTube (watch?v=, youtu.be/, shorts/)..." class="w-full py-2.5 text-xs font-mono bg-transparent focus:outline-none">
+                            <button type="button" onclick="pasteYouTubeUrl()" title="Dán link" class="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
+                                <i data-lucide="clipboard-paste" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <button type="button" onclick="analyzeYouTubeUrl()" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
+                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                            <span>Kiểm tra</span>
+                        </button>
+                        <button type="button" id="btnCobaltDirect" onclick="downloadViaCobaltDirect()" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-zinc-800 dark:hover:bg-white transition-colors shadow-xs">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span id="btnCobaltDirectLabel">Tải trực tiếp (Mobile/PC)</span>
+                        </button>
+                    </div>
+
+                    <!-- Cobalt Direct Result / Fallback Bar -->
+                    <div id="cobaltStatusBanner" class="hidden p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-2">
+                        <span id="cobaltStatusText" class="font-medium">Đang kết nối tới node Cobalt...</span>
+                        <div id="cobaltActionLinks" class="flex items-center gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Cobalt Directory Live Node Selector -->
+                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="server" class="w-3.5 h-3.5"></i>Máy chủ Cobalt Community (cobalt.directory)</span>
+                            <p class="text-[11px] text-zinc-400 mt-0.5">Tự động xoay vòng qua các node điểm cao (96–100%) nếu một máy chủ bận hoặc yêu cầu Turnstile.</p>
+                        </div>
+                        <a href="https://cobalt.directory/" target="_blank" rel="noopener noreferrer" class="text-[11px] font-mono text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline">Xem bảng trạng thái gốc ↗</a>
+                    </div>
+
+                    <div id="cobaltNodeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+
+                    <div class="pt-1 flex flex-col sm:flex-row gap-2">
+                        <input type="url" id="customCobaltApiInput" placeholder="Hoặc dán API Endpoint Cobalt tự host của bạn (VD: https://api.domain.com)..." class="flex-1 px-3 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none">
+                        <button type="button" onclick="applyCustomCobaltEndpoint()" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">Dùng API này</button>
+                    </div>
+                </div>
+
+                <!-- Video Metadata & Thumbnails -->
+                <div id="ytPreviewCard" class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-4">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <img id="ytThumbImg" src="https://i.ytimg.com/vi/kTJczUoc26U/hqdefault.jpg" alt="Thumbnail" class="w-full md:w-56 aspect-video object-cover rounded-lg border border-zinc-200 dark:border-zinc-800">
+                        <div class="space-y-1.5 flex-1">
+                            <span class="text-[11px] font-mono text-zinc-400" id="ytVideoIdBadge">ID: kTJczUoc26U</span>
+                            <h3 id="ytVideoTitle" class="text-base font-bold text-zinc-900 dark:text-zinc-100">The Kid LAROI, Justin Bieber - STAY (Official Video)</h3>
+                            <p id="ytChannelName" class="text-xs text-zinc-500">The Kid LAROI</p>
+                            <div class="pt-2 flex flex-wrap gap-2">
+                                <a id="ytThumbMaxLink" href="https://i.ytimg.com/vi/kTJczUoc26U/maxresdefault.jpg" target="_blank" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium inline-flex items-center gap-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                    <i data-lucide="image" class="w-3.5 h-3.5"></i><span>Ảnh bìa HD 1280×720</span>
+                                </a>
+                                <button type="button" onclick="openSelectedCobaltFrontend()" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium inline-flex items-center gap-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>Mở Web Cobalt Node</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Browser FFmpeg Muxer (Merge Video + Audio) -->
+                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="combine" class="w-3.5 h-3.5"></i>Ghép Video + Audio trực tiếp</span>
+                        <span class="text-[11px] font-mono text-zinc-400">MP4 + MP3/M4A</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="p-3 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center justify-between">
+                            <span id="muxVideoName" class="truncate text-zinc-600 dark:text-zinc-300">1. Chọn file Video (.mp4/.webm)</span>
+                            <input type="file" accept="video/*" class="hidden" onchange="handleMuxFileSelect('video', this.files[0])">
+                            <i data-lucide="film" class="w-4 h-4 text-zinc-400 shrink-0"></i>
+                        </label>
+                        <label class="p-3 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center justify-between">
+                            <span id="muxAudioName" class="truncate text-zinc-600 dark:text-zinc-300">2. Chọn file Audio (.mp3/.m4a)</span>
+                            <input type="file" accept="audio/*" class="hidden" onchange="handleMuxFileSelect('audio', this.files[0])">
+                            <i data-lucide="music" class="w-4 h-4 text-zinc-400 shrink-0"></i>
+                        </label>
+                    </div>
+                    <button type="button" onclick="mergeVideoAndAudioBrowser()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        <span>Ghép thành 1 file hoàn chỉnh</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right: Quality + CLI Commands (Win / Android Termux / Mac) -->
+        <aside class="w-full lg:w-[360px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Chất lượng & Định dạng</span>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" data-ytfmt="1080" onclick="setYtFormat('1080')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium">MP4 1080p Full HD</button>
+                        <button type="button" data-ytfmt="2160" onclick="setYtFormat('2160')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium">MP4 4K Ultra HD</button>
+                        <button type="button" data-ytfmt="720" onclick="setYtFormat('720')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium">MP4 720p HD</button>
+                        <button type="button" data-ytfmt="mp3" onclick="setYtFormat('mp3')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium">MP3 320kbps</button>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Xác thực Cookie (Khi chạy CLI trên máy)</label>
+                    <select id="ytCookieMode" onchange="updateYtCommand()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2.5 py-2">
+                        <option value="cookies_txt">Tự dùng cookies.txt trong Downloads (Khuyên dùng)</option>
+                        <option value="firefox">Lấy từ Firefox</option>
+                        <option value="bypass">Bypass (Android VR / TV)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Lệnh 1-chạm</span>
+                        <div class="flex gap-1 text-[10px] font-mono">
+                            <button type="button" id="ytShellWin" onclick="setYtShell('win')" class="px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900">Win</button>
+                            <button type="button" id="ytShellTermux" onclick="setYtShell('termux')" class="px-1.5 py-0.5 rounded text-zinc-500">Android Termux</button>
+                            <button type="button" id="ytShellUnix" onclick="setYtShell('unix')" class="px-1.5 py-0.5 rounded text-zinc-500">Mac/Linux</button>
+                        </div>
+                    </div>
+                    <textarea id="ytCliCommand" rows="5" readonly class="w-full p-2.5 text-[11px] font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-800 dark:text-zinc-200 focus:outline-none"></textarea>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-3">
+                <button type="button" onclick="copyYtCommand()" class="py-2.5 px-3 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-1.5">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copy lệnh</span>
+                </button>
+                <button type="button" onclick="downloadYtBatchScript()" class="py-2.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-semibold flex items-center justify-center gap-1.5">
+                    <i data-lucide="file-terminal" class="w-3.5 h-3.5"></i><span>Tải file .BAT</span>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 6: UNIVERSAL CONVERTER (30+ FORMATS)                             -->
+    <!-- ===================================================================== -->
+    <div id="view-convert" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
+            <div class="flex-1 overflow-y-auto p-4 lg:p-6">
+                <div id="convertEmptyState" onclick="document.getElementById('convertInput').click()" class="cursor-pointer h-full min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
+                        <i data-lucide="repeat" class="w-6 h-6 stroke-[1.75]"></i>
+                    </div>
+                    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Chọn hoặc kéo thả tệp bất kỳ để chuyển đổi định dạng</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-lg mb-6">Hình ảnh (PNG, JPG, WEBP, AVIF, ICO, SVG, DXF) · Âm thanh (WAV, MP3, OGG) · Tài liệu (TXT, MD, HTML, JSON, CSV, XML, EPUB, PDF, ZIP)</p>
+                    <button type="button" onclick="event.stopPropagation(); document.getElementById('convertInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg">
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                        <span>Chọn tệp từ máy</span>
+                    </button>
+                </div>
+
+                <div id="convertList" class="hidden space-y-2.5 pb-24"></div>
+            </div>
+
+            <div id="convertFloatingDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
+                <button type="button" onclick="document.getElementById('convertInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Thêm tệp</span>
+                </button>
+                <div class="w-px h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                <button type="button" onclick="clearConvertQueue()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-950/50">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Xóa tất cả</span>
+                </button>
+            </div>
+        </main>
+
+        <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col justify-between p-4 shrink-0">
+            <div class="space-y-4">
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Định dạng đích hàng loạt</label>
+                    <select id="globalConvertTarget" onchange="applyGlobalConvertTarget(this.value)" class="w-full text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2">
+                        <optgroup label="Hình ảnh & Vector">
+                            <option value="png">PNG</option>
+                            <option value="jpg">JPG / JPEG</option>
+                            <option value="webp">WEBP</option>
+                            <option value="ico">ICO (Icon 64x64)</option>
+                            <option value="svg">SVG Vector</option>
+                            <option value="dxf">DXF (AutoCAD)</option>
+                        </optgroup>
+                        <optgroup label="Âm thanh">
+                            <option value="wav">WAV (Lossless PCM)</option>
+                            <option value="mp3">MP3</option>
+                            <option value="ogg">OGG</option>
+                        </optgroup>
+                        <optgroup label="Tài liệu & Dữ liệu">
+                            <option value="pdf">PDF Document</option>
+                            <option value="epub">EPUB Ebook</option>
+                            <option value="json">JSON</option>
+                            <option value="csv">CSV</option>
+                            <option value="html">HTML</option>
+                            <option value="txt">TXT</option>
+                            <option value="zip">ZIP Archive</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btnConvertAll" type="button" onclick="convertAndDownloadAll()" disabled class="w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
+                <i data-lucide="repeat" class="w-4 h-4"></i>
+                <span>Chuyển đổi & Tải xuống</span>
+            </button>
+        </aside>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 7: QR & BARCODE STUDIO (DEEP CUSTOMIZATION & SCANNER)            -->
+    <!-- ===================================================================== -->
+    <div id="view-qr" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-y-auto p-4 lg:p-6">
+            <div class="max-w-5xl w-full mx-auto space-y-4">
+                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-2 flex flex-wrap items-center justify-between gap-2 shadow-2xs">
+                    <div class="inline-flex p-1 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60">
+                        <button type="button" id="qrModeBtnQr" onclick="setQrStudioMode('qr')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs inline-flex items-center gap-1.5">
+                            <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                            <span>QR Code Pro</span>
+                        </button>
+                        <button type="button" id="qrModeBtnBarcode" onclick="setQrStudioMode('barcode')" class="px-3 py-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 inline-flex items-center gap-1.5">
+                            <i data-lucide="barcode" class="w-3.5 h-3.5"></i>
+                            <span>Barcode 1D</span>
+                        </button>
+                        <button type="button" id="qrModeBtnScan" onclick="setQrStudioMode('scan')" class="px-3 py-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 inline-flex items-center gap-1.5">
+                            <i data-lucide="scan-line" class="w-3.5 h-3.5"></i>
+                            <span>Quét & Giải mã</span>
+                        </button>
+                    </div>
+                    <span id="qrPayloadLengthBadge" class="text-[11px] font-mono px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">PAYLOAD · READY</span>
+                </div>
+
+                <div id="qrGeneratorWorkspace" class="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-4 items-start">
+                    <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-4">
+                        <div id="qrTemplateSection" class="space-y-2.5">
+                            <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Loại nội dung QR</span>
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                                <button type="button" data-qrtpl="url" onclick="setQrTemplate('url')" class="qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium flex flex-col items-center gap-1">
+                                    <i data-lucide="link" class="w-3.5 h-3.5"></i><span>URL / Link</span>
+                                </button>
+                                <button type="button" data-qrtpl="wifi" onclick="setQrTemplate('wifi')" class="qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex flex-col items-center gap-1">
+                                    <i data-lucide="wifi" class="w-3.5 h-3.5"></i><span>Wi-Fi</span>
+                                </button>
+                                <button type="button" data-qrtpl="vietqr" onclick="setQrTemplate('vietqr')" class="qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex flex-col items-center gap-1">
+                                    <i data-lucide="landmark" class="w-3.5 h-3.5"></i><span>VietQR</span>
+                                </button>
+                                <button type="button" data-qrtpl="vcard" onclick="setQrTemplate('vcard')" class="qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex flex-col items-center gap-1">
+                                    <i data-lucide="contact" class="w-3.5 h-3.5"></i><span>Danh thiếp</span>
+                                </button>
+                                <button type="button" data-qrtpl="email" onclick="setQrTemplate('email')" class="qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex flex-col items-center gap-1">
+                                    <i data-lucide="mail" class="w-3.5 h-3.5"></i><span>Email</span>
+                                </button>
+                                <button type="button" data-qrtpl="text" onclick="setQrTemplate('text')" class="qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex flex-col items-center gap-1">
+                                    <i data-lucide="align-left" class="w-3.5 h-3.5"></i><span>Văn bản</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="qrFieldsUrl" class="qr-field-group space-y-2">
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Đường dẫn Website (URL)</label>
+                            <input type="url" id="qrInputUrl" value="https://github.com/CheemsGalaxy" oninput="renderQrStudio()" placeholder="https://example.com" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 focus:outline-none">
+                        </div>
+
+                        <div id="qrFieldsWifi" class="qr-field-group hidden space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Tên mạng Wi-Fi (SSID)</label>
+                                    <input type="text" id="qrWifiSsid" value="Wea-T_Studio_5G" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Mật khẩu Wi-Fi</label>
+                                    <input type="text" id="qrWifiPass" value="12345678" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Bảo mật</label>
+                                    <select id="qrWifiEnc" onchange="renderQrStudio()" class="w-full px-2.5 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                        <option value="WPA">WPA / WPA2 / WPA3</option>
+                                        <option value="WEP">WEP</option>
+                                        <option value="nopass">Không mật khẩu</option>
+                                    </select>
+                                </div>
+                                <label class="flex items-center gap-2 pt-5 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
+                                    <input type="checkbox" id="qrWifiHidden" onchange="renderQrStudio()" class="rounded border-zinc-300">
+                                    <span>Mạng ẩn (Hidden SSID)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="qrFieldsVietqr" class="qr-field-group hidden space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Ngân hàng (NAPAS)</label>
+                                    <select id="qrBankBin" onchange="renderQrStudio()" class="w-full px-2.5 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                        <option value="970436">Vietcombank (VCB)</option>
+                                        <option value="970415">VietinBank (CTG)</option>
+                                        <option value="970418">BIDV</option>
+                                        <option value="970407">Techcombank (TCB)</option>
+                                        <option value="970422">MB Bank</option>
+                                        <option value="970403">Sacombank (STB)</option>
+                                        <option value="970416">ACB</option>
+                                        <option value="970432">VPBank</option>
+                                        <option value="970423">TPBank</option>
+                                        <option value="970405">Agribank</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Số tài khoản</label>
+                                    <input type="text" id="qrBankAcc" value="0123456789" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Số tiền (VNĐ, tùy chọn)</label>
+                                    <input type="number" id="qrBankAmount" placeholder="50000" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Nội dung chuyển khoản</label>
+                                    <input type="text" id="qrBankMemo" value="Chuyen khoan Wea-T" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="qrFieldsVcard" class="qr-field-group hidden space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Họ và tên</label>
+                                    <input type="text" id="qrVcardName" value="Cheems Galaxy" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Số điện thoại</label>
+                                    <input type="text" id="qrVcardPhone" value="+84 901 234 567" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Email</label>
+                                    <input type="email" id="qrVcardEmail" value="hello@wea-t.studio" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Tổ chức / Chức danh</label>
+                                    <input type="text" id="qrVcardOrg" value="Wea-T Personal Tech Studio" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="qrFieldsEmail" class="qr-field-group hidden space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Địa chỉ Email nhận</label>
+                                <input type="email" id="qrEmailTo" value="contact@wea-t.studio" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Tiêu đề thư</label>
+                                <input type="text" id="qrEmailSub" value="Liên hệ từ QR Studio" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                            </div>
+                        </div>
+
+                        <div id="qrFieldsText" class="qr-field-group hidden space-y-2">
+                            <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Nội dung văn bản bất kỳ</label>
+                            <textarea id="qrInputText" rows="3" oninput="renderQrStudio()" placeholder="Nhập ghi chú, mã giảm giá, chuỗi JSON..." class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 focus:outline-none">Wea-T Studio — Precision QR Generator</textarea>
+                        </div>
+
+                        <div id="barcodeFieldsSection" class="hidden space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Chuẩn mã vạch (Symbology)</label>
+                                    <select id="barcodeFormatSelect" onchange="renderQrStudio()" class="w-full px-2.5 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                        <option value="CODE128">CODE 128 (Đa năng chữ & số)</option>
+                                        <option value="EAN13">EAN-13 (13 số sản phẩm)</option>
+                                        <option value="UPC">UPC-A (12 số bán lẻ)</option>
+                                        <option value="CODE39">CODE 39 (Kho vận / Công nghiệp)</option>
+                                        <option value="ITF14">ITF-14 (14 số thùng hàng)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">Mã số / Dữ liệu vạch</label>
+                                    <input type="text" id="barcodeValueInput" value="WEAT-2026-8899" oninput="renderQrStudio()" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-mono text-zinc-400">ENCODED PAYLOAD</span>
+                                <button type="button" onclick="copyQrRawPayload()" class="text-[11px] font-mono text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline">Copy chuỗi mã</button>
+                            </div>
+                            <pre id="qrEncodedPreview" class="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-800/70 border border-zinc-200/70 dark:border-zinc-800 text-[11px] font-mono text-zinc-600 dark:text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all"></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs flex flex-col items-center space-y-4">
+                        <div class="w-full flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                            <span>LIVE PREVIEW</span>
+                            <span id="qrDimensionBadge">1024 × 1024 PX</span>
+                        </div>
+
+                        <div class="w-full aspect-square bg-checkerboard rounded-xl border border-zinc-200/80 dark:border-zinc-800 p-5 flex items-center justify-center overflow-hidden">
+                            <canvas id="qrLiveCanvas" class="max-w-full max-h-full object-contain shadow-2xs"></canvas>
+                            <svg id="barcodeLiveSvg" class="hidden max-w-full max-h-full"></svg>
+                        </div>
+
+                        <div id="barcodeErrorBanner" class="hidden w-full p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-[11px] font-mono text-red-600 dark:text-red-400 text-center">
+                            Dữ liệu không khớp độ dài chuẩn mã vạch này.
+                        </div>
+
+                        <div class="w-full grid grid-cols-2 gap-2">
+                            <button type="button" onclick="downloadQrPng()" class="py-2.5 px-3 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Tải PNG nét cao</span>
+                            </button>
+                            <button type="button" onclick="downloadQrSvg()" class="py-2.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+                                <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
+                                <span>Tải SVG Vector</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="qrScannerWorkspace" class="hidden space-y-4">
+                    <div onclick="document.getElementById('qrScanInput').click()" class="cursor-pointer min-h-[320px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
+                        <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
+                            <i data-lucide="scan-line" class="w-6 h-6 stroke-[1.75]"></i>
+                        </div>
+                        <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Kéo thả ảnh chứa mã QR hoặc dán ảnh (Ctrl + V)</h2>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mb-5">Giải mã tức thì nội dung ẩn bên trong mã QR trên trình duyệt, không tải ảnh lên máy chủ.</p>
+                        <button type="button" onclick="event.stopPropagation(); document.getElementById('qrScanInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg">
+                            <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                            <span>Chọn ảnh cần quét</span>
+                        </button>
+                    </div>
+
+                    <div id="qrScanResultCard" class="hidden bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Đã giải mã thành công</span>
+                            <button type="button" onclick="copyScannedQrText()" class="px-3 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold">Sao chép kết quả</button>
+                        </div>
+                        <pre id="qrScanResultText" class="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-mono text-zinc-900 dark:text-zinc-100 whitespace-pre-wrap break-all"></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col shrink-0 h-[50vh] lg:h-full">
+            <div id="qrCustomInspector" class="flex-1 overflow-y-auto divide-y divide-studio-border dark:divide-zinc-800">
+                <div class="p-4 space-y-3">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Hình dáng chấm dữ liệu (Dots)</span>
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button type="button" data-qrdot="square" onclick="setQrDotStyle('square')" class="qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Vuông</button>
+                        <button type="button" data-qrdot="rounded" onclick="setQrDotStyle('rounded')" class="qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900">Bo góc</button>
+                        <button type="button" data-qrdot="circle" onclick="setQrDotStyle('circle')" class="qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Chấm tròn</button>
+                        <button type="button" data-qrdot="diamond" onclick="setQrDotStyle('diamond')" class="qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Kim cương</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 pt-1">
+                        <div>
+                            <label class="block text-[11px] text-zinc-500 mb-1">Khung mắt QR (Eye Frame)</label>
+                            <select id="qrEyeFrameStyle" onchange="renderQrStudio()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="squircle">Bo siêu elip (Squircle)</option>
+                                <option value="square">Vuông sắc nét</option>
+                                <option value="circle">Vòng tròn</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-zinc-500 mb-1">Tâm mắt QR (Pupil)</label>
+                            <select id="qrEyePupilStyle" onchange="renderQrStudio()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="rounded">Bo tròn mềm</option>
+                                <option value="square">Vuông chuẩn</option>
+                                <option value="circle">Chấm tròn</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Màu sắc & Gradient</span>
+                        <label class="inline-flex items-center gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-300 cursor-pointer">
+                            <input type="checkbox" id="qrGradientToggle" onchange="toggleQrGradient(this.checked)" class="rounded border-zinc-300">
+                            <span>Bật Gradient</span>
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <span class="block text-[10px] text-zinc-400 mb-1">Màu chính</span>
+                            <input type="color" id="qrFgColor1" value="#18181B" oninput="renderQrStudio()" class="w-full h-8 rounded border border-zinc-200 dark:border-zinc-700 cursor-pointer bg-transparent">
+                        </div>
+                        <div id="qrFgColor2Wrap" class="opacity-40 pointer-events-none">
+                            <span class="block text-[10px] text-zinc-400 mb-1">Màu chuyển</span>
+                            <input type="color" id="qrFgColor2" value="#2563EB" oninput="renderQrStudio()" class="w-full h-8 rounded border border-zinc-200 dark:border-zinc-700 cursor-pointer bg-transparent">
+                        </div>
+                        <div>
+                            <span class="block text-[10px] text-zinc-400 mb-1">Màu mắt QR</span>
+                            <input type="color" id="qrEyeColor" value="#18181B" oninput="renderQrStudio()" class="w-full h-8 rounded border border-zinc-200 dark:border-zinc-700 cursor-pointer bg-transparent">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-zinc-600 dark:text-zinc-300">Màu nền:</span>
+                            <input type="color" id="qrBgColor" value="#FFFFFF" oninput="renderQrStudio()" class="w-7 h-7 rounded border border-zinc-200 dark:border-zinc-700 cursor-pointer bg-transparent">
+                        </div>
+                        <label class="inline-flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-300 cursor-pointer">
+                            <input type="checkbox" id="qrTransparentBg" onchange="renderQrStudio()" class="rounded border-zinc-300">
+                            <span>Nền trong suốt</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Chèn Logo ở giữa</span>
+                        <button type="button" id="btnClearQrLogo" onclick="clearQrLogo()" class="hidden text-[11px] text-red-500 hover:underline">Gỡ logo</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="document.getElementById('qrLogoInput').click()" class="flex-1 py-1.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200 flex items-center justify-center gap-1.5">
+                            <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
+                            <span>Tải ảnh Logo lên</span>
+                        </button>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] text-zinc-500">
+                            <span>Kích thước Logo</span>
+                            <span id="qrLogoScaleLabel" class="font-mono">22%</span>
+                        </div>
+                        <input type="range" id="qrLogoScaleSlider" min="12" max="32" value="22" class="w-full" oninput="document.getElementById('qrLogoScaleLabel').textContent=this.value+'%'; renderQrStudio();">
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-3">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Kỹ thuật & Độ bền quét</span>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] text-zinc-500 mb-1">Sửa lỗi (ECC)</label>
+                            <select id="qrEccLevel" onchange="renderQrStudio()" class="w-full text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="L">L (7% - Gọn nhất)</option>
+                                <option value="M">M (15% - Tiêu chuẩn)</option>
+                                <option value="Q">Q (25% - Khá cao)</option>
+                                <option value="H" selected>H (30% - Tốt cho Logo)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-zinc-500 mb-1">Vùng lề trắng (Margin)</label>
+                            <input type="number" id="qrMarginInput" min="0" max="10" value="2" oninput="renderQrStudio()" class="w-full text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="barcodeCustomInspector" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
+                <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Tùy chỉnh Barcode 1D</span>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <span class="block text-[11px] text-zinc-500 mb-1">Màu vạch</span>
+                        <input type="color" id="bcLineColor" value="#18181B" oninput="renderQrStudio()" class="w-full h-8 rounded border border-zinc-200 dark:border-zinc-700 bg-transparent">
+                    </div>
+                    <div>
+                        <span class="block text-[11px] text-zinc-500 mb-1">Màu nền</span>
+                        <input type="color" id="bcBgColor" value="#FFFFFF" oninput="renderQrStudio()" class="w-full h-8 rounded border border-zinc-200 dark:border-zinc-700 bg-transparent">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs text-zinc-500"><span>Chiều cao vạch</span><span id="bcHeightLabel" class="font-mono">90px</span></div>
+                    <input type="range" id="bcHeightSlider" min="40" max="180" value="90" class="w-full" oninput="document.getElementById('bcHeightLabel').textContent=this.value+'px'; renderQrStudio();">
+                </div>
+                <label class="flex items-center gap-2 text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
+                    <input type="checkbox" id="bcShowText" checked onchange="renderQrStudio()" class="rounded border-zinc-300">
+                    <span>Hiển thị chuỗi số bên dưới vạch</span>
+                </label>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- LIGHTBOX MODAL & TOAST NOTIFICATIONS                                  -->
+    <!-- ===================================================================== -->
+    <div id="lightboxModal" class="hidden fixed inset-0 z-50 bg-zinc-950/75 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target===this) closeLightbox()">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="h-12 px-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+                <span id="lbTitle" class="text-xs font-semibold truncate">preview.png</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" onmousedown="showOriginalInLightbox(true)" onmouseup="showOriginalInLightbox(false)" ontouchstart="showOriginalInLightbox(true)" ontouchend="showOriginalInLightbox(false)" class="px-2.5 py-1 text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 rounded-md">Giữ xem gốc</button>
+                    <button type="button" onclick="closeLightbox()" class="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+            <div class="flex-1 bg-checkerboard p-6 flex items-center justify-center overflow-auto">
+                <canvas id="lightboxCanvas" class="max-w-full max-h-[70vh] object-contain"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="fileInput" multiple accept="image/png, image/jpeg, image/webp" class="hidden" onchange="handleFileSelect(event)">
+    <input type="file" id="compressInput" multiple accept="image/png, image/jpeg, image/webp" class="hidden" onchange="handleCompressSelect(event)">
+    <input type="file" id="convertInput" multiple class="hidden" onchange="handleConvertSelect(event)">
+    <input type="file" id="qrLogoInput" accept="image/png, image/jpeg, image/webp, image/svg+xml" class="hidden" onchange="handleQrLogoUpload(event)">
+    <input type="file" id="qrScanInput" accept="image/*" class="hidden" onchange="handleQrScanFile(this.files[0])">
+
+    <!-- ===================================================================== -->
+    <!-- COMPLETE UNIFIED JAVASCRIPT ENGINE                                    -->
+    <!-- ===================================================================== -->
+    <script>
+        let activeView = 'home';
+        let weatherInitialized = false;
+        let currentCity = 'Ha Noi';
+        let weatherUnit = 'metric';
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('studio-theme', isDark ? 'dark' : 'light');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const icon = type === 'error' ? 'alert-circle' : 'check-circle-2';
+            const color = type === 'error' ? 'text-red-400' : 'text-emerald-400';
+            toast.className = 'flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-zinc-900 text-white text-xs font-medium shadow-lg border border-zinc-800 transition-all duration-200';
+            toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 ${color} shrink-0"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.remove(), 3200);
+        }
+
+        function triggerBlobDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function switchView(viewName, updateHash = true) {
+            const validViews = ['home', 'weather', 'studio', 'compress', 'youtube', 'convert', 'qr'];
+            if (!validViews.includes(viewName)) viewName = 'home';
+            activeView = viewName;
+
+            document.querySelectorAll('.app-view').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            });
+
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('flex');
+            }
+
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                const isActive = btn.getAttribute('data-nav') === viewName;
+                btn.className = isActive
+                    ? 'nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 shadow-xs transition-all shrink-0'
+                    : 'nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0';
+            });
+
+            const badges = {
+                home: 'PERSONAL TECH STUDIO',
+                weather: 'WEATHER & AQI STUDIO',
+                studio: 'CORNER ROUNDER',
+                compress: 'SMART COMPRESSOR',
+                youtube: 'YOUTUBE & COBALT DIRECT',
+                convert: 'UNIVERSAL CONVERTER',
+                qr: 'QR & BARCODE STUDIO'
+            };
+            const badgeEl = document.getElementById('headerModuleBadge');
+            if (badgeEl) badgeEl.textContent = badges[viewName] || 'STUDIO';
+
+            if (viewName === 'weather' && !weatherInitialized) {
+                weatherInitialized = true;
+                fetchWeatherByCity(currentCity);
+            }
+            if (viewName === 'youtube') {
+                renderCobaltNodes();
+                updateYtCommand();
+            }
+            if (viewName === 'qr') renderQrStudio();
+            if (updateHash) history.replaceState(null, '', `#${viewName}`);
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // MODULE 2: WEATHER & AQI ENGINE
+        // =========================================================================
+        const OW_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
+
+        function setWeatherUnit(unit) {
+            weatherUnit = unit;
+            document.getElementById('wUnitC').className = unit === 'metric' ? 'py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 shadow-2xs' : 'py-1.5 rounded-md text-xs font-medium text-zinc-500';
+            document.getElementById('wUnitF').className = unit === 'imperial' ? 'py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 shadow-2xs' : 'py-1.5 rounded-md text-xs font-medium text-zinc-500';
+            fetchWeatherByCity(currentCity);
+        }
+
+        function fetchWeatherByGPS() {
+            if (!navigator.geolocation) return showToast('Trình duyệt không hỗ trợ GPS.', 'error');
+            navigator.geolocation.getCurrentPosition(pos => {
+                fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+            }, () => showToast('Không thể lấy vị trí GPS.', 'error'));
+        }
+
+        async function fetchWeatherByCity(city) {
+            if (!city || !city.trim()) return;
+            currentCity = city.trim();
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(currentCity)}&units=${weatherUnit}&lang=vi&appid=${OW_API_KEY}`);
+                if (!res.ok) throw new Error('City not found');
+                const data = await res.json();
+                renderCurrentWeather(data);
+                fetchForecastAndAqi(data.coord.lat, data.coord.lon);
+            } catch (e) {
+                showToast('Không tìm thấy thành phố này.', 'error');
+            }
+        }
+
+        async function fetchWeatherByCoords(lat, lon) {
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${weatherUnit}&lang=vi&appid=${OW_API_KEY}`);
+                const data = await res.json();
+                currentCity = data.name;
+                renderCurrentWeather(data);
+                fetchForecastAndAqi(lat, lon);
+            } catch (e) {
+                showToast('Lỗi tải dữ liệu thời tiết.', 'error');
+            }
+        }
+
+        function renderCurrentWeather(d) {
+            const unitSym = weatherUnit === 'metric' ? '°C' : '°F';
+            const speedUnit = weatherUnit === 'metric' ? 'm/s' : 'mph';
+            document.getElementById('wCityTitle').textContent = `${d.name}, ${d.sys?.country || ''}`;
+            document.getElementById('wDescText').textContent = d.weather?.[0]?.description || '';
+            document.getElementById('wTempVal').textContent = Math.round(d.main.temp);
+            document.getElementById('wTempUnit').textContent = unitSym;
+            document.getElementById('wFeelsVal').textContent = `${Math.round(d.main.feels_like)}${unitSym}`;
+            document.getElementById('wHumidity').textContent = `${d.main.humidity}%`;
+            document.getElementById('wWind').textContent = `${d.wind.speed} ${speedUnit}`;
+            const dirs = ['Bắc', 'Đông Bắc', 'Đông', 'Đông Nam', 'Nam', 'Tây Nam', 'Tây', 'Tây Bắc'];
+            document.getElementById('wWindDir').textContent = dirs[Math.round((d.wind.deg || 0) / 45) % 8];
+            document.getElementById('wVisibility').textContent = `${((d.visibility || 10000) / 1000).toFixed(1)} km`;
+            document.getElementById('wPressure').textContent = `${d.main.pressure} hPa`;
+            document.getElementById('wClouds').textContent = `${d.clouds?.all || 0}%`;
+
+            const fmtTime = (unix) => new Date((unix + d.timezone) * 1000).toUTCString().slice(17, 22);
+            document.getElementById('wLocalTime').textContent = fmtTime(Math.floor(Date.now() / 1000));
+            document.getElementById('wSunrise').textContent = fmtTime(d.sys.sunrise);
+            document.getElementById('wSunset').textContent = fmtTime(d.sys.sunset);
+            const pct = Math.min(100, Math.max(0, ((Math.floor(Date.now() / 1000) - d.sys.sunrise) / (d.sys.sunset - d.sys.sunrise)) * 100));
+            document.getElementById('wSunProgress').style.width = `${pct}%`;
+        }
+
+        async function fetchForecastAndAqi(lat, lon) {
+            try {
+                const [fRes, aRes] = await Promise.all([
+                    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${weatherUnit}&lang=vi&appid=${OW_API_KEY}`),
+                    fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${OW_API_KEY}`)
+                ]);
+                if (fRes.ok) {
+                    const fData = await fRes.json();
+                    document.getElementById('wHourlyList').innerHTML = fData.list.slice(0, 8).map(item => `
+                        <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800 text-center space-y-1">
+                            <span class="block text-[11px] font-mono text-zinc-400">${item.dt_txt.slice(11, 16)}</span>
+                            <strong class="block text-sm font-mono">${Math.round(item.main.temp)}°</strong>
+                            <span class="block text-[10px] text-blue-500 font-mono">${Math.round((item.pop || 0) * 100)}% mưa</span>
+                        </div>
+                    `).join('');
+
+                    const dailyMap = {};
+                    fData.list.forEach(item => {
+                        const day = item.dt_txt.slice(0, 10);
+                        if (!dailyMap[day]) dailyMap[day] = { min: item.main.temp_min, max: item.main.temp_max, desc: item.weather[0].description };
+                        else {
+                            dailyMap[day].min = Math.min(dailyMap[day].min, item.main.temp_min);
+                            dailyMap[day].max = Math.max(dailyMap[day].max, item.main.temp_max);
+                        }
+                    });
+                    document.getElementById('wDailyList').innerHTML = Object.entries(dailyMap).slice(0, 5).map(([day, info]) => `
+                        <div class="py-2.5 flex items-center justify-between text-xs">
+                            <span class="font-mono font-medium">${day.slice(5)}</span>
+                            <span class="text-zinc-500 capitalize truncate max-w-[140px]">${info.desc}</span>
+                            <span class="font-mono font-semibold">${Math.round(info.min)}° / ${Math.round(info.max)}°</span>
+                        </div>
+                    `).join('');
+                }
+                if (aRes.ok) {
+                    const aData = await aRes.json();
+                    const entry = aData.list?.[0];
+                    if (entry) {
+                        const labels = ['', '1 · Tốt', '2 · Khá', '3 · Trung bình', '4 · Kém', '5 · Xấu'];
+                        document.getElementById('wAqiBadge').textContent = labels[entry.main.aqi] || 'Tốt';
+                        document.getElementById('wPm25').textContent = `${entry.components.pm2_5} µg/m³`;
+                        document.getElementById('wPm10').textContent = `${entry.components.pm10} µg/m³`;
+                        document.getElementById('wO3').textContent = `${entry.components.o3} µg/m³`;
+                        document.getElementById('wNo2').textContent = `${entry.components.no2} µg/m³`;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // MODULE 3: CORNER ROUNDER ENGINE
+        // =========================================================================
+        const state = {
+            images: [],
+            curveType: 'circular',
+            isIndividual: false,
+            unit: 'px',
+            uniformRadius: 32,
+            corners: { tl: 32, tr: 32, br: 32, bl: 32 },
+            bgMode: 'transparent',
+            bgColor: '#FFFFFF',
+            borderEnabled: false,
+            borderWidth: 4,
+            borderColor: '#18181B',
+            exportFormat: 'image/png',
+            lightboxImageId: null
+        };
+
+        function traceRoundedPath(ctx, x, y, w, h, radii, curveType) {
+            const maxR = Math.min(w, h) / 2;
+            const tl = Math.min(Math.max(0, radii.tl), maxR);
+            const tr = Math.min(Math.max(0, radii.tr), maxR);
+            const br = Math.min(Math.max(0, radii.br), maxR);
+            const bl = Math.min(Math.max(0, radii.bl), maxR);
+            ctx.beginPath();
+            if (curveType === 'circular' || (tl === 0 && tr === 0 && br === 0 && bl === 0)) {
+                if (ctx.roundRect) ctx.roundRect(x, y, w, h, [tl, tr, br, bl]);
+                else ctx.rect(x, y, w, h);
+                return;
+            }
+            const smooth = 1.28, handle = 0.22;
+            const cornerFn = (c, r) => {
+                const ext = Math.min(r * smooth, maxR), hd = ext * handle;
+                if (c === 'tr') { ctx.lineTo(x + w - ext, y); ctx.bezierCurveTo(x + w - hd, y, x + w, y + hd, x + w, y + ext); }
+                else if (c === 'br') { ctx.lineTo(x + w, y + h - ext); ctx.bezierCurveTo(x + w, y + h - hd, x + w - hd, y + h, x + w - ext, y + h); }
+                else if (c === 'bl') { ctx.lineTo(x + ext, y + h); ctx.bezierCurveTo(x + hd, y + h, x, y + h - hd, x, y + h - ext); }
+                else { ctx.lineTo(x, y + ext); ctx.bezierCurveTo(x, y + hd, x + hd, y, x + ext, y); }
+            };
+            ctx.moveTo(x + Math.min(tl * smooth, maxR), y);
+            cornerFn('tr', tr); cornerFn('br', br); cornerFn('bl', bl); cornerFn('tl', tl);
+            ctx.closePath();
+        }
+
+        function renderProcessedImage(item, canvas, maxDim = null, showOriginal = false) {
+            let w = item.width, h = item.height, scale = 1;
+            if (maxDim && (w > maxDim || h > maxDim)) {
+                scale = maxDim / Math.max(w, h);
+                w = Math.round(w * scale);
+                h = Math.round(h * scale);
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, w, h);
+            if (showOriginal) { ctx.drawImage(item.imgElement, 0, 0, w, h); return; }
+
+            const minSide = Math.min(item.width, item.height);
+            const raw = state.isIndividual ? state.corners : { tl: state.uniformRadius, tr: state.uniformRadius, br: state.uniformRadius, bl: state.uniformRadius };
+            const conv = v => (state.unit === '%' ? (v / 100) * minSide : v) * scale;
+            const r = { tl: conv(raw.tl), tr: conv(raw.tr), br: conv(raw.br), bl: conv(raw.bl) };
+
+            if (state.bgMode === 'color' || state.exportFormat === 'image/jpeg') {
+                ctx.fillStyle = state.bgMode === 'color' ? state.bgColor : '#FFFFFF';
+                ctx.fillRect(0, 0, w, h);
+            }
+            ctx.save();
+            traceRoundedPath(ctx, 0, 0, w, h, r, state.curveType);
+            ctx.clip();
+            ctx.drawImage(item.imgElement, 0, 0, w, h);
+            ctx.restore();
+
+            if (state.borderEnabled && state.borderWidth > 0) {
+                const bw = Math.max(1, state.borderWidth * scale), hb = bw / 2;
+                ctx.save();
+                traceRoundedPath(ctx, hb, hb, w - bw, h - bw, {
+                    tl: Math.max(0, r.tl - hb), tr: Math.max(0, r.tr - hb), br: Math.max(0, r.br - hb), bl: Math.max(0, r.bl - hb)
+                }, state.curveType);
+                ctx.strokeStyle = state.borderColor;
+                ctx.lineWidth = bw;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function scheduleRender() {
+            updateStatusSummary();
+            requestAnimationFrame(() => {
+                state.images.forEach(it => it.previewCanvas && renderProcessedImage(it, it.previewCanvas, 600));
+            });
+        }
+
+        function updateStatusSummary() {
+            const count = state.images.length;
+            document.getElementById('statCount').textContent = count;
+            const btn = document.getElementById('btnExportZip');
+            const lbl = document.getElementById('btnExportLabel');
+            const ext = state.exportFormat === 'image/jpeg' ? 'JPG' : state.exportFormat.split('/')[1].toUpperCase();
+            btn.disabled = count === 0;
+            lbl.textContent = count === 0 ? 'Tải xuống' : count === 1 ? `Tải xuống ảnh (.${ext})` : `Tải xuống tất cả (${count} ảnh .ZIP)`;
+
+            document.getElementById('emptyDropzone').classList.toggle('hidden', count > 0);
+            const grid = document.getElementById('previewGrid');
+            grid.classList.toggle('hidden', count === 0);
+            grid.classList.toggle('grid', count > 0);
+            const bar = document.getElementById('statusBar');
+            bar.classList.toggle('hidden', count === 0);
+            bar.classList.toggle('flex', count > 0);
+            const dock = document.getElementById('floatingActionDock');
+            dock.classList.toggle('hidden', count === 0);
+            dock.classList.toggle('inline-flex', count > 0);
+        }
+
+        function rebuildGrid() {
+            const grid = document.getElementById('previewGrid');
+            grid.innerHTML = '';
+            state.images.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'group bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl overflow-hidden flex flex-col';
+                const wrap = document.createElement('div');
+                wrap.className = 'relative aspect-square bg-checkerboard p-4 flex items-center justify-center cursor-zoom-in';
+                wrap.onclick = () => openLightbox(item.id);
+                const canvas = document.createElement('canvas');
+                canvas.className = 'max-w-full max-h-full object-contain';
+                item.previewCanvas = canvas;
+                renderProcessedImage(item, canvas, 600);
+                wrap.appendChild(canvas);
+
+                const foot = document.createElement('div');
+                foot.className = 'px-3 py-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2 text-xs';
+                foot.innerHTML = `<span class="truncate font-medium">${item.name}</span><button type="button" onclick="removeImage('${item.id}')" class="text-zinc-400 hover:text-red-500"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`;
+                card.appendChild(wrap);
+                card.appendChild(foot);
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+            updateStatusSummary();
+        }
+
+        function setCurveType(t) {
+            state.curveType = t;
+            document.getElementById('curveBadge').textContent = t === 'squircle' ? 'iOS Squircle' : 'Circular';
+            document.getElementById('btnCurveCircular').className = t === 'circular' ? 'py-1.5 px-2.5 text-xs font-medium rounded-md bg-white dark:bg-zinc-700 shadow-2xs' : 'py-1.5 px-2.5 text-xs font-medium text-zinc-500';
+            document.getElementById('btnCurveSquircle').className = t === 'squircle' ? 'py-1.5 px-2.5 text-xs font-medium rounded-md bg-white dark:bg-zinc-700 shadow-2xs' : 'py-1.5 px-2.5 text-xs font-medium text-zinc-500';
+            scheduleRender();
+        }
+        function setUnit(u) { state.unit = u; document.getElementById('uniformUnitLabel').textContent = u; scheduleRender(); }
+        function toggleIndividualCorners() {
+            state.isIndividual = !state.isIndividual;
+            document.getElementById('uniformControl').classList.toggle('hidden', state.isIndividual);
+            document.getElementById('individualControl').classList.toggle('hidden', !state.isIndividual);
+            document.getElementById('individualControl').classList.toggle('grid', state.isIndividual);
+            scheduleRender();
+        }
+        function updateUniformRadius(v) { state.uniformRadius = Math.max(0, Number(v) || 0); document.getElementById('uniformSlider').value = state.uniformRadius; document.getElementById('uniformInput').value = state.uniformRadius; scheduleRender(); }
+        function updateCornerRadius(c, v) { state.corners[c] = Math.max(0, Number(v) || 0); scheduleRender(); }
+        function applyPreset(val, unit, curve, btn) {
+            if (state.isIndividual) toggleIndividualCorners();
+            setCurveType(curve); setUnit(unit); updateUniformRadius(val);
+            document.querySelectorAll('.preset-btn').forEach(b => b.className = 'preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-200 dark:border-zinc-700 rounded-md text-center');
+            if (btn) btn.className = 'preset-btn py-1.5 px-1 text-[11px] font-medium border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-center';
+        }
+        function setBgMode(m, c = '#FFFFFF') { state.bgMode = m; state.bgColor = c; scheduleRender(); }
+        function toggleBorder(en) { state.borderEnabled = en; document.getElementById('borderControls').classList.toggle('hidden', !en); scheduleRender(); }
+        function updateBorderWidth(v) { state.borderWidth = Number(v) || 1; scheduleRender(); }
+        function updateBorderColor(c) { state.borderColor = c; scheduleRender(); }
+        function updateExportFormat(f) { state.exportFormat = f; scheduleRender(); }
+
+        function handleFileSelect(e) { processIncomingFiles(Array.from(e.target.files || [])); e.target.value = ''; }
+        function processIncomingFiles(files) {
+            const imgs = files.filter(f => f.type.startsWith('image/'));
+            if (!imgs.length) return;
+            switchView('studio');
+            let done = 0;
+            imgs.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = new Image();
+                    img.onload = () => {
+                        state.images.push({ id: 'img_' + Date.now() + Math.random().toString(36).slice(2, 6), name: file.name, width: img.naturalWidth, height: img.naturalHeight, imgElement: img });
+                        if (++done === imgs.length) rebuildGrid();
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        function loadSampleImages() {
+            ['#18181B', '#2563EB', '#059669', '#D97706'].forEach((bg, idx) => {
+                const c = document.createElement('canvas'); c.width = 800; c.height = 800;
+                const ctx = c.getContext('2d'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 800, 800);
+                ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(400, 400, 220, 0, Math.PI * 2); ctx.fill();
+                const img = new Image();
+                img.onload = () => { state.images.push({ id: 'smp_' + idx + Date.now(), name: `sample-0${idx + 1}.png`, width: 800, height: 800, imgElement: img }); rebuildGrid(); };
+                img.src = c.toDataURL();
+            });
+        }
+        function removeImage(id) { state.images = state.images.filter(i => i.id !== id); rebuildGrid(); }
+        function clearAllImages() { state.images = []; rebuildGrid(); }
+
+        function openLightbox(id) {
+            const it = state.images.find(i => i.id === id); if (!it) return;
+            state.lightboxImageId = id;
+            document.getElementById('lbTitle').textContent = it.name;
+            renderProcessedImage(it, document.getElementById('lightboxCanvas'), 1400, false);
+            document.getElementById('lightboxModal').classList.remove('hidden');
+        }
+        function showOriginalInLightbox(orig) {
+            const it = state.images.find(i => i.id === state.lightboxImageId);
+            if (it) renderProcessedImage(it, document.getElementById('lightboxCanvas'), 1400, orig);
+        }
+        function closeLightbox() { state.lightboxImageId = null; document.getElementById('lightboxModal').classList.add('hidden'); }
+
+        async function handlePrimaryExport() {
+            if (!state.images.length) return;
+            const ext = state.exportFormat === 'image/jpeg' ? 'jpg' : state.exportFormat.split('/')[1];
+            const suffix = document.getElementById('fileSuffix').value || '';
+            const toBlob = (it) => new Promise(res => {
+                const c = document.createElement('canvas'); renderProcessedImage(it, c); c.toBlob(res, state.exportFormat, 0.92);
+            });
+            if (state.images.length === 1) {
+                const b = await toBlob(state.images[0]);
+                triggerBlobDownload(b, state.images[0].name.replace(/\.[^.]+$/, '') + suffix + '.' + ext);
+                return;
+            }
+            const zip = new JSZip();
+            for (const it of state.images) {
+                zip.file(it.name.replace(/\.[^.]+$/, '') + suffix + '.' + ext, await toBlob(it));
+            }
+            const zb = await zip.generateAsync({ type: 'blob' });
+            triggerBlobDownload(zb, `weat-rounded-${Date.now()}.zip`);
+        }
+
+        // =========================================================================
+        // MODULE 4: SMART COMPRESSOR ENGINE
+        // =========================================================================
+        let compressQueue = [];
+        function handleCompressSelect(e) { processCompressFiles(Array.from(e.target.files || [])); e.target.value = ''; }
+        function processCompressFiles(files) {
+            const imgs = files.filter(f => f.type.startsWith('image/'));
+            if (!imgs.length) return;
+            switchView('compress');
+            imgs.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const item = { id: 'cmp_' + Date.now() + Math.random().toString(36).slice(2, 5), file, img, origSize: file.size, compBlob: null };
+                        compressQueue.push(item);
+                        compressSingleItem(item);
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        function compressSingleItem(item) {
+            const q = Number(document.getElementById('compQualitySlider').value) / 100;
+            const target = document.getElementById('compTargetFormat').value;
+            const mime = target === 'auto' ? (item.file.type === 'image/png' ? 'image/webp' : item.file.type) : target;
+            const c = document.createElement('canvas'); c.width = item.img.naturalWidth; c.height = item.img.naturalHeight;
+            c.getContext('2d').drawImage(item.img, 0, 0);
+            c.toBlob(blob => {
+                item.compBlob = blob;
+                item.outExt = mime.split('/')[1];
+                renderCompressList();
+            }, mime, q);
+        }
+        function recompressAll() { compressQueue.forEach(compressSingleItem); }
+        function renderCompressList() {
+            const has = compressQueue.length > 0;
+            document.getElementById('compressEmptyState').classList.toggle('hidden', has);
+            document.getElementById('compressList').classList.toggle('hidden', !has);
+            document.getElementById('compressFloatingDock').classList.toggle('hidden', !has);
+            document.getElementById('compressFloatingDock').classList.toggle('inline-flex', has);
+            document.getElementById('btnDownloadCompressed').disabled = !has;
+
+            let totalOrig = 0, totalNew = 0;
+            document.getElementById('compressList').innerHTML = compressQueue.map(it => {
+                totalOrig += it.origSize;
+                const newSz = it.compBlob ? it.compBlob.size : it.origSize;
+                totalNew += newSz;
+                const pct = Math.max(0, Math.round((1 - newSz / it.origSize) * 100));
+                return `<div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-3.5 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold truncate">${it.file.name}</p>
+                        <p class="text-[11px] font-mono text-zinc-400">${(it.origSize / 1024).toFixed(1)} KB → <span class="text-emerald-500 font-semibold">${(newSz / 1024).toFixed(1)} KB (-${pct}%)</span></p>
+                    </div>
+                    <button type="button" onclick="downloadSingleCompressed('${it.id}')" class="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs font-medium">Tải về</button>
+                </div>`;
+            }).join('');
+
+            const savedKb = Math.max(0, (totalOrig - totalNew) / 1024).toFixed(1);
+            const savedPct = totalOrig > 0 ? Math.max(0, Math.round((1 - totalNew / totalOrig) * 100)) : 0;
+            document.getElementById('compTotalSavedText').textContent = `${savedKb} KB (${savedPct}%)`;
+            document.getElementById('compCountBadge').textContent = `${compressQueue.length} ảnh`;
+        }
+        function downloadSingleCompressed(id) {
+            const it = compressQueue.find(i => i.id === id);
+            if (it && it.compBlob) triggerBlobDownload(it.compBlob, it.file.name.replace(/\.[^.]+$/, '') + '-min.' + it.outExt);
+        }
+        async function downloadCompressedBatch() {
+            if (compressQueue.length === 1) return downloadSingleCompressed(compressQueue[0].id);
+            const zip = new JSZip();
+            compressQueue.forEach(it => it.compBlob && zip.file(it.file.name.replace(/\.[^.]+$/, '') + '-min.' + it.outExt, it.compBlob));
+            triggerBlobDownload(await zip.generateAsync({ type: 'blob' }), `weat-compressed-${Date.now()}.zip`);
+        }
+        function clearCompressQueue() { compressQueue = []; renderCompressList(); }
+
+        // =========================================================================
+        // MODULE 5: YOUTUBE & COBALT DIRECTORY ENGINE (MOBILE + DESKTOP)
+        // =========================================================================
+        const COBALT_DIRECTORY_NODES = [
+            { id: 'girlskissing', name: 'cobalt.girlskissing.top', api: 'https://apicobalt.girlskissing.top', web: 'https://cobalt.girlskissing.top', score: '100%', version: '11.8' },
+            { id: 'nuko', name: 'nuko-c.meowing.de', api: 'https://nuko-c.meowing.de', web: 'https://cobalt.meowing.de', score: '100%', version: '11.8' },
+            { id: 'yuuri', name: 'yuuri-c.meowing.de', api: 'https://yuuri-c.meowing.de', web: 'https://cobalt.meowing.de', score: '100%', version: '11.8' },
+            { id: 'bergung', name: 'bergung.hoffnungfuerdiezukunft.net', api: 'https://bergung-api.hoffnungfuerdiezukunft.net', web: 'https://bergung.hoffnungfuerdiezukunft.net', score: '96%', version: '11.8' },
+            { id: 'rpki', name: 'cobalt.rpkiinval.id', api: 'https://api.cobalt.rpkiinval.id', web: 'https://cobalt.rpkiinval.id', score: '96%', version: '11.8' },
+            { id: 'canine', name: 'cobalt.canine.tools', api: 'https://cobalt-omega.wolfy.love', web: 'https://cobalt.canine.tools', score: '88%', version: '11.8' }
+        ];
+
+        const ytState = {
+            format: '1080',
+            shell: 'win',
+            muxVideo: null,
+            muxAudio: null,
+            selectedNodeIdx: 0,
+            customApi: ''
+        };
+
+        function renderCobaltNodes() {
+            const grid = document.getElementById('cobaltNodeGrid');
+            if (!grid) return;
+            grid.innerHTML = COBALT_DIRECTORY_NODES.map((node, idx) => {
+                const isSelected = !ytState.customApi && ytState.selectedNodeIdx === idx;
+                return `
+                    <button type="button" onclick="selectCobaltNode(${idx})" class="text-left p-2.5 rounded-lg border transition-all ${isSelected ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 hover:border-zinc-400'}">
+                        <div class="flex items-center justify-between gap-1 text-[11px] font-mono">
+                            <span class="font-semibold truncate">${node.name}</span>
+                            <span class="px-1.5 py-0.5 rounded ${isSelected ? 'bg-emerald-500/20 text-emerald-300 dark:text-emerald-700' : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'}">${node.score}</span>
+                        </div>
+                        <div class="mt-1 text-[10px] font-mono ${isSelected ? 'text-zinc-300 dark:text-zinc-600' : 'text-zinc-400'}">v${node.version} · 24/24 Services</div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectCobaltNode(idx) {
+            ytState.selectedNodeIdx = idx;
+            ytState.customApi = '';
+            document.getElementById('customCobaltApiInput').value = '';
+            renderCobaltNodes();
+            showToast(`Đã chọn máy chủ ${COBALT_DIRECTORY_NODES[idx].name}`);
+        }
+
+        function applyCustomCobaltEndpoint() {
+            const val = document.getElementById('customCobaltApiInput').value.trim().replace(/\/+$/, '');
+            if (!val) return showToast('Vui lòng nhập URL API Cobalt hợp lệ.', 'error');
+            ytState.customApi = val;
+            renderCobaltNodes();
+            showToast(`Đã áp dụng Cobalt API tùy chỉnh.`);
+        }
+
+        function openSelectedCobaltFrontend() {
+            const node = COBALT_DIRECTORY_NODES[ytState.selectedNodeIdx] || COBALT_DIRECTORY_NODES[0];
+            window.open(node.web, '_blank', 'noopener,noreferrer');
+        }
+
+        async function downloadViaCobaltDirect() {
+            const rawUrl = document.getElementById('ytUrlInput').value.trim();
+            if (!rawUrl) return showToast('Vui lòng dán liên kết YouTube trước.', 'error');
+
+            const btn = document.getElementById('btnCobaltDirect');
+            const lbl = document.getElementById('btnCobaltDirectLabel');
+            const banner = document.getElementById('cobaltStatusBanner');
+            const statusText = document.getElementById('cobaltStatusText');
+            const actionLinks = document.getElementById('cobaltActionLinks');
+
+            btn.disabled = true;
+            lbl.textContent = 'Đang lấy link tải...';
+            banner.className = 'p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/70 text-xs flex flex-wrap items-center justify-between gap-2';
+            banner.classList.remove('hidden');
+            actionLinks.innerHTML = '';
+
+            const candidates = ytState.customApi
+                ? [{ name: 'Custom API', api: ytState.customApi, web: ytState.customApi }]
+                : [
+                    COBALT_DIRECTORY_NODES[ytState.selectedNodeIdx],
+                    ...COBALT_DIRECTORY_NODES.filter((_, i) => i !== ytState.selectedNodeIdx)
+                ];
+
+            const isAudio = ytState.format === 'mp3';
+            const payload = {
+                url: rawUrl,
+                videoQuality: isAudio ? '1080' : ytState.format,
+                audioFormat: 'mp3',
+                audioBitrate: '320',
+                downloadMode: isAudio ? 'audio' : 'auto',
+                filenameStyle: 'pretty'
+            };
+
+            let succeeded = false;
+            for (const node of candidates) {
+                statusText.textContent = `Đang thử máy chủ ${node.name}...`;
+                try {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 9000);
+                    const res = await fetch(`${node.api}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+                    clearTimeout(timer);
+
+                    const data = await res.json();
+                    if ((data.status === 'tunnel' || data.status === 'redirect' || data.status === 'stream') && data.url) {
+                        succeeded = true;
+                        banner.className = 'p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs flex flex-wrap items-center justify-between gap-2';
+                        statusText.textContent = `Sẵn sàng tải xuống từ ${node.name}!`;
+                        actionLinks.innerHTML = `
+                            <a href="${data.url}" target="_blank" rel="noopener noreferrer" download="${data.filename || 'video.mp4'}" class="px-3 py-1.5 rounded-md bg-emerald-600 text-white font-semibold inline-flex items-center gap-1 hover:bg-emerald-500">
+                                <span>Lưu về máy ngay</span>
+                            </a>
+                        `;
+                        window.open(data.url, '_blank', 'noopener,noreferrer');
+                        showToast('Đã tạo liên kết tải trực tiếp!');
+                        break;
+                    }
+                } catch (err) {
+                    // Failover to next node in cobalt.directory list
+                }
+            }
+
+            if (!succeeded) {
+                const fallbackNode = candidates[0] || COBALT_DIRECTORY_NODES[0];
+                banner.className = 'p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 text-xs flex flex-wrap items-center justify-between gap-2';
+                statusText.textContent = 'Các node API yêu cầu xác minh Turnstile trên trình duyệt — mở trực tiếp giao diện node để tải 1 chạm:';
+                actionLinks.innerHTML = `
+                    <a href="${fallbackNode.web}" target="_blank" rel="noopener noreferrer" onclick="copyYtUrlOnly()" class="px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold inline-flex items-center gap-1">
+                        <span>Mở ${fallbackNode.name} (Đã copy link) ↗</span>
+                    </a>
+                `;
+                copyYtUrlOnly();
+            }
+
+            btn.disabled = false;
+            lbl.textContent = 'Tải trực tiếp (Mobile/PC)';
+        }
+
+        function copyYtUrlOnly() {
+            const url = document.getElementById('ytUrlInput').value.trim();
+            if (!url) return;
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Đã copy link YouTube vào bộ nhớ tạm!');
+        }
+
+        function extractYouTubeId(url) {
+            const m = (url || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+            return m ? m[1] : (/^[a-zA-Z0-9_-]{11}$/.test((url || '').trim()) ? url.trim() : 'kTJczUoc26U');
+        }
+        async function pasteYouTubeUrl() {
+            try {
+                const txt = await navigator.clipboard.readText();
+                if (txt) { document.getElementById('ytUrlInput').value = txt; analyzeYouTubeUrl(); }
+            } catch (e) { showToast('Hãy nhấn giữ ô nhập và chọn Dán.', 'error'); }
+        }
+        async function analyzeYouTubeUrl() {
+            const url = document.getElementById('ytUrlInput').value.trim();
+            const id = extractYouTubeId(url);
+            document.getElementById('ytVideoIdBadge').textContent = `ID: ${id}`;
+            document.getElementById('ytThumbImg').src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+            document.getElementById('ytThumbMaxLink').href = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+            updateYtCommand();
+            try {
+                const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`);
+                const data = await res.json();
+                if (data.title) document.getElementById('ytVideoTitle').textContent = data.title;
+                if (data.author_name) document.getElementById('ytChannelName').textContent = data.author_name;
+            } catch (e) {}
+        }
+        function setYtFormat(fmt) {
+            ytState.format = fmt;
+            document.querySelectorAll('.yt-fmt-btn').forEach(b => {
+                const act = b.getAttribute('data-ytfmt') === fmt;
+                b.className = act ? 'yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium' : 'yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium';
+            });
+            updateYtCommand();
+        }
+        function setYtShell(sh) {
+            ytState.shell = sh;
+            document.getElementById('ytShellWin').className = sh === 'win' ? 'px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'px-1.5 py-0.5 rounded text-zinc-500';
+            document.getElementById('ytShellTermux').className = sh === 'termux' ? 'px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'px-1.5 py-0.5 rounded text-zinc-500';
+            document.getElementById('ytShellUnix').className = sh === 'unix' ? 'px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'px-1.5 py-0.5 rounded text-zinc-500';
+            updateYtCommand();
+        }
+        function updateYtCommand() {
+            const url = document.getElementById('ytUrlInput').value.trim() || 'https://www.youtube.com/watch?v=kTJczUoc26U';
+            const ckMode = document.getElementById('ytCookieMode').value;
+            const fmtArg = ytState.format === 'mp3'
+                ? `-x --audio-format mp3 --audio-quality 0`
+                : `-f "bv*[height<=${ytState.format}]+ba/b" --merge-output-format mp4 --remux-video mp4 --postprocessor-args "Merger+ffmpeg:-c:v copy -c:a aac -b:a 192k"`;
+
+            if (ytState.shell === 'win') {
+                const ckVar = ckMode === 'cookies_txt'
+                    ? `$ck=if(Test-Path .\\cookies.txt){@('--cookies','.\\cookies.txt')}else{@()};`
+                    : ckMode === 'firefox'
+                    ? `$ck=@('--cookies-from-browser','firefox');`
+                    : `$ck=@('--extractor-args','youtube:player_client=android_vr,tv');`;
+                document.getElementById('ytCliCommand').value = `$ProgressPreference='SilentlyContinue'; $dl="$HOME\\Downloads"; cd $dl; if(!(Test-Path .\\yt-dlp.exe)){iwr https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile yt-dlp.exe}; if(!(Test-Path .\\ffmpeg.exe)){iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; rm ff,ff.zip -Recurse -Force}; ${ckVar} .\\yt-dlp.exe @ck --ffmpeg-location . ${fmtArg} -o "$dl\\%(title)s.%(ext)s" "${url}"`;
+            } else if (ytState.shell === 'termux') {
+                document.getElementById('ytCliCommand').value = `pkg update -y && pkg install -y python ffmpeg && pip install -U yt-dlp && termux-setup-storage && yt-dlp ${fmtArg} -o "/sdcard/Download/%(title)s.%(ext)s" "${url}"`;
+            } else {
+                const ckFlag = ckMode === 'cookies_txt' ? `[ -f ./cookies.txt ] && CK="--cookies ./cookies.txt" || CK=""` : ckMode === 'firefox' ? `CK="--cookies-from-browser firefox"` : `CK="--extractor-args youtube:player_client=android_vr,tv"`;
+                document.getElementById('ytCliCommand').value = `cd ~/Downloads && ${ckFlag} && yt-dlp $CK ${fmtArg} -o "~/Downloads/%(title)s.%(ext)s" "${url}"`;
+            }
+        }
+        function copyYtCommand() {
+            const el = document.getElementById('ytCliCommand');
+            el.select();
+            document.execCommand('copy');
+            showToast('Đã sao chép lệnh tải video!');
+        }
+        function downloadYtBatchScript() {
+            const url = document.getElementById('ytUrlInput').value.trim();
+            const fmtArg = ytState.format === 'mp3' ? `-x --audio-format mp3` : `-f "bv*[height<=${ytState.format}]+ba/b" --merge-output-format mp4`;
+            const bat = `@echo off\r\ncd /d "%USERPROFILE%\\Downloads"\r\nif not exist yt-dlp.exe curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -o yt-dlp.exe\r\nif exist cookies.txt (set CK=--cookies cookies.txt) else (set CK=)\r\nyt-dlp.exe %CK% --ffmpeg-location . ${fmtArg} -o "%%(title)s.%%(ext)s" "${url}"\r\nexplorer "%USERPROFILE%\\Downloads"\r\npause`;
+            triggerBlobDownload(new Blob([bat], { type: 'text/plain' }), 'WeaT-YouTube-Downloader.bat');
+        }
+        function handleMuxFileSelect(kind, file) {
+            if (!file) return;
+            if (kind === 'video') { ytState.muxVideo = file; document.getElementById('muxVideoName').textContent = file.name; }
+            else { ytState.muxAudio = file; document.getElementById('muxAudioName').textContent = file.name; }
+        }
+        function mergeVideoAndAudioBrowser() {
+            if (!ytState.muxVideo || !ytState.muxAudio) return showToast('Vui lòng chọn đủ cả file Video và Audio.', 'error');
+            showToast('Đang ghép luồng hình & tiếng trên trình duyệt...');
+            const video = document.createElement('video');
+            const audio = document.createElement('audio');
+            video.src = URL.createObjectURL(ytState.muxVideo);
+            audio.src = URL.createObjectURL(ytState.muxAudio);
+            video.muted = true;
+            Promise.all([video.play(), audio.play()]).then(() => {
+                const vStream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+                const aStream = audio.captureStream ? audio.captureStream() : audio.mozCaptureStream();
+                const mixed = new MediaStream([...vStream.getVideoTracks(), ...aStream.getAudioTracks()]);
+                const rec = new MediaRecorder(mixed);
+                const chunks = [];
+                rec.ondataavailable = e => chunks.push(e.data);
+                rec.onstop = () => triggerBlobDownload(new Blob(chunks, { type: 'video/webm' }), `merged-${Date.now()}.webm`);
+                rec.start();
+                video.onended = () => { rec.stop(); audio.pause(); };
+            });
+        }
+
+        // =========================================================================
+        // MODULE 6: UNIVERSAL CONVERTER ENGINE
+        // =========================================================================
+        let convertQueue = [];
+        function handleConvertSelect(e) { processConvertFiles(Array.from(e.target.files || [])); e.target.value = ''; }
+        function processConvertFiles(files) {
+            if (!files.length) return;
+            switchView('convert');
+            const defTarget = document.getElementById('globalConvertTarget').value;
+            files.forEach(f => convertQueue.push({ id: 'cv_' + Date.now() + Math.random().toString(36).slice(2, 5), file: f, target: defTarget }));
+            renderConvertList();
+        }
+        function applyGlobalConvertTarget(val) { convertQueue.forEach(it => it.target = val); renderConvertList(); }
+        function renderConvertList() {
+            const has = convertQueue.length > 0;
+            document.getElementById('convertEmptyState').classList.toggle('hidden', has);
+            document.getElementById('convertList').classList.toggle('hidden', !has);
+            document.getElementById('convertFloatingDock').classList.toggle('hidden', !has);
+            document.getElementById('convertFloatingDock').classList.toggle('inline-flex', has);
+            document.getElementById('btnConvertAll').disabled = !has;
+            document.getElementById('convertList').innerHTML = convertQueue.map(it => `
+                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-3.5 flex items-center justify-between gap-3">
+                    <span class="text-xs font-medium truncate">${it.file.name}</span>
+                    <span class="text-xs font-mono uppercase px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800">→ ${it.target}</span>
+                </div>
+            `).join('');
+        }
+        async function convertSingleFile(it) {
+            const t = it.target;
+            if (it.file.type.startsWith('image/') && ['png', 'jpg', 'webp', 'ico', 'svg'].includes(t)) {
+                return new Promise(res => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const c = document.createElement('canvas');
+                        c.width = t === 'ico' ? 64 : img.naturalWidth;
+                        c.height = t === 'ico' ? 64 : img.naturalHeight;
+                        const ctx = c.getContext('2d');
+                        if (t === 'jpg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, c.width, c.height); }
+                        ctx.drawImage(img, 0, 0, c.width, c.height);
+                        if (t === 'svg') {
+                            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${c.width}" height="${c.height}"><image href="${c.toDataURL()}" width="${c.width}" height="${c.height}"/></svg>`;
+                            return res(new Blob([svg], { type: 'image/svg+xml' }));
+                        }
+                        c.toBlob(res, t === 'jpg' ? 'image/jpeg' : t === 'webp' ? 'image/webp' : 'image/png', 0.92);
+                    };
+                    img.src = URL.createObjectURL(it.file);
+                });
+            }
+            const txt = await it.file.text();
+            if (t === 'html') return new Blob([`<!DOCTYPE html><html><body><pre>${txt}</pre></body></html>`], { type: 'text/html' });
+            if (t === 'json') return new Blob([JSON.stringify({ filename: it.file.name, content: txt }, null, 2)], { type: 'application/json' });
+            return new Blob([txt], { type: 'text/plain' });
+        }
+        async function convertAndDownloadAll() {
+            if (!convertQueue.length) return;
+            if (convertQueue.length === 1) {
+                const b = await convertSingleFile(convertQueue[0]);
+                return triggerBlobDownload(b, convertQueue[0].file.name.replace(/\.[^.]+$/, '') + '.' + convertQueue[0].target);
+            }
+            const zip = new JSZip();
+            for (const it of convertQueue) zip.file(it.file.name.replace(/\.[^.]+$/, '') + '.' + it.target, await convertSingleFile(it));
+            triggerBlobDownload(await zip.generateAsync({ type: 'blob' }), `weat-converted-${Date.now()}.zip`);
+        }
+        function clearConvertQueue() { convertQueue = []; renderConvertList(); }
+
+        // =========================================================================
+        // MODULE 7: QR & BARCODE STUDIO
+        // =========================================================================
+        const qrState = { mode: 'qr', template: 'url', dotStyle: 'rounded', logoImg: null, lastPayload: '' };
+
+        function setQrStudioMode(mode) {
+            qrState.mode = mode;
+            ['qr', 'barcode', 'scan'].forEach(m => {
+                const btn = document.getElementById(`qrModeBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                if (!btn) return;
+                btn.className = m === mode
+                    ? 'px-3 py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs inline-flex items-center gap-1.5'
+                    : 'px-3 py-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 inline-flex items-center gap-1.5';
+            });
+
+            const genWs = document.getElementById('qrGeneratorWorkspace');
+            const scanWs = document.getElementById('qrScannerWorkspace');
+            const qrTplSec = document.getElementById('qrTemplateSection');
+            const bcFields = document.getElementById('barcodeFieldsSection');
+            const qrInsp = document.getElementById('qrCustomInspector');
+            const bcInsp = document.getElementById('barcodeCustomInspector');
+            const liveCanvas = document.getElementById('qrLiveCanvas');
+            const liveSvg = document.getElementById('barcodeLiveSvg');
+
+            if (mode === 'scan') {
+                genWs.classList.add('hidden');
+                scanWs.classList.remove('hidden');
+                return;
+            }
+
+            genWs.classList.remove('hidden');
+            scanWs.classList.add('hidden');
+
+            if (mode === 'qr') {
+                qrTplSec.classList.remove('hidden');
+                bcFields.classList.add('hidden');
+                qrInsp.classList.remove('hidden');
+                bcInsp.classList.add('hidden');
+                liveCanvas.classList.remove('hidden');
+                liveSvg.classList.add('hidden');
+                setQrTemplate(qrState.template);
+            } else {
+                qrTplSec.classList.add('hidden');
+                document.querySelectorAll('.qr-field-group').forEach(el => el.classList.add('hidden'));
+                bcFields.classList.remove('hidden');
+                qrInsp.classList.add('hidden');
+                bcInsp.classList.remove('hidden');
+                liveCanvas.classList.add('hidden');
+                liveSvg.classList.remove('hidden');
+                renderQrStudio();
+            }
+        }
+
+        function setQrTemplate(tpl) {
+            qrState.template = tpl;
+            document.querySelectorAll('.qr-tpl-btn').forEach(btn => {
+                const active = btn.getAttribute('data-qrtpl') === tpl;
+                btn.className = active
+                    ? 'qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium flex flex-col items-center gap-1'
+                    : 'qr-tpl-btn py-2 px-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex flex-col items-center gap-1';
+            });
+            document.querySelectorAll('.qr-field-group').forEach(el => el.classList.add('hidden'));
+            const targetGroup = document.getElementById(`qrFields${tpl.charAt(0).toUpperCase() + tpl.slice(1)}`);
+            if (targetGroup) targetGroup.classList.remove('hidden');
+            renderQrStudio();
+        }
+
+        function setQrDotStyle(style) {
+            qrState.dotStyle = style;
+            document.querySelectorAll('.qr-dot-btn').forEach(btn => {
+                const active = btn.getAttribute('data-qrdot') === style;
+                btn.className = active
+                    ? 'qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900'
+                    : 'qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300';
+            });
+            renderQrStudio();
+        }
+
+        function toggleQrGradient(enabled) {
+            const wrap = document.getElementById('qrFgColor2Wrap');
+            wrap.classList.toggle('opacity-40', !enabled);
+            wrap.classList.toggle('pointer-events-none', !enabled);
+            renderQrStudio();
+        }
+
+        function handleQrLogoUpload(e) {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    qrState.logoImg = img;
+                    document.getElementById('btnClearQrLogo').classList.remove('hidden');
+                    renderQrStudio();
+                    showToast('Đã chèn Logo vào tâm mã QR.');
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearQrLogo() {
+            qrState.logoImg = null;
+            document.getElementById('btnClearQrLogo').classList.add('hidden');
+            renderQrStudio();
+        }
+
+        function buildVietQrPayload(bin, acc, amount, memo) {
+            const tlv = (id, val) => id + String(val.length).padStart(2, '0') + val;
+            const guid = tlv('00', 'A000000727');
+            const bankInfo = tlv('00', bin) + tlv('01', acc);
+            const service = tlv('02', 'QRIBFTTA');
+            const merchantAcc = tlv('38', guid + tlv('01', bankInfo) + service);
+            let payload = tlv('00', '01') + tlv('01', amount ? '12' : '11') + merchantAcc + tlv('53', '704');
+            if (amount && Number(amount) > 0) payload += tlv('54', String(Math.round(Number(amount))));
+            payload += tlv('58', 'VN');
+            if (memo) payload += tlv('62', tlv('08', memo.slice(0, 50)));
+            payload += '6304';
+
+            let crc = 0xFFFF;
+            for (let i = 0; i < payload.length; i++) {
+                crc ^= payload.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+                    crc &= 0xFFFF;
+                }
+            }
+            return payload + crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        function getQrEncodedPayload() {
+            if (qrState.mode === 'barcode') return document.getElementById('barcodeValueInput').value || '12345678';
+            const tpl = qrState.template;
+            if (tpl === 'url') return document.getElementById('qrInputUrl').value.trim() || 'https://wea-t.studio';
+            if (tpl === 'wifi') {
+                const ssid = document.getElementById('qrWifiSsid').value || '';
+                const pass = document.getElementById('qrWifiPass').value || '';
+                const enc = document.getElementById('qrWifiEnc').value;
+                const hid = document.getElementById('qrWifiHidden').checked ? 'true' : 'false';
+                return `WIFI:T:${enc};S:${ssid};P:${pass};H:${hid};;`;
+            }
+            if (tpl === 'vietqr') {
+                return buildVietQrPayload(
+                    document.getElementById('qrBankBin').value,
+                    document.getElementById('qrBankAcc').value.trim() || '000000',
+                    document.getElementById('qrBankAmount').value,
+                    document.getElementById('qrBankMemo').value.trim()
+                );
+            }
+            if (tpl === 'vcard') {
+                const n = document.getElementById('qrVcardName').value;
+                const p = document.getElementById('qrVcardPhone').value;
+                const e = document.getElementById('qrVcardEmail').value;
+                const o = document.getElementById('qrVcardOrg').value;
+                return `BEGIN:VCARD\nVERSION:3.0\nFN:${n}\nORG:${o}\nTEL:${p}\nEMAIL:${e}\nEND:VCARD`;
+            }
+            if (tpl === 'email') {
+                const to = document.getElementById('qrEmailTo').value;
+                const sub = encodeURIComponent(document.getElementById('qrEmailSub').value);
+                return `mailto:${to}?subject=${sub}`;
+            }
+            return document.getElementById('qrInputText').value || 'Wea-T Studio';
+        }
+
+        function isFinderZone(r, c, count) {
+            return (r < 7 && c < 7) || (r < 7 && c >= count - 7) || (r >= count - 7 && c < 7);
+        }
+
+        function renderQrStudio() {
+            const payload = getQrEncodedPayload();
+            qrState.lastPayload = payload;
+            document.getElementById('qrEncodedPreview').textContent = payload;
+            document.getElementById('qrPayloadLengthBadge').textContent = `${payload.length} CHARS`;
+
+            if (qrState.mode === 'barcode') {
+                const svg = document.getElementById('barcodeLiveSvg');
+                const errBanner = document.getElementById('barcodeErrorBanner');
+                try {
+                    JsBarcode(svg, payload, {
+                        format: document.getElementById('barcodeFormatSelect').value,
+                        lineColor: document.getElementById('bcLineColor').value,
+                        background: document.getElementById('bcBgColor').value,
+                        height: Number(document.getElementById('bcHeightSlider').value),
+                        displayValue: document.getElementById('bcShowText').checked,
+                        font: 'JetBrains Mono',
+                        fontSize: 14,
+                        margin: 12
+                    });
+                    errBanner.classList.add('hidden');
+                } catch (err) {
+                    errBanner.classList.remove('hidden');
+                }
+                return;
+            }
+
+            if (typeof qrcode === 'undefined') return;
+            const ecc = document.getElementById('qrEccLevel').value || 'H';
+            const qr = qrcode(0, ecc);
+            qr.addData(payload);
+            qr.make();
+
+            const count = qr.getModuleCount();
+            const margin = Math.max(0, Number(document.getElementById('qrMarginInput').value) || 0);
+            const size = 1024;
+            const totalModules = count + margin * 2;
+            const cell = size / totalModules;
+
+            const canvas = document.getElementById('qrLiveCanvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, size, size);
+
+            const isTransparent = document.getElementById('qrTransparentBg').checked;
+            const bgColor = document.getElementById('qrBgColor').value;
+            if (!isTransparent) {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, size, size);
+            }
+
+            const fg1 = document.getElementById('qrFgColor1').value;
+            const fg2 = document.getElementById('qrFgColor2').value;
+            const useGrad = document.getElementById('qrGradientToggle').checked;
+            if (useGrad) {
+                const grad = ctx.createLinearGradient(0, 0, size, size);
+                grad.addColorStop(0, fg1);
+                grad.addColorStop(1, fg2);
+                ctx.fillStyle = grad;
+            } else {
+                ctx.fillStyle = fg1;
+            }
+
+            for (let r = 0; r < count; r++) {
+                for (let c = 0; c < count; c++) {
+                    if (!qr.isDark(r, c) || isFinderZone(r, c, count)) continue;
+                    const x = (c + margin) * cell;
+                    const y = (r + margin) * cell;
+                    const pad = cell * 0.08;
+                    const w = cell - pad * 2;
+
+                    if (qrState.dotStyle === 'circle') {
+                        ctx.beginPath();
+                        ctx.arc(x + cell / 2, y + cell / 2, w / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (qrState.dotStyle === 'diamond') {
+                        ctx.beginPath();
+                        ctx.moveTo(x + cell / 2, y + pad);
+                        ctx.lineTo(x + cell - pad, y + cell / 2);
+                        ctx.lineTo(x + cell / 2, y + cell - pad);
+                        ctx.lineTo(x + pad, y + cell / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                    } else if (qrState.dotStyle === 'rounded') {
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x + pad, y + pad, w, w, w * 0.36);
+                        else ctx.rect(x + pad, y + pad, w, w);
+                        ctx.fill();
+                    } else {
+                        ctx.fillRect(x, y, cell + 0.4, cell + 0.4);
+                    }
+                }
+            }
+
+            const eyeColor = document.getElementById('qrEyeColor').value;
+            const frameStyle = document.getElementById('qrEyeFrameStyle').value;
+            const pupilStyle = document.getElementById('qrEyePupilStyle').value;
+            const eyePositions = [[0, 0], [count - 7, 0], [0, count - 7]];
+
+            eyePositions.forEach(([mc, mr]) => {
+                const ex = (mc + margin) * cell;
+                const ey = (mr + margin) * cell;
+                const ew = cell * 7;
+
+                ctx.strokeStyle = eyeColor;
+                ctx.fillStyle = eyeColor;
+                ctx.lineWidth = cell;
+
+                const fx = ex + cell * 0.5;
+                const fy = ey + cell * 0.5;
+                const fw = cell * 6;
+                ctx.beginPath();
+                if (frameStyle === 'circle') {
+                    ctx.arc(ex + ew / 2, ey + ew / 2, cell * 3, 0, Math.PI * 2);
+                } else if (frameStyle === 'squircle') {
+                    if (ctx.roundRect) ctx.roundRect(fx, fy, fw, fw, cell * 1.8);
+                    else ctx.rect(fx, fy, fw, fw);
+                } else {
+                    ctx.rect(fx, fy, fw, fw);
+                }
+                ctx.stroke();
+
+                const px = ex + cell * 2;
+                const py = ey + cell * 2;
+                const pw = cell * 3;
+                ctx.beginPath();
+                if (pupilStyle === 'circle') {
+                    ctx.arc(ex + ew / 2, ey + ew / 2, pw / 2, 0, Math.PI * 2);
+                } else if (pupilStyle === 'rounded') {
+                    if (ctx.roundRect) ctx.roundRect(px, py, pw, pw, cell * 0.9);
+                    else ctx.rect(px, py, pw, pw);
+                } else {
+                    ctx.rect(px, py, pw, pw);
+                }
+                ctx.fill();
+            });
+
+            if (qrState.logoImg) {
+                const scalePct = Number(document.getElementById('qrLogoScaleSlider').value) / 100;
+                const logoSize = size * scalePct;
+                const lx = (size - logoSize) / 2;
+                const ly = (size - logoSize) / 2;
+                const pad = logoSize * 0.14;
+
+                ctx.save();
+                ctx.fillStyle = isTransparent ? '#FFFFFF' : bgColor;
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(lx - pad, ly - pad, logoSize + pad * 2, logoSize + pad * 2, (logoSize + pad * 2) * 0.24);
+                else ctx.rect(lx - pad, ly - pad, logoSize + pad * 2, logoSize + pad * 2);
+                ctx.fill();
+
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(lx, ly, logoSize, logoSize, logoSize * 0.2);
+                else ctx.rect(lx, ly, logoSize, logoSize);
+                ctx.clip();
+                ctx.drawImage(qrState.logoImg, lx, ly, logoSize, logoSize);
+                ctx.restore();
+            }
+        }
+
+        function copyQrRawPayload() {
+            const ta = document.createElement('textarea');
+            ta.value = qrState.lastPayload;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Đã sao chép chuỗi dữ liệu mã!');
+        }
+
+        function downloadQrPng() {
+            if (qrState.mode === 'barcode') {
+                const svg = document.getElementById('barcodeLiveSvg');
+                const xml = new XMLSerializer().serializeToString(svg);
+                const img = new Image();
+                img.onload = () => {
+                    const c = document.createElement('canvas');
+                    c.width = img.width * 2;
+                    c.height = img.height * 2;
+                    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                    c.toBlob(b => triggerBlobDownload(b, `weat-barcode-${Date.now()}.png`), 'image/png');
+                };
+                img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+                return;
+            }
+            document.getElementById('qrLiveCanvas').toBlob(blob => {
+                triggerBlobDownload(blob, `weat-qr-${Date.now()}.png`);
+                showToast('Đã tải mã QR (.PNG 1024px)!');
+            }, 'image/png');
+        }
+
+        function downloadQrSvg() {
+            if (qrState.mode === 'barcode') {
+                const xml = new XMLSerializer().serializeToString(document.getElementById('barcodeLiveSvg'));
+                triggerBlobDownload(new Blob([xml], { type: 'image/svg+xml' }), `weat-barcode-${Date.now()}.svg`);
+                return;
+            }
+            const dataUrl = document.getElementById('qrLiveCanvas').toDataURL('image/png');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><image href="${dataUrl}" width="1024" height="1024"/></svg>`;
+            triggerBlobDownload(new Blob([svg], { type: 'image/svg+xml' }), `weat-qr-${Date.now()}.svg`);
+            showToast('Đã xuất mã QR (.SVG)!');
+        }
+
+        function handleQrScanFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const c = document.createElement('canvas');
+                    c.width = img.naturalWidth;
+                    c.height = img.naturalHeight;
+                    const ctx = c.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, c.width, c.height);
+                    const code = typeof jsQR !== 'undefined' ? jsQR(imgData.data, c.width, c.height) : null;
+                    if (code && code.data) {
+                        document.getElementById('qrScanResultCard').classList.remove('hidden');
+                        document.getElementById('qrScanResultText').textContent = code.data;
+                        showToast('Quét & giải mã QR thành công!');
+                    } else {
+                        showToast('Không tìm thấy mã QR rõ nét trong ảnh này.', 'error');
+                    }
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function copyScannedQrText() {
+            const ta = document.createElement('textarea');
+            ta.value = document.getElementById('qrScanResultText').textContent;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Đã sao chép nội dung quét được!');
+        }
+
+        // =========================================================================
+        // GLOBAL DRAG-AND-DROP, PASTE & INITIALIZATION
+        // =========================================================================
+        window.addEventListener('dragover', e => e.preventDefault());
+        window.addEventListener('drop', e => {
+            e.preventDefault();
+            const files = Array.from(e.dataTransfer?.files || []);
+            if (!files.length) return;
+            if (activeView === 'compress') processCompressFiles(files);
+            else if (activeView === 'convert') processConvertFiles(files);
+            else if (activeView === 'qr' && qrState.mode === 'scan') handleQrScanFile(files[0]);
+            else processIncomingFiles(files);
+        });
+
+        window.addEventListener('paste', e => {
+            const items = e.clipboardData?.items;
+            if (!items) return;
+            const imgs = [];
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    const f = items[i].getAsFile();
+                    if (f) imgs.push(new File([f], `pasted-${Date.now()}.png`, { type: f.type }));
+                }
+            }
+            if (imgs.length) {
+                if (activeView === 'qr' && qrState.mode === 'scan') handleQrScanFile(imgs[0]);
+                else processIncomingFiles(imgs);
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialHash = (window.location.hash || '').replace('#', '');
+            switchView(initialHash || 'home', false);
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
