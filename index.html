@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
     <title>Wea-T — Unified Personal Tech Studio</title>
     <meta name="description" content="Wea-T Studio: Thời tiết & AQI, Bo tròn góc ảnh hàng loạt, Nén ảnh thông minh, YouTube & FFmpeg, Chuyển đổi 30+ định dạng và QR & Barcode Studio.">
@@ -143,29 +143,63 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Dynamic Viewport & Safe Area for All Devices (iOS/Android/Desktop) */
+        .app-shell-height {
+            height: 100vh;
+            height: 100dvh;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        button, a, input, select, textarea, label, summary {
+            touch-action: manipulation;
+        }
+        @media (pointer: coarse) {
+            input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
+                margin-top: -8px;
+            }
+        }
+        /* Smooth single-column scrolling on mobile/tablet (< 1024px) */
+        @media (max-width: 1023px) {
+            .studio-split-view {
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            .studio-split-view > main {
+                flex: none !important;
+                overflow: visible !important;
+            }
+            .studio-split-view > aside {
+                height: auto !important;
+                overflow: visible !important;
+            }
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900 transition-colors duration-150">
+<body class="app-shell-height flex flex-col overflow-hidden selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900 transition-colors duration-150">
 
     <!-- ===================================================================== -->
-    <!-- UNIFIED 3-COLUMN TOPBAR NAVIGATION                                    -->
+    <!-- UNIFIED RESPONSIVE TOPBAR NAVIGATION                                  -->
     <!-- ===================================================================== -->
-    <header class="h-14 bg-white dark:bg-zinc-900 border-b border-studio-border dark:border-zinc-800 px-4 lg:px-6 grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-3 shrink-0 z-30 transition-colors duration-150">
+    <header class="h-14 bg-white dark:bg-zinc-900 border-b border-studio-border dark:border-zinc-800 px-3 sm:px-4 lg:px-6 flex md:grid md:grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center justify-between gap-2 sm:gap-3 shrink-0 z-30 transition-colors duration-150">
         <!-- Left: Brand Identity -->
-        <div class="flex items-center gap-2.5 min-w-0">
-            <button type="button" onclick="switchView('home')" class="flex items-center gap-2.5 text-left group focus:outline-none">
+        <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <button type="button" onclick="switchView('home')" class="flex items-center gap-2 sm:gap-2.5 text-left group focus:outline-none shrink-0">
                 <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-xs shrink-0 transition-transform group-hover:scale-105">
                     <i data-lucide="layers" class="w-4 h-4"></i>
                 </div>
                 <span class="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Wea-T</span>
             </button>
-            <span id="headerModuleBadge" class="hidden xl:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/80 truncate">
+            <span id="headerModuleBadge" class="inline-flex md:hidden xl:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/80 truncate max-w-[160px] sm:max-w-none">
                 PERSONAL TECH STUDIO
             </span>
         </div>
 
-        <!-- Center: Synchronized Navigation Pill Bar -->
-        <nav class="flex items-center justify-self-center gap-0.5 max-w-full overflow-x-auto no-scrollbar p-1 border border-zinc-200 dark:border-zinc-800 rounded-[10px] bg-zinc-50 dark:bg-zinc-800/60" aria-label="Điều hướng chính">
+        <!-- Center: Desktop / Tablet Pill Navigation Bar -->
+        <nav class="hidden md:flex items-center justify-self-center gap-0.5 max-w-full overflow-x-auto no-scrollbar p-1 border border-zinc-200 dark:border-zinc-800 rounded-[10px] bg-zinc-50 dark:bg-zinc-800/60" aria-label="Điều hướng chính">
             <button type="button" data-nav="home" onclick="switchView('home')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 shadow-xs transition-all shrink-0">
                 <i data-lucide="home" class="w-3.5 h-3.5"></i>
                 <span>Home</span>
@@ -212,7 +246,7 @@
     <!-- ===================================================================== -->
     <!-- VIEW 1: HOME STUDIO DASHBOARD                                         -->
     <!-- ===================================================================== -->
-    <div id="view-home" class="app-view flex-1 overflow-y-auto p-4 lg:p-8">
+    <div id="view-home" class="app-view flex-1 overflow-y-auto p-3.5 sm:p-5 lg:p-8 pb-24 md:pb-8">
         <div class="max-w-5xl mx-auto space-y-6">
             <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-6 lg:p-8 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="space-y-3 max-w-2xl">
@@ -298,7 +332,7 @@
     <!-- ===================================================================== -->
     <!-- VIEW 2: WEATHER & AQI STUDIO                                          -->
     <!-- ===================================================================== -->
-    <div id="view-weather" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+    <div id="view-weather" class="app-view studio-split-view hidden flex-1 flex-col lg:flex-row overflow-hidden pb-20 md:pb-0">
         <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-studio-bg dark:bg-zinc-950">
             <div class="max-w-4xl mx-auto space-y-4">
                 <!-- Current Weather Hero Card -->
@@ -510,7 +544,7 @@
     <!-- ===================================================================== -->
     <!-- VIEW 3: CORNER ROUNDER STUDIO                                         -->
     <!-- ===================================================================== -->
-    <div id="view-studio" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+    <div id="view-studio" class="app-view studio-split-view hidden flex-1 flex-col lg:flex-row overflow-hidden pb-20 md:pb-0">
         <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
             <div id="statusBar" class="hidden h-10 bg-white/80 dark:bg-zinc-900/80 border-b border-studio-border dark:border-zinc-800 px-4 lg:px-6 items-center justify-between text-xs text-zinc-500 shrink-0">
                 <div class="flex items-center gap-3">
@@ -522,7 +556,7 @@
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 lg:p-6">
-                <div id="emptyDropzone" class="h-full min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center">
+                <div id="emptyDropzone" class="h-full min-h-[240px] sm:min-h-[320px] lg:min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl bg-white dark:bg-zinc-900/60 p-6 sm:p-8 text-center">
                     <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
                         <i data-lucide="image-plus" class="w-6 h-6 stroke-[1.75]"></i>
                     </div>
@@ -546,7 +580,7 @@
             </div>
 
             <!-- Floating Bottom Dock -->
-            <div id="floatingActionDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
+            <div id="floatingActionDock" class="hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg max-w-[calc(100vw-1.5rem)]">
                 <button type="button" onclick="document.getElementById('fileInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Thêm ảnh</span>
@@ -653,7 +687,7 @@
     <!-- ===================================================================== -->
     <!-- VIEW 4: SMART IMAGE COMPRESSOR (TINYPNG-INSPIRED)                     -->
     <!-- ===================================================================== -->
-    <div id="view-compress" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+    <div id="view-compress" class="app-view studio-split-view hidden flex-1 flex-col lg:flex-row overflow-hidden pb-20 md:pb-0">
         <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
             <div class="flex-1 overflow-y-auto p-4 lg:p-6">
                 <div id="compressEmptyState" onclick="document.getElementById('compressInput').click()" class="cursor-pointer h-full min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
@@ -671,7 +705,7 @@
                 <div id="compressList" class="hidden space-y-2.5 pb-24"></div>
             </div>
 
-            <div id="compressFloatingDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
+            <div id="compressFloatingDock" class="hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg max-w-[calc(100vw-1.5rem)]">
                 <button type="button" onclick="document.getElementById('compressInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Thêm ảnh</span>
                 </button>
@@ -721,7 +755,7 @@
     <!-- ===================================================================== -->
     <!-- VIEW 5: SMART MULTI-PLATFORM VIDEO DOWNLOADER                         -->
     <!-- ===================================================================== -->
-    <div id="view-youtube" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+    <div id="view-youtube" class="app-view studio-split-view hidden flex-1 flex-col lg:flex-row overflow-hidden pb-20 md:pb-0">
         <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-studio-bg dark:bg-zinc-950">
             <div class="max-w-4xl mx-auto space-y-4">
                 <!-- Smart 1-Tap URL Input & Instant Download Hero -->
@@ -967,79 +1001,229 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- VIEW 6: UNIVERSAL CONVERTER (30+ FORMATS)                             -->
     <!-- ===================================================================== -->
-    <div id="view-convert" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
-        <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
-            <div class="flex-1 overflow-y-auto p-4 lg:p-6">
-                <div id="convertEmptyState" onclick="document.getElementById('convertInput').click()" class="cursor-pointer h-full min-h-[380px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
-                        <i data-lucide="repeat" class="w-6 h-6 stroke-[1.75]"></i>
-                    </div>
-                    <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Chọn hoặc kéo thả tệp bất kỳ để chuyển đổi định dạng</h2>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-lg mb-6">Hình ảnh (PNG, JPG, WEBP, AVIF, ICO, SVG, DXF) · Âm thanh (WAV, MP3, OGG) · Tài liệu (TXT, MD, HTML, JSON, CSV, XML, EPUB, PDF, ZIP)</p>
-                    <button type="button" onclick="event.stopPropagation(); document.getElementById('convertInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg">
-                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
-                        <span>Chọn tệp từ máy</span>
-                    </button>
+    <!-- VIEW 6: SMART UNIVERSAL CONVERTER (REAL 100% CLIENT-SIDE ENGINE)      -->
+    <!-- ===================================================================== -->
+    <div id="view-convert" class="app-view studio-split-view hidden flex-1 flex-col lg:flex-row overflow-hidden pb-20 md:pb-0">
+        <main id="convertDropArea" class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
+            <!-- Top Live Status & Progress Bar -->
+            <div id="convertStatusBar" class="hidden h-10 bg-white/85 dark:bg-zinc-900/85 border-b border-studio-border dark:border-zinc-800 px-4 lg:px-6 items-center justify-between text-xs text-zinc-500 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="font-semibold text-zinc-900 dark:text-zinc-100 shrink-0"><span id="convertStatCount" class="font-mono">0</span> tệp</span>
+                    <span class="text-zinc-300 dark:text-zinc-700">|</span>
+                    <span id="convertStatSummary" class="font-mono text-[11px] truncate">Sẵn sàng chuyển đổi</span>
                 </div>
-
-                <div id="convertList" class="hidden space-y-2.5 pb-24"></div>
+                <div id="convertProgressWrap" class="hidden items-center gap-2 shrink-0">
+                    <div class="w-24 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                        <div id="convertProgressBar" class="h-full bg-zinc-900 dark:bg-zinc-100 transition-all duration-150" style="width: 0%"></div>
+                    </div>
+                    <span id="convertProgressText" class="font-mono text-[10px]">0%</span>
+                </div>
             </div>
 
-            <div id="convertFloatingDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
-                <button type="button" onclick="document.getElementById('convertInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
+            <div class="flex-1 overflow-y-auto p-4 lg:p-6">
+                <!-- Empty Dropzone with Quick Category Chips & Paste Text Option -->
+                <div id="convertEmptyState" onclick="document.getElementById('convertInput').click()" class="cursor-pointer h-full min-h-[260px] sm:min-h-[340px] lg:min-h-[400px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 dark:hover:border-zinc-500 rounded-2xl bg-white dark:bg-zinc-900/60 p-6 sm:p-8 text-center transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-800 dark:text-zinc-200 mb-4">
+                        <i data-lucide="repeat" class="w-6 h-6 stroke-[1.75]"></i>
+                    </div>
+                    <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-1">Kéo thả tệp bất kỳ hoặc dán trực tiếp (Ctrl + V)</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-lg mb-4 leading-relaxed">
+                        Tự động nhận diện loại tệp & gợi ý định dạng đích thông minh. Xử lý 100% trên trình duyệt, không tải lên máy chủ.
+                    </p>
+
+                    <div class="flex flex-wrap items-center justify-center gap-1.5 mb-6 max-w-xl">
+                        <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-medium">Ảnh: PNG · JPG · WEBP · BMP · ICO · SVG · PDF</span>
+                        <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-medium">Audio/Video: WAV · WEBM · Tách nhạc/ảnh</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-medium">Dữ liệu: JSON ↔ CSV ↔ XML ↔ YAML</span>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium">Tài liệu: MD · HTML · TXT · PDF · EPUB · ZIP</span>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <button type="button" onclick="event.stopPropagation(); document.getElementById('convertInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white rounded-lg transition-colors">
+                            <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                            <span>Chọn nhiều tệp</span>
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); toggleConvertTextModal(true)" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                            <i data-lucide="file-code-2" class="w-3.5 h-3.5"></i>
+                            <span>Dán JSON / CSV / Markdown</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- File Queue List -->
+                <div id="convertList" class="hidden space-y-2.5 pb-24 max-w-4xl mx-auto"></div>
+            </div>
+
+            <!-- Floating Bottom Dock -->
+            <div id="convertFloatingDock" class="hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg max-w-[calc(100vw-1.5rem)]">
+                <button type="button" onclick="document.getElementById('convertInput').click()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>Thêm tệp</span>
                 </button>
                 <div class="w-px h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
-                <button type="button" onclick="clearConvertQueue()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-950/50">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Xóa tất cả</span>
+                <button type="button" onclick="toggleConvertTextModal(true)" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <i data-lucide="file-code-2" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">Dán text</span>
+                </button>
+                <div class="w-px h-4 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                <button type="button" onclick="clearConvertQueue()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 rounded-full hover:bg-red-50 dark:hover:bg-red-950/50">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Xóa hết</span>
                 </button>
             </div>
         </main>
 
-        <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col justify-between p-4 shrink-0">
+        <!-- Right Sidebar: Smart Controls & Quality Options -->
+        <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col justify-between p-4 shrink-0 overflow-y-auto">
             <div class="space-y-4">
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Định dạng đích hàng loạt</label>
-                    <select id="globalConvertTarget" onchange="applyGlobalConvertTarget(this.value)" class="w-full text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2">
+                <!-- Smart Batch Target Selector -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Đổi nhanh hàng loạt</label>
+                        <button type="button" onclick="autoRecommendConvertTargets()" class="text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:underline inline-flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i>Tự gợi ý
+                        </button>
+                    </div>
+                    <select id="globalConvertTarget" onchange="applyGlobalConvertTarget(this.value)" class="w-full text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-zinc-900 dark:text-zinc-100">
+                        <option value="auto">Tự động chọn theo từng loại tệp (Thông minh)</option>
                         <optgroup label="Hình ảnh & Vector">
-                            <option value="png">PNG</option>
-                            <option value="jpg">JPG / JPEG</option>
-                            <option value="webp">WEBP</option>
-                            <option value="ico">ICO (Icon 64x64)</option>
-                            <option value="svg">SVG Vector</option>
-                            <option value="dxf">DXF (AutoCAD)</option>
-                        </optgroup>
-                        <optgroup label="Âm thanh">
-                            <option value="wav">WAV (Lossless PCM)</option>
-                            <option value="mp3">MP3</option>
-                            <option value="ogg">OGG</option>
-                        </optgroup>
-                        <optgroup label="Tài liệu & Dữ liệu">
+                            <option value="webp">WEBP (Nhẹ & Nét)</option>
+                            <option value="png">PNG (Không nén mất dữ liệu)</option>
+                            <option value="jpg">JPG / JPEG (Phổ biến)</option>
+                            <option value="bmp">BMP (Bitmap 24-bit)</option>
+                            <option value="ico">ICO (Biểu tượng chuẩn)</option>
+                            <option value="svg">SVG Vector Wrapper</option>
                             <option value="pdf">PDF Document</option>
+                            <option value="base64">Base64 Data URL (.txt)</option>
+                        </optgroup>
+                        <optgroup label="Âm thanh (Web Audio)">
+                            <option value="wav">WAV (PCM 16-bit Lossless)</option>
+                            <option value="webm">WEBM Audio (Opus)</option>
+                        </optgroup>
+                        <optgroup label="Dữ liệu có cấu trúc">
+                            <option value="json">JSON (Đẹp & Chuẩn)</option>
+                            <option value="csv">CSV (Excel / Bảng tính)</option>
+                            <option value="tsv">TSV (Tab-separated)</option>
+                            <option value="xml">XML</option>
+                            <option value="yaml">YAML</option>
+                            <option value="md">Markdown Table (.md)</option>
+                        </optgroup>
+                        <optgroup label="Tài liệu & Đóng gói">
+                            <option value="html">HTML (Trình bày đẹp)</option>
                             <option value="epub">EPUB Ebook</option>
-                            <option value="json">JSON</option>
-                            <option value="csv">CSV</option>
-                            <option value="html">HTML</option>
-                            <option value="txt">TXT</option>
+                            <option value="txt">TXT (Văn bản thuần)</option>
                             <option value="zip">ZIP Archive</option>
                         </optgroup>
                     </select>
                 </div>
+
+                <!-- Image Conversion Settings -->
+                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800 space-y-3">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tùy chỉnh Ảnh & PDF</span>
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-600 dark:text-zinc-300">Chất lượng nén (JPG/WEBP)</span>
+                            <span id="convertQualityVal" class="font-mono font-semibold">92%</span>
+                        </div>
+                        <input type="range" id="convertQualitySlider" min="20" max="100" value="92" oninput="document.getElementById('convertQualityVal').textContent = this.value + '%'" class="w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-zinc-500">Kích thước tối đa</label>
+                            <select id="convertMaxSize" class="w-full text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
+                                <option value="0">Giữ nguyên gốc</option>
+                                <option value="1920">Full HD (1920px)</option>
+                                <option value="1280">HD (1280px)</option>
+                                <option value="800">Web (800px)</option>
+                                <option value="256">Icon (256px)</option>
+                                <option value="64">Favicon (64px)</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[11px] text-zinc-500">Nền khi xuất JPG</label>
+                            <div class="flex items-center gap-1.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1">
+                                <input type="color" id="convertBgColor" value="#ffffff" class="w-5 h-5 rounded cursor-pointer border-0 bg-transparent">
+                                <span class="text-[11px] font-mono text-zinc-500">Nền</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Settings -->
+                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800 space-y-2">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tùy chỉnh Âm thanh (WAV)</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="convertAudioRate" class="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
+                            <option value="44100">44.1 kHz (CD)</option>
+                            <option value="48000">48 kHz (Studio)</option>
+                            <option value="22050">22 kHz (Nhẹ)</option>
+                        </select>
+                        <select id="convertAudioChannels" class="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
+                            <option value="2">Stereo (2 kênh)</option>
+                            <option value="1">Mono (1 kênh)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <button id="btnConvertAll" type="button" onclick="convertAndDownloadAll()" disabled class="w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
-                <i data-lucide="repeat" class="w-4 h-4"></i>
-                <span>Chuyển đổi & Tải xuống</span>
-            </button>
+            <!-- Action Buttons -->
+            <div class="space-y-2 pt-4">
+                <button id="btnConvertMergePdf" type="button" onclick="mergeQueuedImagesToPdf()" class="hidden w-full py-2 px-4 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-semibold items-center justify-center gap-2 transition-colors">
+                    <i data-lucide="file-stack" class="w-3.5 h-3.5"></i>
+                    <span>Gộp tất cả ảnh thành 1 file PDF</span>
+                </button>
+                <button id="btnConvertAll" type="button" onclick="convertAndDownloadAll()" disabled class="w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition-colors">
+                    <i data-lucide="repeat" class="w-4 h-4"></i>
+                    <span id="btnConvertAllLabel">Chuyển đổi & Tải xuống</span>
+                </button>
+            </div>
         </aside>
+    </div>
+
+    <!-- Modal: Paste Raw Text / JSON / CSV / Markdown to Convert -->
+    <div id="convertTextModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs p-4 items-center justify-center" onclick="if(event.target===this) toggleConvertTextModal(false)">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-xl w-full p-5 shadow-2xl space-y-3.5">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Dán nhanh dữ liệu / văn bản để chuyển đổi</h3>
+                <button type="button" onclick="toggleConvertTextModal(false)" class="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="convertTextFilename" value="data" placeholder="Tên tệp..." class="px-3 py-1.5 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none">
+                <select id="convertTextSourceExt" class="px-3 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                    <option value="auto">Tự nhận diện (JSON/CSV/MD/HTML)</option>
+                    <option value="json">JSON</option>
+                    <option value="csv">CSV</option>
+                    <option value="xml">XML</option>
+                    <option value="yaml">YAML</option>
+                    <option value="md">Markdown (.md)</option>
+                    <option value="html">HTML</option>
+                    <option value="txt">Plain Text (.txt)</option>
+                </select>
+            </div>
+            <textarea id="convertTextContent" rows="8" placeholder='Dán JSON ([{"ten":"An","tuoi":22}]), CSV, XML, YAML, Markdown hoặc văn bản...' class="w-full p-3 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none"></textarea>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="toggleConvertTextModal(false)" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs font-medium">Hủy</button>
+                <button type="button" onclick="addPastedTextToConvert()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold">Thêm vào hàng đợi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Quick Output Preview -->
+    <div id="convertPreviewModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs p-4 items-center justify-center" onclick="if(event.target===this) toggleConvertPreviewModal(false)">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="h-12 px-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+                <span id="convertPreviewTitle" class="text-xs font-mono font-semibold truncate">preview</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="convertPreviewCopyBtn" onclick="copyConvertPreviewText()" class="hidden px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-[11px] font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700">Copy</button>
+                    <button type="button" onclick="toggleConvertPreviewModal(false)" class="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+            <div id="convertPreviewBody" class="flex-1 overflow-auto p-4 bg-zinc-50 dark:bg-zinc-950"></div>
+        </div>
     </div>
 
     <!-- ===================================================================== -->
     <!-- VIEW 7: QR & BARCODE STUDIO (DEEP CUSTOMIZATION & SCANNER)            -->
     <!-- ===================================================================== -->
-    <div id="view-qr" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+    <div id="view-qr" class="app-view studio-split-view hidden flex-1 flex-col lg:flex-row overflow-hidden pb-20 md:pb-0">
         <!-- Left / Center: Live Preview Canvas + Data Payload + Scanner -->
         <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-y-auto p-4 lg:p-6">
             <div class="max-w-5xl w-full mx-auto space-y-4">
@@ -1436,7 +1620,41 @@
         </div>
     </div>
 
-    <div id="toastContainer" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Mobile Bottom Navigation Bar (< 768px) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-studio-border dark:border-zinc-800 pb-safe" aria-label="Điều hướng di động">
+        <div class="grid grid-cols-7 h-14 px-1">
+            <button type="button" data-mnav="home" onclick="switchView('home')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold text-zinc-900 dark:text-zinc-100 transition-colors">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">Home</span>
+            </button>
+            <button type="button" data-mnav="weather" onclick="switchView('weather')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors">
+                <i data-lucide="cloud-sun" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">Thời tiết</span>
+            </button>
+            <button type="button" data-mnav="studio" onclick="switchView('studio')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors">
+                <i data-lucide="crop" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">Bo góc</span>
+            </button>
+            <button type="button" data-mnav="compress" onclick="switchView('compress')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors">
+                <i data-lucide="package" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">Nén ảnh</span>
+            </button>
+            <button type="button" data-mnav="youtube" onclick="switchView('youtube')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">Video</span>
+            </button>
+            <button type="button" data-mnav="convert" onclick="switchView('convert')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors">
+                <i data-lucide="repeat" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">Đổi file</span>
+            </button>
+            <button type="button" data-mnav="qr" onclick="switchView('qr')" class="mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors">
+                <i data-lucide="qr-code" class="w-4 h-4"></i>
+                <span class="truncate max-w-full">QR</span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="toastContainer" class="fixed bottom-[calc(4.25rem+env(safe-area-inset-bottom))] md:bottom-4 left-3 right-3 sm:right-auto sm:left-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Hidden File Inputs -->
     <input type="file" id="fileInput" multiple accept="image/png, image/jpeg, image/webp" class="hidden" onchange="handleFileSelect(event)">
@@ -1504,6 +1722,15 @@
                     ? 'nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 shadow-xs transition-all shrink-0'
                     : 'nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0';
             });
+
+            document.querySelectorAll('.mobile-nav-tab').forEach(btn => {
+                const isActive = btn.getAttribute('data-mnav') === viewName;
+                btn.className = isActive
+                    ? 'mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold text-zinc-900 dark:text-zinc-100 bg-zinc-100/80 dark:bg-zinc-800/80 rounded-lg my-1 transition-colors'
+                    : 'mobile-nav-tab flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400 transition-colors';
+            });
+
+            if (target) target.scrollTop = 0;
 
             const badges = {
                 home: 'PERSONAL TECH STUDIO',
@@ -3258,69 +3485,1034 @@
         }
 
         // =========================================================================
-        // MODULE 6: UNIVERSAL CONVERTER ENGINE
+        // MODULE 6: SMART UNIVERSAL CONVERTER ENGINE (REAL CLIENT-SIDE CONVERTERS)
         // =========================================================================
         let convertQueue = [];
-        function handleConvertSelect(e) { processConvertFiles(Array.from(e.target.files || [])); e.target.value = ''; }
+        let convertLastPreviewText = '';
+
+        const CONVERT_CATEGORY_TARGETS = {
+            image: ['webp', 'png', 'jpg', 'bmp', 'ico', 'svg', 'pdf', 'base64', 'zip'],
+            audio: ['wav', 'webm', 'base64', 'zip'],
+            video: ['wav', 'png', 'jpg', 'webp', 'zip'],
+            data:  ['json', 'csv', 'tsv', 'xml', 'yaml', 'html', 'md', 'txt', 'zip'],
+            doc:   ['html', 'pdf', 'epub', 'md', 'txt', 'json', 'zip'],
+            other: ['zip', 'base64', 'txt']
+        };
+
+        const CONVERT_CATEGORY_META = {
+            image: { label: 'Ảnh', icon: 'image', badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+            audio: { label: 'Âm thanh', icon: 'music', badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400' },
+            video: { label: 'Video', icon: 'film', badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
+            data:  { label: 'Dữ liệu', icon: 'database', badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+            doc:   { label: 'Tài liệu', icon: 'file-text', badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+            other: { label: 'Tệp', icon: 'file', badge: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400' }
+        };
+
+        function getFileExt(name) {
+            const m = (name || '').toLowerCase().match(/\.([a-z0-9]+)$/);
+            return m ? m[1] : '';
+        }
+
+        function formatBytesSmart(bytes) {
+            if (!bytes || bytes < 0) return '0 B';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let i = 0, n = bytes;
+            while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+            return `${n < 10 && i > 0 ? n.toFixed(1) : Math.round(n)} ${units[i]}`;
+        }
+
+        function detectConvertCategory(file) {
+            const ext = getFileExt(file.name);
+            const mime = (file.type || '').toLowerCase();
+            if (mime.startsWith('image/') || ['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'bmp', 'svg', 'ico'].includes(ext)) return 'image';
+            if (mime.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'opus'].includes(ext)) return 'audio';
+            if (mime.startsWith('video/') || ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'].includes(ext)) return 'video';
+            if (['json', 'csv', 'tsv', 'xml', 'yaml', 'yml'].includes(ext) || mime.includes('json') || mime.includes('csv') || mime.includes('xml')) return 'data';
+            if (['md', 'markdown', 'html', 'htm', 'txt', 'log', 'css', 'js', 'ts'].includes(ext) || mime.startsWith('text/')) return 'doc';
+            return 'other';
+        }
+
+        function recommendConvertTarget(file, cat) {
+            const ext = getFileExt(file.name);
+            if (cat === 'image') {
+                if (ext === 'webp') return 'png';
+                if (ext === 'svg') return 'png';
+                if (ext === 'ico') return 'png';
+                if (ext === 'png') return 'webp';
+                if (ext === 'jpg' || ext === 'jpeg') return 'webp';
+                return 'png';
+            }
+            if (cat === 'audio') return ext === 'wav' ? 'webm' : 'wav';
+            if (cat === 'video') return 'wav';
+            if (cat === 'data') {
+                if (ext === 'json') return 'csv';
+                if (ext === 'csv' || ext === 'tsv') return 'json';
+                if (ext === 'xml') return 'json';
+                if (ext === 'yaml' || ext === 'yml') return 'json';
+                return 'json';
+            }
+            if (cat === 'doc') {
+                if (ext === 'md' || ext === 'markdown') return 'html';
+                if (ext === 'html' || ext === 'htm') return 'md';
+                return 'pdf';
+            }
+            return 'zip';
+        }
+
+        function handleConvertSelect(e) {
+            processConvertFiles(Array.from(e.target.files || []));
+            e.target.value = '';
+        }
+
         function processConvertFiles(files) {
-            if (!files.length) return;
+            if (!files || !files.length) return;
             switchView('convert');
-            const defTarget = document.getElementById('globalConvertTarget').value;
-            files.forEach(f => convertQueue.push({ id: 'cv_' + Date.now() + Math.random().toString(36).slice(2, 5), file: f, target: defTarget }));
+            const globalVal = document.getElementById('globalConvertTarget')?.value || 'auto';
+            files.forEach(f => {
+                const cat = detectConvertCategory(f);
+                const allowed = CONVERT_CATEGORY_TARGETS[cat] || CONVERT_CATEGORY_TARGETS.other;
+                const target = (globalVal !== 'auto' && allowed.includes(globalVal)) ? globalVal : recommendConvertTarget(f, cat);
+                const thumbUrl = cat === 'image' ? URL.createObjectURL(f) : '';
+                convertQueue.push({
+                    id: 'cv_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    file: f,
+                    ext: getFileExt(f.name) || 'file',
+                    cat,
+                    target,
+                    thumbUrl,
+                    status: 'ready',
+                    outBlob: null,
+                    outName: '',
+                    errorMsg: ''
+                });
+            });
+            renderConvertList();
+            showToast(`Đã thêm ${files.length} tệp — tự động chọn định dạng đích phù hợp!`);
+        }
+
+        function applyGlobalConvertTarget(val) {
+            if (val === 'auto') {
+                autoRecommendConvertTargets();
+                return;
+            }
+            let updated = 0;
+            convertQueue.forEach(it => {
+                const allowed = CONVERT_CATEGORY_TARGETS[it.cat] || CONVERT_CATEGORY_TARGETS.other;
+                if (allowed.includes(val)) {
+                    it.target = val;
+                    it.status = 'ready';
+                    it.outBlob = null;
+                    updated++;
+                }
+            });
+            renderConvertList();
+            if (convertQueue.length && updated === 0) {
+                showToast(`Định dạng .${val.toUpperCase()} không tương thích với loại tệp hiện tại.`, 'error');
+            }
+        }
+
+        function autoRecommendConvertTargets() {
+            const sel = document.getElementById('globalConvertTarget');
+            if (sel) sel.value = 'auto';
+            convertQueue.forEach(it => {
+                it.target = recommendConvertTarget(it.file, it.cat);
+                it.status = 'ready';
+                it.outBlob = null;
+            });
+            renderConvertList();
+            if (convertQueue.length) showToast('Đã tự động gợi ý định dạng đích tối ưu cho từng tệp!');
+        }
+
+        function setItemConvertTarget(id, newTarget) {
+            const it = convertQueue.find(x => x.id === id);
+            if (!it) return;
+            it.target = newTarget;
+            it.status = 'ready';
+            it.outBlob = null;
+            it.errorMsg = '';
             renderConvertList();
         }
-        function applyGlobalConvertTarget(val) { convertQueue.forEach(it => it.target = val); renderConvertList(); }
+
+        function removeConvertItem(id) {
+            const idx = convertQueue.findIndex(x => x.id === id);
+            if (idx >= 0) {
+                if (convertQueue[idx].thumbUrl) URL.revokeObjectURL(convertQueue[idx].thumbUrl);
+                convertQueue.splice(idx, 1);
+                renderConvertList();
+            }
+        }
+
+        function clearConvertQueue() {
+            convertQueue.forEach(it => { if (it.thumbUrl) URL.revokeObjectURL(it.thumbUrl); });
+            convertQueue = [];
+            renderConvertList();
+        }
+
         function renderConvertList() {
             const has = convertQueue.length > 0;
             document.getElementById('convertEmptyState').classList.toggle('hidden', has);
             document.getElementById('convertList').classList.toggle('hidden', !has);
-            document.getElementById('convertFloatingDock').classList.toggle('hidden', !has);
-            document.getElementById('convertFloatingDock').classList.toggle('inline-flex', has);
+            const sb = document.getElementById('convertStatusBar');
+            if (sb) { sb.classList.toggle('hidden', !has); sb.classList.toggle('flex', has); }
+            const dock = document.getElementById('convertFloatingDock');
+            dock.classList.toggle('hidden', !has);
+            dock.classList.toggle('inline-flex', has);
             document.getElementById('btnConvertAll').disabled = !has;
-            document.getElementById('convertList').innerHTML = convertQueue.map(it => `
-                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-3.5 flex items-center justify-between gap-3">
-                    <span class="text-xs font-medium truncate">${it.file.name}</span>
-                    <span class="text-xs font-mono uppercase px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800">→ ${it.target}</span>
-                </div>
-            `).join('');
+
+            const imgCount = convertQueue.filter(it => it.cat === 'image').length;
+            const mergePdfBtn = document.getElementById('btnConvertMergePdf');
+            if (mergePdfBtn) {
+                mergePdfBtn.classList.toggle('hidden', imgCount < 2);
+                mergePdfBtn.classList.toggle('flex', imgCount >= 2);
+            }
+
+            if (has) {
+                document.getElementById('convertStatCount').textContent = convertQueue.length;
+                const totalIn = convertQueue.reduce((s, x) => s + (x.file.size || 0), 0);
+                const doneCount = convertQueue.filter(x => x.status === 'done').length;
+                document.getElementById('convertStatSummary').textContent = doneCount
+                    ? `Hoàn tất ${doneCount}/${convertQueue.length} · Tổng gốc ${formatBytesSmart(totalIn)}`
+                    : `Tổng dung lượng ${formatBytesSmart(totalIn)} · Chọn định dạng từng tệp hoặc đổi hàng loạt`;
+                document.getElementById('btnConvertAllLabel').textContent = convertQueue.length > 1
+                    ? `Chuyển đổi ${convertQueue.length} tệp & Tải ZIP`
+                    : 'Chuyển đổi & Tải xuống';
+            }
+
+            document.getElementById('convertList').innerHTML = convertQueue.map(it => {
+                const meta = CONVERT_CATEGORY_META[it.cat] || CONVERT_CATEGORY_META.other;
+                const targets = CONVERT_CATEGORY_TARGETS[it.cat] || CONVERT_CATEGORY_TARGETS.other;
+                let statusHtml = '';
+                if (it.status === 'working') {
+                    statusHtml = `<span class="inline-flex items-center gap-1 text-[11px] font-mono text-amber-600 dark:text-amber-400"><span class="w-2.5 h-2.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></span>Đang đổi...</span>`;
+                } else if (it.status === 'done' && it.outBlob) {
+                    const diffPct = it.file.size ? Math.round(((it.outBlob.size - it.file.size) / it.file.size) * 100) : 0;
+                    const diffTxt = diffPct < 0 ? `${diffPct}%` : `+${diffPct}%`;
+                    statusHtml = `<span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">✓ ${formatBytesSmart(it.outBlob.size)} (${diffTxt})</span>`;
+                } else if (it.status === 'error') {
+                    statusHtml = `<span class="text-[11px] text-red-500">${escapeHtml(it.errorMsg || 'Lỗi chuyển đổi')}</span>`;
+                } else {
+                    statusHtml = `<span class="text-[11px] font-mono text-zinc-400">${formatBytesSmart(it.file.size)} · ${it.ext.toUpperCase()}</span>`;
+                }
+
+                return `
+                    <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-3 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 shadow-2xs">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/70 dark:border-zinc-700/70 overflow-hidden shrink-0 flex items-center justify-center">
+                                ${it.thumbUrl ? `<img src="${it.thumbUrl}" class="w-full h-full object-cover" alt="">` : `<i data-lucide="${meta.icon}" class="w-4 h-4 text-zinc-500"></i>`}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">${escapeHtml(it.file.name)}</span>
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium shrink-0 ${meta.badge}">${meta.label}</span>
+                                </div>
+                                <div class="mt-0.5">${statusHtml}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 shrink-0 w-full sm:w-auto justify-end">
+                            <span class="text-zinc-400 text-xs font-mono">→</span>
+                            <select onchange="setItemConvertTarget('${it.id}', this.value)" class="text-xs font-mono uppercase bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-zinc-900 dark:text-zinc-100">
+                                ${targets.map(t => `<option value="${t}" ${t === it.target ? 'selected' : ''}>.${t.toUpperCase()}</option>`).join('')}
+                            </select>
+                            <button type="button" onclick="convertAndDownloadSingle('${it.id}')" title="Chuyển đổi & tải tệp này" class="px-2.5 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold hover:bg-zinc-800 dark:hover:bg-white inline-flex items-center gap-1 transition-colors">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button type="button" onclick="previewConvertedItem('${it.id}')" title="Xem trước kết quả" class="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button type="button" onclick="removeConvertItem('${it.id}')" title="Xóa khỏi danh sách" class="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
         }
+
+        // --- Drag & Drop + Ctrl+V Paste for Universal Converter ---
+        (function setupConvertDragAndPaste() {
+            document.addEventListener('dragover', (e) => {
+                if (activeView !== 'convert') return;
+                e.preventDefault();
+            });
+            document.addEventListener('drop', (e) => {
+                if (activeView !== 'convert') return;
+                e.preventDefault();
+                const files = Array.from(e.dataTransfer?.files || []);
+                if (files.length) processConvertFiles(files);
+            });
+            document.addEventListener('paste', (e) => {
+                if (activeView !== 'convert') return;
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+                const files = Array.from(e.clipboardData?.files || []);
+                if (files.length) {
+                    e.preventDefault();
+                    processConvertFiles(files);
+                    return;
+                }
+                const txt = e.clipboardData?.getData('text');
+                if (txt && txt.trim()) {
+                    e.preventDefault();
+                    const ext = detectPastedTextExt(txt);
+                    const f = new File([txt], `pasted-${Date.now()}.${ext}`, { type: 'text/plain' });
+                    processConvertFiles([f]);
+                }
+            });
+        })();
+
+        function detectPastedTextExt(txt) {
+            const s = (txt || '').trim();
+            if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
+                try { JSON.parse(s); return 'json'; } catch (e) {}
+            }
+            if (/^<\s*(!DOCTYPE|html|body|div|table|p|h1)/i.test(s)) return 'html';
+            if (/^<\?xml|^<[a-zA-Z][\w-]*>[\s\S]*<\/[a-zA-Z][\w-]*>$/.test(s)) return 'xml';
+            if (/^#{1,6}\s|^\s*[-*]\s.+\n|```/m.test(s)) return 'md';
+            const lines = s.split(/\r?\n/).filter(Boolean);
+            if (lines.length >= 2 && lines[0].includes(',') && lines[1].includes(',')) return 'csv';
+            if (lines.length >= 2 && /^[a-zA-Z0-9_-]+\s*:\s*.+/m.test(s)) return 'yaml';
+            return 'txt';
+        }
+
+        function toggleConvertTextModal(show) {
+            const m = document.getElementById('convertTextModal');
+            if (!m) return;
+            m.classList.toggle('hidden', !show);
+            m.classList.toggle('flex', show);
+            if (show) {
+                setTimeout(() => document.getElementById('convertTextContent')?.focus(), 50);
+                lucide.createIcons();
+            }
+        }
+
+        function addPastedTextToConvert() {
+            const content = document.getElementById('convertTextContent')?.value || '';
+            if (!content.trim()) return showToast('Vui lòng dán nội dung trước.', 'error');
+            const baseName = (document.getElementById('convertTextFilename')?.value || 'data').trim().replace(/\.[^.]+$/, '') || 'data';
+            const selExt = document.getElementById('convertTextSourceExt')?.value || 'auto';
+            const ext = selExt === 'auto' ? detectPastedTextExt(content) : selExt;
+            const file = new File([content], `${baseName}.${ext}`, { type: 'text/plain;charset=utf-8' });
+            toggleConvertTextModal(false);
+            document.getElementById('convertTextContent').value = '';
+            processConvertFiles([file]);
+        }
+
+        function toggleConvertPreviewModal(show) {
+            const m = document.getElementById('convertPreviewModal');
+            if (!m) return;
+            m.classList.toggle('hidden', !show);
+            m.classList.toggle('flex', show);
+        }
+
+        async function copyConvertPreviewText() {
+            if (!convertLastPreviewText) return;
+            try { await navigator.clipboard.writeText(convertLastPreviewText); } catch (e) {}
+            showToast('Đã sao chép nội dung chuyển đổi!');
+        }
+
+        async function previewConvertedItem(id) {
+            const it = convertQueue.find(x => x.id === id);
+            if (!it) return;
+            if (!it.outBlob) await runSingleConversion(it);
+            if (!it.outBlob) return;
+            const titleEl = document.getElementById('convertPreviewTitle');
+            const bodyEl = document.getElementById('convertPreviewBody');
+            const copyBtn = document.getElementById('convertPreviewCopyBtn');
+            titleEl.textContent = `${it.outName} (${formatBytesSmart(it.outBlob.size)})`;
+            convertLastPreviewText = '';
+            copyBtn.classList.add('hidden');
+
+            if (it.outBlob.type.startsWith('image/') || it.target === 'ico') {
+                const url = URL.createObjectURL(it.outBlob);
+                bodyEl.innerHTML = `<div class="flex items-center justify-center bg-checkerboard rounded-xl p-4"><img src="${url}" class="max-w-full max-h-[60vh] object-contain rounded shadow-xs" alt=""></div>`;
+            } else if (it.outBlob.type.startsWith('audio/')) {
+                const url = URL.createObjectURL(it.outBlob);
+                bodyEl.innerHTML = `<div class="p-6 flex flex-col items-center gap-3"><audio controls src="${url}" class="w-full max-w-md"></audio><p class="text-xs text-zinc-500 font-mono">${escapeHtml(it.outName)}</p></div>`;
+            } else if (it.target === 'pdf') {
+                const url = URL.createObjectURL(it.outBlob);
+                bodyEl.innerHTML = `<iframe src="${url}" class="w-full h-[65vh] rounded-lg border border-zinc-200 dark:border-zinc-800"></iframe>`;
+            } else if (it.target === 'zip' || it.target === 'epub') {
+                bodyEl.innerHTML = `<div class="p-8 text-center text-xs text-zinc-500">Tệp nén/ebook nhị phân (.${it.target.toUpperCase()}) đã sẵn sàng tải xuống (${formatBytesSmart(it.outBlob.size)}).</div>`;
+            } else {
+                const text = await it.outBlob.text();
+                convertLastPreviewText = text;
+                copyBtn.classList.remove('hidden');
+                bodyEl.innerHTML = `<pre class="text-xs font-mono text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap break-all">${escapeHtml(text.slice(0, 30000))}${text.length > 30000 ? '\n... (đã rút gọn xem trước)' : ''}</pre>`;
+            }
+            toggleConvertPreviewModal(true);
+            lucide.createIcons();
+        }
+
+        // --- Binary Encoders: Real ICO, Real BMP, Real Multi-Page PDF, Real WAV, Real EPUB ---
+        function encodePngToIco(pngBytes, width, height) {
+            const w = width >= 256 ? 0 : width;
+            const h = height >= 256 ? 0 : height;
+            const header = new Uint8Array(22);
+            const dv = new DataView(header.buffer);
+            dv.setUint16(0, 0, true);      // Reserved
+            dv.setUint16(2, 1, true);      // Type: ICO
+            dv.setUint16(4, 1, true);      // Image count
+            header[6] = w;                 // Width
+            header[7] = h;                 // Height
+            header[8] = 0;                 // Palette
+            header[9] = 0;                 // Reserved
+            dv.setUint16(10, 1, true);     // Color planes
+            dv.setUint16(12, 32, true);    // Bits per pixel
+            dv.setUint32(14, pngBytes.length, true); // Image size
+            dv.setUint32(18, 22, true);    // Offset
+            return new Blob([header, pngBytes], { type: 'image/x-icon' });
+        }
+
+        function encodeCanvasToBmp(canvas) {
+            const w = canvas.width, h = canvas.height;
+            const ctx = canvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, w, h).data;
+            const rowSize = Math.floor((24 * w + 31) / 32) * 4;
+            const pixelArraySize = rowSize * h;
+            const fileSize = 54 + pixelArraySize;
+            const buf = new ArrayBuffer(fileSize);
+            const dv = new DataView(buf);
+            const u8 = new Uint8Array(buf);
+            // BITMAPFILEHEADER
+            u8[0] = 0x42; u8[1] = 0x4D;
+            dv.setUint32(2, fileSize, true);
+            dv.setUint32(10, 54, true);
+            // BITMAPINFOHEADER
+            dv.setUint32(14, 40, true);
+            dv.setInt32(18, w, true);
+            dv.setInt32(22, h, true);
+            dv.setUint16(26, 1, true);
+            dv.setUint16(28, 24, true);
+            dv.setUint32(34, pixelArraySize, true);
+            for (let y = 0; y < h; y++) {
+                const srcRow = (h - 1 - y) * w * 4;
+                const dstRow = 54 + y * rowSize;
+                for (let x = 0; x < w; x++) {
+                    const si = srcRow + x * 4;
+                    const di = dstRow + x * 3;
+                    u8[di] = imgData[si + 2];     // B
+                    u8[di + 1] = imgData[si + 1]; // G
+                    u8[di + 2] = imgData[si];     // R
+                }
+            }
+            return new Blob([buf], { type: 'image/bmp' });
+        }
+
+        function buildPdfFromJpegPages(pages) {
+            // pages: [{ jpegBytes: Uint8Array, width, height }]
+            const enc = new TextEncoder();
+            const chunks = [];
+            let offset = 0;
+            const xref = [0];
+            const pushStr = (s) => { const b = enc.encode(s); chunks.push(b); offset += b.length; };
+            const pushBytes = (b) => { chunks.push(b); offset += b.length; };
+
+            pushStr('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n');
+            const pageIds = [];
+            let nextObj = 3; // 1 = Catalog, 2 = Pages
+
+            // Reserve 1 & 2 after we know page count; write objects in exact order
+            const pageObjs = pages.map(() => {
+                const imgId = nextObj++;
+                const contentId = nextObj++;
+                const pageId = nextObj++;
+                pageIds.push(pageId);
+                return { imgId, contentId, pageId };
+            });
+
+            // Obj 1: Catalog
+            xref[1] = offset;
+            pushStr(`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`);
+            // Obj 2: Pages
+            xref[2] = offset;
+            pushStr(`2 0 obj\n<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>\nendobj\n`);
+
+            pages.forEach((p, idx) => {
+                const { imgId, contentId, pageId } = pageObjs[idx];
+                const ptW = Math.max(72, Math.round(p.width * 0.75));
+                const ptH = Math.max(72, Math.round(p.height * 0.75));
+
+                xref[imgId] = offset;
+                pushStr(`${imgId} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${p.width} /Height ${p.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpegBytes.length} >>\nstream\n`);
+                pushBytes(p.jpegBytes);
+                pushStr(`\nendstream\nendobj\n`);
+
+                const streamStr = `q ${ptW} 0 0 ${ptH} 0 0 cm /Im0 Do Q`;
+                xref[contentId] = offset;
+                pushStr(`${contentId} 0 obj\n<< /Length ${streamStr.length} >>\nstream\n${streamStr}\nendstream\nendobj\n`);
+
+                xref[pageId] = offset;
+                pushStr(`${pageId} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${ptW} ${ptH}] /Resources << /XObject << /Im0 ${imgId} 0 R >> >> /Contents ${contentId} 0 R >>\nendobj\n`);
+            });
+
+            const xrefStart = offset;
+            pushStr(`xref\n0 ${nextObj}\n0000000000 65535 f \n`);
+            for (let i = 1; i < nextObj; i++) {
+                pushStr(`${String(xref[i]).padStart(10, '0')} 00000 n \n`);
+            }
+            pushStr(`trailer\n<< /Size ${nextObj} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
+            return new Blob(chunks, { type: 'application/pdf' });
+        }
+
+        function encodeAudioBufferToWav(buffer, targetChannels) {
+            const numCh = Math.min(targetChannels || buffer.numberOfChannels, buffer.numberOfChannels);
+            const sampleRate = buffer.sampleRate;
+            const length = buffer.length;
+            const dataSize = length * numCh * 2;
+            const ab = new ArrayBuffer(44 + dataSize);
+            const dv = new DataView(ab);
+            const writeStr = (off, str) => { for (let i = 0; i < str.length; i++) dv.setUint8(off + i, str.charCodeAt(i)); };
+
+            writeStr(0, 'RIFF');
+            dv.setUint32(4, 36 + dataSize, true);
+            writeStr(8, 'WAVE');
+            writeStr(12, 'fmt ');
+            dv.setUint32(16, 16, true);
+            dv.setUint16(20, 1, true); // PCM
+            dv.setUint16(22, numCh, true);
+            dv.setUint32(24, sampleRate, true);
+            dv.setUint32(28, sampleRate * numCh * 2, true);
+            dv.setUint16(32, numCh * 2, true);
+            dv.setUint16(34, 16, true);
+            writeStr(36, 'data');
+            dv.setUint32(40, dataSize, true);
+
+            const channels = [];
+            for (let c = 0; c < numCh; c++) channels.push(buffer.getChannelData(c));
+            let pos = 44;
+            for (let i = 0; i < length; i++) {
+                for (let c = 0; c < numCh; c++) {
+                    const s = Math.max(-1, Math.min(1, channels[c][i]));
+                    dv.setInt16(pos, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                    pos += 2;
+                }
+            }
+            return new Blob([ab], { type: 'audio/wav' });
+        }
+
+        async function decodeAndResampleAudio(file) {
+            const arr = await file.arrayBuffer();
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioCtx();
+            const decoded = await ctx.decodeAudioData(arr);
+            ctx.close();
+            const targetRate = parseInt(document.getElementById('convertAudioRate')?.value || '44100', 10);
+            const targetCh = parseInt(document.getElementById('convertAudioChannels')?.value || '2', 10);
+            const outCh = Math.min(targetCh, decoded.numberOfChannels);
+            if (decoded.sampleRate === targetRate && decoded.numberOfChannels === outCh) return decoded;
+            const offline = new OfflineAudioContext(outCh, Math.ceil(decoded.duration * targetRate), targetRate);
+            const src = offline.createBufferSource();
+            src.buffer = decoded;
+            src.connect(offline.destination);
+            src.start(0);
+            return await offline.startRendering();
+        }
+
+        async function encodeAudioBufferToWebm(buffer) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioCtx({ sampleRate: buffer.sampleRate });
+            const dest = ctx.createMediaStreamDestination();
+            const src = ctx.createBufferSource();
+            src.buffer = buffer;
+            src.connect(dest);
+            const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
+            const rec = new MediaRecorder(dest.stream, { mimeType: mime });
+            const chunks = [];
+            return new Promise((resolve, reject) => {
+                rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+                rec.onstop = () => { ctx.close(); resolve(new Blob(chunks, { type: 'audio/webm' })); };
+                rec.onerror = (e) => { ctx.close(); reject(e); };
+                src.onended = () => { if (rec.state !== 'inactive') rec.stop(); };
+                rec.start();
+                src.start();
+            });
+        }
+
+        function renderTextToPdfPages(title, text) {
+            const pageW = 1240, pageH = 1754, margin = 96;
+            const fontSize = 26, lineH = 38;
+            const maxW = pageW - margin * 2;
+            const measureCanvas = document.createElement('canvas');
+            const mctx = measureCanvas.getContext('2d');
+            mctx.font = `${fontSize}px Inter, -apple-system, sans-serif`;
+
+            const wrapped = [];
+            (text || '').split(/\r?\n/).forEach(para => {
+                if (!para.trim()) { wrapped.push(''); return; }
+                let line = '';
+                for (const word of para.split(' ')) {
+                    const test = line ? `${line} ${word}` : word;
+                    if (mctx.measureText(test).width > maxW && line) {
+                        wrapped.push(line);
+                        line = word;
+                    } else {
+                        line = test;
+                    }
+                }
+                if (line) wrapped.push(line);
+            });
+
+            const linesPerPage = Math.floor((pageH - margin * 2 - 70) / lineH);
+            const pages = [];
+            for (let i = 0; i < Math.max(1, wrapped.length); i += linesPerPage) {
+                const c = document.createElement('canvas');
+                c.width = pageW; c.height = pageH;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, pageW, pageH);
+                if (i === 0 && title) {
+                    ctx.fillStyle = '#18181B';
+                    ctx.font = 'bold 34px Inter, -apple-system, sans-serif';
+                    ctx.fillText(title.slice(0, 60), margin, margin + 28);
+                    ctx.strokeStyle = '#E4E4E7';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(margin, margin + 48); ctx.lineTo(pageW - margin, margin + 48); ctx.stroke();
+                }
+                ctx.fillStyle = '#27272A';
+                ctx.font = `${fontSize}px Inter, -apple-system, sans-serif`;
+                const slice = wrapped.slice(i, i + linesPerPage);
+                let y = margin + (i === 0 ? 96 : 36);
+                slice.forEach(ln => { ctx.fillText(ln, margin, y); y += lineH; });
+                const dataUrl = c.toDataURL('image/jpeg', 0.9);
+                const bin = atob(dataUrl.split(',')[1]);
+                const bytes = new Uint8Array(bin.length);
+                for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
+                pages.push({ jpegBytes: bytes, width: pageW, height: pageH });
+            }
+            return buildPdfFromJpegPages(pages);
+        }
+
+        async function buildEpubBlob(title, htmlBody) {
+            const zip = new JSZip();
+            zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
+            zip.file('META-INF/container.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>`);
+            const safeTitle = escapeHtml(title || 'Wea-T Document');
+            zip.file('OEBPS/content.opf', `<?xml version="1.0" encoding="UTF-8"?>\n<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="uid">weat-${Date.now()}</dc:identifier><dc:title>${safeTitle}</dc:title><dc:language>vi</dc:language></metadata><manifest><item id="ch1" href="chapter1.xhtml" media-type="application/xhtml+xml"/></manifest><spine><itemref idref="ch1"/></spine></package>`);
+            zip.file('OEBPS/chapter1.xhtml', `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><title>${safeTitle}</title><style>body{font-family:sans-serif;line-height:1.6;padding:1em;color:#18181b;}pre{background:#f4f4f5;padding:10px;border-radius:6px;overflow:auto;}</style></head><body><h1>${safeTitle}</h1>${htmlBody}</body></html>`);
+            return await zip.generateAsync({ type: 'blob', mimeType: 'application/epub+zip' });
+        }
+
+        // --- Structured Data Parsers & Serializers (JSON <-> CSV <-> TSV <-> XML <-> YAML <-> MD) ---
+        function parseDelimited(text, delim = ',') {
+            const rows = [];
+            let row = [], cell = '', inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i], next = text[i + 1];
+                if (inQuotes) {
+                    if (ch === '"' && next === '"') { cell += '"'; i++; }
+                    else if (ch === '"') inQuotes = false;
+                    else cell += ch;
+                } else {
+                    if (ch === '"') inQuotes = true;
+                    else if (ch === delim) { row.push(cell); cell = ''; }
+                    else if (ch === '\r' && next === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; i++; }
+                    else if (ch === '\n' || ch === '\r') { row.push(cell); rows.push(row); row = []; cell = ''; }
+                    else cell += ch;
+                }
+            }
+            if (cell.length > 0 || row.length > 0) { row.push(cell); rows.push(row); }
+            const cleanRows = rows.filter(r => r.some(c => c.trim() !== ''));
+            if (cleanRows.length < 2) return cleanRows;
+            const headers = cleanRows[0].map((h, i) => h.trim() || `col_${i + 1}`);
+            return cleanRows.slice(1).map(r => {
+                const obj = {};
+                headers.forEach((h, i) => { obj[h] = r[i] ?? ''; });
+                return obj;
+            });
+        }
+
+        function serializeDelimited(data, delim = ',') {
+            const arr = Array.isArray(data) ? data : [data];
+            if (!arr.length) return '';
+            const headers = [...new Set(arr.flatMap(item => (item && typeof item === 'object') ? Object.keys(item) : ['value']))];
+            const esc = (v) => {
+                const s = v == null ? '' : (typeof v === 'object' ? JSON.stringify(v) : String(v));
+                return (s.includes(delim) || s.includes('"') || s.includes('\n')) ? `"${s.replace(/"/g, '""')}"` : s;
+            };
+            const lines = [headers.map(esc).join(delim)];
+            arr.forEach(item => {
+                lines.push(headers.map(h => esc((item && typeof item === 'object') ? item[h] : item)).join(delim));
+            });
+            return lines.join('\n');
+        }
+
+        function xmlToObj(node) {
+            const children = Array.from(node.children || []);
+            if (!children.length) return (node.textContent || '').trim();
+            const obj = {};
+            children.forEach(ch => {
+                const val = xmlToObj(ch);
+                if (obj[ch.tagName] !== undefined) {
+                    if (!Array.isArray(obj[ch.tagName])) obj[ch.tagName] = [obj[ch.tagName]];
+                    obj[ch.tagName].push(val);
+                } else {
+                    obj[ch.tagName] = val;
+                }
+            });
+            return obj;
+        }
+
+        function objToXml(val, tag = 'item', indent = '') {
+            const safeTag = String(tag).replace(/[^a-zA-Z0-9_-]/g, '_') || 'item';
+            if (Array.isArray(val)) {
+                return `${indent}<${safeTag}s>\n${val.map(v => objToXml(v, safeTag, indent + '  ')).join('\n')}\n${indent}</${safeTag}s>`;
+            }
+            if (val && typeof val === 'object') {
+                const inner = Object.entries(val).map(([k, v]) => objToXml(v, k, indent + '  ')).join('\n');
+                return `${indent}<${safeTag}>\n${inner}\n${indent}</${safeTag}>`;
+            }
+            return `${indent}<${safeTag}>${escapeHtml(val == null ? '' : String(val))}</${safeTag}>`;
+        }
+
+        function objToYaml(val, indent = '') {
+            if (Array.isArray(val)) {
+                return val.map(v => {
+                    if (v && typeof v === 'object') {
+                        const sub = objToYaml(v, indent + '  ').trimStart();
+                        return `${indent}- ${sub}`;
+                    }
+                    return `${indent}- ${JSON.stringify(v)}`;
+                }).join('\n');
+            }
+            if (val && typeof val === 'object') {
+                return Object.entries(val).map(([k, v]) => {
+                    if (v && typeof v === 'object') return `${indent}${k}:\n${objToYaml(v, indent + '  ')}`;
+                    const s = typeof v === 'string' && /[:#\n]/.test(v) ? JSON.stringify(v) : (v == null ? 'null' : String(v));
+                    return `${indent}${k}: ${s}`;
+                }).join('\n');
+            }
+            return `${indent}${String(val)}`;
+        }
+
+        function parseSimpleYaml(text) {
+            const lines = text.split(/\r?\n/).filter(l => l.trim() && !l.trim().startsWith('#'));
+            const root = {};
+            lines.forEach(line => {
+                const m = line.match(/^\s*([a-zA-Z0-9_.-]+)\s*:\s*(.*)$/);
+                if (m) {
+                    let v = m[2].trim();
+                    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+                    else if (v === 'true') v = true;
+                    else if (v === 'false') v = false;
+                    else if (v !== '' && !isNaN(Number(v))) v = Number(v);
+                    root[m[1]] = v;
+                }
+            });
+            return root;
+        }
+
+        function markdownToHtml(md) {
+            let html = escapeHtml(md);
+            html = html.replace(/```([\s\S]*?)```/g, (_, code) => `<pre><code>${code.trim()}</code></pre>`);
+            html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            html = html.replace(/^\s*[-*] (.*)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`);
+            html = html.replace(/\n{2,}/g, '</p><p>');
+            return `<p>${html}</p>`;
+        }
+
+        function htmlToMarkdown(htmlStr) {
+            const doc = new DOMParser().parseFromString(htmlStr, 'text/html');
+            const walk = (node) => {
+                if (node.nodeType === 3) return node.textContent;
+                if (node.nodeType !== 1) return '';
+                const tag = node.tagName.toLowerCase();
+                if (['script', 'style'].includes(tag)) return '';
+                const inner = Array.from(node.childNodes).map(walk).join('');
+                if (tag === 'h1') return `# ${inner.trim()}\n\n`;
+                if (tag === 'h2') return `## ${inner.trim()}\n\n`;
+                if (tag === 'h3') return `### ${inner.trim()}\n\n`;
+                if (tag === 'p' || tag === 'div') return `${inner.trim()}\n\n`;
+                if (tag === 'br') return '\n';
+                if (tag === 'strong' || tag === 'b') return `**${inner}**`;
+                if (tag === 'em' || tag === 'i') return `*${inner}*`;
+                if (tag === 'code') return `\`${inner}\``;
+                if (tag === 'li') return `- ${inner.trim()}\n`;
+                if (tag === 'a') return `[${inner}](${node.getAttribute('href') || ''})`;
+                return inner;
+            };
+            return walk(doc.body).replace(/\n{3,}/g, '\n\n').trim();
+        }
+
+        function dataToHtmlTable(data) {
+            const arr = Array.isArray(data) ? data : [data];
+            if (!arr.length) return '<p>Empty</p>';
+            const headers = [...new Set(arr.flatMap(x => (x && typeof x === 'object') ? Object.keys(x) : ['value']))];
+            const th = headers.map(h => `<th>${escapeHtml(h)}</th>`).join('');
+            const trs = arr.map(r => `<tr>${headers.map(h => `<td>${escapeHtml((r && typeof r === 'object') ? (typeof r[h] === 'object' ? JSON.stringify(r[h]) : r[h] ?? '') : r)}</td>`).join('')}</tr>`).join('');
+            return `<table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>`;
+        }
+
+        function dataToMarkdownTable(data) {
+            const arr = Array.isArray(data) ? data : [data];
+            if (!arr.length) return '';
+            const headers = [...new Set(arr.flatMap(x => (x && typeof x === 'object') ? Object.keys(x) : ['value']))];
+            const headRow = `| ${headers.join(' | ')} |`;
+            const sepRow = `| ${headers.map(() => '---').join(' | ')} |`;
+            const bodyRows = arr.map(r => `| ${headers.map(h => String((r && typeof r === 'object') ? (r[h] ?? '') : r).replace(/\|/g, '\\|').replace(/\n/g, ' ')).join(' | ')} |`);
+            return [headRow, sepRow, ...bodyRows].join('\n');
+        }
+
+        function loadImageFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Không đọc được ảnh')); };
+                img.src = url;
+            });
+        }
+
+        function extractVideoFrame(file) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                const url = URL.createObjectURL(file);
+                video.muted = true;
+                video.playsInline = true;
+                video.preload = 'auto';
+                video.onloadeddata = () => { video.currentTime = Math.min(1, (video.duration || 2) / 3); };
+                video.onseeked = () => {
+                    const c = document.createElement('canvas');
+                    c.width = video.videoWidth || 1280;
+                    c.height = video.videoHeight || 720;
+                    c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+                    URL.revokeObjectURL(url);
+                    resolve(c);
+                };
+                video.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Không đọc được khung hình video')); };
+                video.src = url;
+            });
+        }
+
         async function convertSingleFile(it) {
             const t = it.target;
-            if (it.file.type.startsWith('image/') && ['png', 'jpg', 'webp', 'ico', 'svg'].includes(t)) {
-                return new Promise(res => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const c = document.createElement('canvas');
-                        c.width = t === 'ico' ? 64 : img.naturalWidth;
-                        c.height = t === 'ico' ? 64 : img.naturalHeight;
-                        const ctx = c.getContext('2d');
-                        if (t === 'jpg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, c.width, c.height); }
-                        ctx.drawImage(img, 0, 0, c.width, c.height);
-                        if (t === 'svg') {
-                            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${c.width}" height="${c.height}"><image href="${c.toDataURL()}" width="${c.width}" height="${c.height}"/></svg>`;
-                            return res(new Blob([svg], { type: 'image/svg+xml' }));
-                        }
-                        c.toBlob(res, t === 'jpg' ? 'image/jpeg' : t === 'webp' ? 'image/webp' : 'image/png', 0.92);
-                    };
-                    img.src = URL.createObjectURL(it.file);
+            const quality = parseInt(document.getElementById('convertQualitySlider')?.value || '92', 10) / 100;
+            const maxDim = parseInt(document.getElementById('convertMaxSize')?.value || '0', 10);
+            const bgColor = document.getElementById('convertBgColor')?.value || '#ffffff';
+
+            // 1. ZIP wrap for any file
+            if (t === 'zip') {
+                const zip = new JSZip();
+                zip.file(it.file.name, it.file);
+                return await zip.generateAsync({ type: 'blob' });
+            }
+
+            // 2. Base64 export for any file
+            if (t === 'base64') {
+                return await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(new Blob([reader.result], { type: 'text/plain;charset=utf-8' }));
+                    reader.onerror = reject;
+                    reader.readAsDataURL(it.file);
                 });
             }
+
+            // 3. Image conversions
+            if (it.cat === 'image') {
+                const img = await loadImageFromFile(it.file);
+                let w = img.naturalWidth || 512, h = img.naturalHeight || 512;
+                if (t === 'ico') {
+                    const icoDim = maxDim > 0 && maxDim <= 256 ? maxDim : 64;
+                    w = icoDim; h = icoDim;
+                } else if (maxDim > 0 && Math.max(w, h) > maxDim) {
+                    const ratio = maxDim / Math.max(w, h);
+                    w = Math.round(w * ratio); h = Math.round(h * ratio);
+                }
+                const c = document.createElement('canvas');
+                c.width = w; c.height = h;
+                const ctx = c.getContext('2d');
+                if (t === 'jpg' || t === 'bmp' || t === 'pdf') {
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, w, h);
+                }
+                ctx.drawImage(img, 0, 0, w, h);
+
+                if (t === 'bmp') return encodeCanvasToBmp(c);
+                if (t === 'ico') {
+                    const pngBlob = await new Promise(res => c.toBlob(res, 'image/png'));
+                    const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+                    return encodePngToIco(pngBytes, w, h);
+                }
+                if (t === 'svg') {
+                    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><image href="${c.toDataURL('image/png')}" width="${w}" height="${h}"/></svg>`;
+                    return new Blob([svg], { type: 'image/svg+xml' });
+                }
+                if (t === 'pdf') {
+                    const jpgBlob = await new Promise(res => c.toBlob(res, 'image/jpeg', quality));
+                    const jpgBytes = new Uint8Array(await jpgBlob.arrayBuffer());
+                    return buildPdfFromJpegPages([{ jpegBytes: jpgBytes, width: w, height: h }]);
+                }
+                const mime = t === 'jpg' ? 'image/jpeg' : t === 'webp' ? 'image/webp' : 'image/png';
+                return await new Promise(res => c.toBlob(res, mime, quality));
+            }
+
+            // 4. Video extractions (Audio WAV or Frame PNG/JPG/WEBP)
+            if (it.cat === 'video') {
+                if (t === 'wav') {
+                    const buf = await decodeAndResampleAudio(it.file);
+                    return encodeAudioBufferToWav(buf, parseInt(document.getElementById('convertAudioChannels')?.value || '2', 10));
+                }
+                if (['png', 'jpg', 'webp'].includes(t)) {
+                    const c = await extractVideoFrame(it.file);
+                    const mime = t === 'jpg' ? 'image/jpeg' : t === 'webp' ? 'image/webp' : 'image/png';
+                    return await new Promise(res => c.toBlob(res, mime, quality));
+                }
+            }
+
+            // 5. Audio conversions (WAV PCM / WEBM Opus)
+            if (it.cat === 'audio') {
+                const buf = await decodeAndResampleAudio(it.file);
+                if (t === 'wav') {
+                    return encodeAudioBufferToWav(buf, parseInt(document.getElementById('convertAudioChannels')?.value || '2', 10));
+                }
+                if (t === 'webm') {
+                    return await encodeAudioBufferToWebm(buf);
+                }
+            }
+
+            // 6. Structured Data conversions (JSON <-> CSV <-> TSV <-> XML <-> YAML <-> HTML <-> MD)
+            if (it.cat === 'data') {
+                const raw = await it.file.text();
+                let parsed;
+                if (it.ext === 'json') parsed = JSON.parse(raw);
+                else if (it.ext === 'csv') parsed = parseDelimited(raw, ',');
+                else if (it.ext === 'tsv') parsed = parseDelimited(raw, '\t');
+                else if (it.ext === 'xml') {
+                    const doc = new DOMParser().parseFromString(raw, 'application/xml');
+                    parsed = xmlToObj(doc.documentElement);
+                } else if (it.ext === 'yaml' || it.ext === 'yml') parsed = parseSimpleYaml(raw);
+                else parsed = { content: raw };
+
+                if (t === 'json') return new Blob([JSON.stringify(parsed, null, 2)], { type: 'application/json;charset=utf-8' });
+                if (t === 'csv') return new Blob(['\uFEFF' + serializeDelimited(parsed, ',')], { type: 'text/csv;charset=utf-8' });
+                if (t === 'tsv') return new Blob([serializeDelimited(parsed, '\t')], { type: 'text/tab-separated-values;charset=utf-8' });
+                if (t === 'xml') return new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n${objToXml(parsed, 'record')}`], { type: 'application/xml;charset=utf-8' });
+                if (t === 'yaml') return new Blob([objToYaml(parsed)], { type: 'text/yaml;charset=utf-8' });
+                if (t === 'md') return new Blob([dataToMarkdownTable(parsed)], { type: 'text/markdown;charset=utf-8' });
+                if (t === 'html') {
+                    const docHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${escapeHtml(it.file.name)}</title><style>body{font-family:Inter,sans-serif;padding:24px;color:#18181b}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid #e4e4e7;padding:8px 10px;text-align:left}th{background:#f4f4f5}</style></head><body><h2>${escapeHtml(it.file.name)}</h2>${dataToHtmlTable(parsed)}</body></html>`;
+                    return new Blob([docHtml], { type: 'text/html;charset=utf-8' });
+                }
+                return new Blob([typeof parsed === 'string' ? parsed : JSON.stringify(parsed, null, 2)], { type: 'text/plain;charset=utf-8' });
+            }
+
+            // 7. Document conversions (MD <-> HTML <-> TXT -> PDF / EPUB)
             const txt = await it.file.text();
-            if (t === 'html') return new Blob([`<!DOCTYPE html><html><body><pre>${txt}</pre></body></html>`], { type: 'text/html' });
-            if (t === 'json') return new Blob([JSON.stringify({ filename: it.file.name, content: txt }, null, 2)], { type: 'application/json' });
-            return new Blob([txt], { type: 'text/plain' });
+            const baseTitle = it.file.name.replace(/\.[^.]+$/, '');
+            if (t === 'html') {
+                const body = (it.ext === 'md' || it.ext === 'markdown') ? markdownToHtml(txt) : `<pre>${escapeHtml(txt)}</pre>`;
+                const full = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${escapeHtml(baseTitle)}</title><style>body{font-family:Inter,-apple-system,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;line-height:1.7;color:#18181b}pre{background:#f4f4f5;padding:14px;border-radius:8px;overflow:auto}code{font-family:monospace;background:#f4f4f5;padding:2px 5px;border-radius:4px}</style></head><body>${body}</body></html>`;
+                return new Blob([full], { type: 'text/html;charset=utf-8' });
+            }
+            if (t === 'md') {
+                const outMd = (it.ext === 'html' || it.ext === 'htm') ? htmlToMarkdown(txt) : txt;
+                return new Blob([outMd], { type: 'text/markdown;charset=utf-8' });
+            }
+            if (t === 'pdf') {
+                const plain = (it.ext === 'html' || it.ext === 'htm') ? new DOMParser().parseFromString(txt, 'text/html').body.textContent : txt;
+                return renderTextToPdfPages(baseTitle, plain || '');
+            }
+            if (t === 'epub') {
+                const body = (it.ext === 'md' || it.ext === 'markdown') ? markdownToHtml(txt) : (it.ext === 'html' || it.ext === 'htm') ? txt : `<p>${escapeHtml(txt).replace(/\n/g, '<br/>')}</p>`;
+                return await buildEpubBlob(baseTitle, body);
+            }
+            if (t === 'json') {
+                return new Blob([JSON.stringify({ filename: it.file.name, lines: txt.split(/\r?\n/), content: txt }, null, 2)], { type: 'application/json;charset=utf-8' });
+            }
+            const cleanTxt = (it.ext === 'html' || it.ext === 'htm') ? (new DOMParser().parseFromString(txt, 'text/html').body.textContent || '').trim() : txt;
+            return new Blob([cleanTxt], { type: 'text/plain;charset=utf-8' });
         }
+
+        async function runSingleConversion(it) {
+            it.status = 'working';
+            it.errorMsg = '';
+            renderConvertList();
+            try {
+                const blob = await convertSingleFile(it);
+                const outExt = it.target === 'base64' ? 'base64.txt' : it.target;
+                it.outBlob = blob;
+                it.outName = `${it.file.name.replace(/\.[^.]+$/, '')}.${outExt}`;
+                it.status = 'done';
+            } catch (e) {
+                it.status = 'error';
+                it.errorMsg = e?.message || 'Không hỗ trợ tệp này';
+            }
+            renderConvertList();
+        }
+
+        async function convertAndDownloadSingle(id) {
+            const it = convertQueue.find(x => x.id === id);
+            if (!it) return;
+            await runSingleConversion(it);
+            if (it.status === 'done' && it.outBlob) {
+                triggerBlobDownload(it.outBlob, it.outName);
+                showToast(`Đã tải ${it.outName}!`);
+            } else {
+                showToast(it.errorMsg || 'Chuyển đổi thất bại.', 'error');
+            }
+        }
+
         async function convertAndDownloadAll() {
             if (!convertQueue.length) return;
-            if (convertQueue.length === 1) {
-                const b = await convertSingleFile(convertQueue[0]);
-                return triggerBlobDownload(b, convertQueue[0].file.name.replace(/\.[^.]+$/, '') + '.' + convertQueue[0].target);
+            const progWrap = document.getElementById('convertProgressWrap');
+            const progBar = document.getElementById('convertProgressBar');
+            const progText = document.getElementById('convertProgressText');
+            if (progWrap) { progWrap.classList.remove('hidden'); progWrap.classList.add('flex'); }
+
+            let okCount = 0;
+            for (let i = 0; i < convertQueue.length; i++) {
+                await runSingleConversion(convertQueue[i]);
+                if (convertQueue[i].status === 'done') okCount++;
+                const pct = Math.round(((i + 1) / convertQueue.length) * 100);
+                if (progBar) progBar.style.width = `${pct}%`;
+                if (progText) progText.textContent = `${pct}%`;
             }
-            const zip = new JSZip();
-            for (const it of convertQueue) zip.file(it.file.name.replace(/\.[^.]+$/, '') + '.' + it.target, await convertSingleFile(it));
-            triggerBlobDownload(await zip.generateAsync({ type: 'blob' }), `weat-converted-${Date.now()}.zip`);
+
+            if (okCount === 0) {
+                showToast('Không có tệp nào chuyển đổi thành công.', 'error');
+                return;
+            }
+            if (okCount === 1) {
+                const only = convertQueue.find(x => x.status === 'done' && x.outBlob);
+                triggerBlobDownload(only.outBlob, only.outName);
+                showToast(`Đã chuyển đổi & tải ${only.outName}!`);
+            } else {
+                const zip = new JSZip();
+                convertQueue.forEach(it => { if (it.status === 'done' && it.outBlob) zip.file(it.outName, it.outBlob); });
+                triggerBlobDownload(await zip.generateAsync({ type: 'blob' }), `weat-converted-${okCount}-files.zip`);
+                showToast(`Đã chuyển đổi ${okCount}/${convertQueue.length} tệp và đóng gói ZIP!`);
+            }
+            setTimeout(() => { if (progWrap) progWrap.classList.add('hidden'); }, 1500);
         }
-        function clearConvertQueue() { convertQueue = []; renderConvertList(); }
+
+        async function mergeQueuedImagesToPdf() {
+            const imgs = convertQueue.filter(it => it.cat === 'image');
+            if (imgs.length < 2) return;
+            showToast(`Đang gộp ${imgs.length} ảnh thành 1 file PDF...`);
+            const quality = parseInt(document.getElementById('convertQualitySlider')?.value || '92', 10) / 100;
+            const bgColor = document.getElementById('convertBgColor')?.value || '#ffffff';
+            const pages = [];
+            for (const it of imgs) {
+                const img = await loadImageFromFile(it.file);
+                const c = document.createElement('canvas');
+                c.width = img.naturalWidth; c.height = img.naturalHeight;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, c.width, c.height);
+                ctx.drawImage(img, 0, 0);
+                const jpgBlob = await new Promise(res => c.toBlob(res, 'image/jpeg', quality));
+                pages.push({ jpegBytes: new Uint8Array(await jpgBlob.arrayBuffer()), width: c.width, height: c.height });
+            }
+            const pdfBlob = buildPdfFromJpegPages(pages);
+            triggerBlobDownload(pdfBlob, `weat-merged-${imgs.length}-images.pdf`);
+            showToast(`Đã xuất PDF gồm ${imgs.length} trang ảnh!`);
+        }
 
         // =========================================================================
         // MODULE 7: QR & BARCODE STUDIO (DEEP CUSTOMIZATION + SCANNER)
