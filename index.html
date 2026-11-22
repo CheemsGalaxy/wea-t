@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <title>Wea-T — Unified Personal Tech Studio</title>
-    <meta name="description" content="Wea-T Studio: Thời tiết & AQI, Bo tròn góc ảnh hàng loạt, Nén ảnh thông minh, YouTube & Cobalt Direct Download, Chuyển đổi 30+ định dạng và QR & Barcode Studio.">
+    <meta name="description" content="Wea-T Studio: Thời tiết & AQI, Bo tròn góc ảnh hàng loạt, Nén ảnh thông minh, YouTube & FFmpeg, Chuyển đổi 30+ định dạng và QR & Barcode Studio.">
 
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,6 +27,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
+        // Prevent Flash of Unstyled Theme
         (function () {
             try {
                 var saved = localStorage.getItem('studio-theme');
@@ -71,6 +72,7 @@
             color: #F4F4F5;
         }
 
+        /* Checkerboard transparency preview */
         .bg-checkerboard {
             background-color: #ffffff;
             background-image: 
@@ -90,6 +92,7 @@
                 linear-gradient(-45deg, transparent 75%, #1E1E22 75%);
         }
 
+        /* Precision Range Slider */
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -125,6 +128,7 @@
             transform: scale(1.15);
         }
 
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 3px; }
@@ -179,8 +183,8 @@
                 <span>Compress</span>
             </button>
             <button type="button" data-nav="youtube" onclick="switchView('youtube')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
-                <i data-lucide="play-square" class="w-3.5 h-3.5"></i>
-                <span>YouTube</span>
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Video DL</span>
             </button>
             <button type="button" data-nav="convert" onclick="switchView('convert')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
@@ -214,17 +218,17 @@
                 <div class="space-y-3 max-w-2xl">
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 font-mono text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-                        100% CLIENT-SIDE · COBALT COMMUNITY API
+                        100% CLIENT-SIDE · ZERO SERVER UPLOAD
                     </span>
                     <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Wea-T Personal Tech Studio</h1>
                     <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                        Không gian công cụ đa năng cho cả máy tính & điện thoại: theo dõi thời tiết & chất lượng không khí, bo tròn góc ảnh hàng loạt, nén ảnh siêu nhẹ, tải video YouTube trực tiếp qua Cobalt Directory, chuyển đổi 30+ định dạng và QR Studio.
+                        Không gian công cụ đa năng xử lý trực tiếp trên trình duyệt: theo dõi thời tiết & chất lượng không khí, bo tròn góc ảnh hàng loạt, nén ảnh siêu nhẹ, tải & ghép video YouTube, chuyển đổi 30+ định dạng và tạo mã QR/Barcode tùy biến sâu.
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2 shrink-0">
-                    <button type="button" onclick="switchView('youtube')" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
-                        <i data-lucide="play-square" class="w-4 h-4"></i>
-                        <span>Tải YouTube (Mobile/PC)</span>
+                    <button type="button" onclick="switchView('qr')" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                        <i data-lucide="qr-code" class="w-4 h-4"></i>
+                        <span>Mở QR Studio</span>
                     </button>
                     <button type="button" onclick="switchView('studio')" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
                         <i data-lucide="crop" class="w-4 h-4"></i>
@@ -263,11 +267,11 @@
 
                 <button type="button" onclick="switchView('youtube')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
                     <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="play-square" class="w-4 h-4"></i></div>
+                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="download" class="w-4 h-4"></i></div>
                         <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
                     </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">YouTube & Cobalt Direct</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Tải trực tiếp MP4/MP3 trên điện thoại & PC qua mạng lưới Cobalt Directory + lệnh Termux/PC.</p>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Smart Video Downloader</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Tải video đa nền tảng (YouTube, TikTok không logo, Facebook, IG, X...) 1-chạm ấn là tải và ghép Video + Audio.</p>
                 </button>
 
                 <button type="button" onclick="switchView('convert')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
@@ -297,6 +301,7 @@
     <div id="view-weather" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
         <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-studio-bg dark:bg-zinc-950">
             <div class="max-w-4xl mx-auto space-y-4">
+                <!-- Current Weather Hero Card -->
                 <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-6 shadow-2xs space-y-6">
                     <div class="flex flex-wrap items-start justify-between gap-4">
                         <div>
@@ -309,8 +314,8 @@
                             <p id="wDescText" class="text-xs text-zinc-500 dark:text-zinc-400 capitalize mt-0.5">Đang tải dữ liệu...</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
-                                <i id="wMainIcon" data-lucide="cloud-sun" class="w-6 h-6"></i>
+                            <div id="wMainIconWrap" class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
+                                <i data-lucide="cloud-sun" class="w-6 h-6"></i>
                             </div>
                             <div class="text-right">
                                 <div class="text-4xl font-bold font-mono tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -321,6 +326,7 @@
                         </div>
                     </div>
 
+                    <!-- 6 Metrics -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
                         <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800">
                             <span class="text-[11px] text-zinc-500 flex items-center gap-1"><i data-lucide="droplets" class="w-3 h-3"></i>Độ ẩm</span>
@@ -348,6 +354,7 @@
                         </div>
                     </div>
 
+                    <!-- Sunrise / Sunset Progress -->
                     <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-800 space-y-2">
                         <div class="flex items-center justify-between text-xs font-mono">
                             <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400"><i data-lucide="sunrise" class="w-3.5 h-3.5"></i>Bình minh: <strong id="wSunrise">--:--</strong></span>
@@ -359,6 +366,7 @@
                     </div>
                 </section>
 
+                <!-- Hourly Forecast Strip -->
                 <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i>Dự báo 24 giờ tới</span>
@@ -367,6 +375,7 @@
                     <div id="wHourlyList" class="grid grid-cols-4 sm:grid-cols-8 gap-2"></div>
                 </section>
 
+                <!-- 5-Day Forecast & Air Quality (AQI) -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-3">
                         <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Dự báo 5 ngày</span>
@@ -401,28 +410,84 @@
             </div>
         </main>
 
+        <!-- Right: Weather Search & Unit Controls -->
         <aside class="w-full lg:w-[340px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
             <div class="space-y-5">
                 <div class="space-y-2.5">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tra cứu thành phố</span>
-                    <form onsubmit="event.preventDefault(); fetchWeatherByCity(document.getElementById('wSearchInput').value);" class="flex gap-1.5">
-                        <input type="text" id="wSearchInput" placeholder="Ha Noi, Tokyo, Seoul..." class="flex-1 px-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 focus:outline-none">
-                        <button type="submit" class="px-3.5 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold">Tìm</button>
-                    </form>
-                    <button type="button" onclick="fetchWeatherByGPS()" class="w-full py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
-                        <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i>
-                        <span>Dùng vị trí GPS hiện tại</span>
-                    </button>
+                    <div class="flex items-center justify-between">
+                        <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tra cứu thành phố</span>
+                        <span class="text-[10px] font-mono text-zinc-400">Nhấn <kbd class="px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">/</kbd> để tìm</span>
+                    </div>
+
+                    <!-- Smart Search Box with Autocomplete Dropdown -->
+                    <div id="wSearchWrapper" class="relative">
+                        <form onsubmit="event.preventDefault(); handleWeatherSearchSubmit();" class="relative flex items-center">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-zinc-400 absolute left-3 pointer-events-none"></i>
+                            <input
+                                type="text"
+                                id="wSearchInput"
+                                autocomplete="off"
+                                spellcheck="false"
+                                placeholder="Hà Nội, Sài Gòn, Đà Lạt, Tokyo..."
+                                oninput="handleWeatherSearchInput(this.value)"
+                                onfocus="handleWeatherSearchFocus()"
+                                onkeydown="handleWeatherSearchKeydown(event)"
+                                class="w-full pl-8 pr-16 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:border-zinc-400 dark:focus:border-zinc-500 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none transition-colors"
+                            >
+                            <div class="absolute right-1.5 flex items-center gap-1">
+                                <span id="wSearchSpinner" class="hidden w-3.5 h-3.5 border-2 border-zinc-300 dark:border-zinc-600 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin mr-0.5"></span>
+                                <button
+                                    type="button"
+                                    id="wSearchClearBtn"
+                                    onclick="clearWeatherSearch()"
+                                    title="Xóa từ khóa"
+                                    class="hidden w-5 h-5 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-200/70 dark:hover:bg-zinc-700/70 items-center justify-center transition-colors"
+                                >
+                                    <i data-lucide="x" class="w-3 h-3"></i>
+                                </button>
+                                <button type="submit" title="Tìm kiếm" class="px-2.5 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-semibold hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                                    Tìm
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Autocomplete Suggestions Dropdown -->
+                        <div id="wSearchDropdown" class="hidden absolute left-0 right-0 top-full mt-1.5 z-40 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-lg overflow-hidden max-h-72 overflow-y-auto">
+                            <div id="wSearchDropdownContent" class="py-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-[1fr_auto] gap-1.5">
+                        <button type="button" id="wGpsBtn" onclick="fetchWeatherByGPS()" class="py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+                            <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i>
+                            <span>Vị trí GPS hiện tại</span>
+                        </button>
+                        <button type="button" id="wPinCityBtn" onclick="togglePinnedCity()" title="Lưu / Bỏ lưu thành phố hiện tại" class="px-2.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center justify-center transition-colors">
+                            <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Saved / Recent Cities (dynamically rendered) -->
+                <div id="wSavedSection" class="hidden space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Đã lưu & Gần đây</span>
+                        <button type="button" onclick="clearRecentCities()" class="text-[10px] text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">Xóa lịch sử</button>
+                    </div>
+                    <div id="wSavedList" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
                 <div class="space-y-2">
                     <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Thành phố phổ biến</span>
                     <div class="flex flex-wrap gap-1.5">
-                        <button type="button" onclick="fetchWeatherByCity('Ha Noi')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">Hà Nội</button>
-                        <button type="button" onclick="fetchWeatherByCity('Ho Chi Minh City')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">TP.HCM</button>
-                        <button type="button" onclick="fetchWeatherByCity('Da Nang')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">Đà Nẵng</button>
-                        <button type="button" onclick="fetchWeatherByCity('Tokyo')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">Tokyo</button>
-                        <button type="button" onclick="fetchWeatherByCity('London')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">London</button>
+                        <button type="button" onclick="selectWeatherPreset('Hà Nội')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Hà Nội</button>
+                        <button type="button" onclick="selectWeatherPreset('TP. Hồ Chí Minh')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">TP.HCM</button>
+                        <button type="button" onclick="selectWeatherPreset('Đà Nẵng')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Đà Nẵng</button>
+                        <button type="button" onclick="selectWeatherPreset('Đà Lạt')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Đà Lạt</button>
+                        <button type="button" onclick="selectWeatherPreset('Nha Trang')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Nha Trang</button>
+                        <button type="button" onclick="selectWeatherPreset('Tokyo')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Tokyo</button>
+                        <button type="button" onclick="selectWeatherPreset('Seoul')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Seoul</button>
+                        <button type="button" onclick="selectWeatherPreset('London')" class="px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">London</button>
                     </div>
                 </div>
 
@@ -435,8 +500,8 @@
                 </div>
             </div>
 
-            <button type="button" onclick="fetchWeatherByCity(currentCity)" class="mt-4 w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <button type="button" id="wRefreshBtn" onclick="refreshCurrentWeather()" class="mt-4 w-full py-2.5 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                <i id="wRefreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                 <span>Làm mới dữ liệu</span>
             </button>
         </aside>
@@ -480,6 +545,7 @@
                 <div id="previewGrid" class="hidden grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-24"></div>
             </div>
 
+            <!-- Floating Bottom Dock -->
             <div id="floatingActionDock" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 lg:left-[calc(50%-175px)] z-30 items-center bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 rounded-full p-1.5 shadow-lg">
                 <button type="button" onclick="document.getElementById('fileInput').click()" class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -493,6 +559,7 @@
             </div>
         </main>
 
+        <!-- Right: Rounder Inspector -->
         <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col shrink-0 h-[50vh] lg:h-full">
             <div class="flex-1 overflow-y-auto divide-y divide-studio-border dark:divide-zinc-800">
                 <div class="p-4 space-y-3">
@@ -584,7 +651,7 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- VIEW 4: SMART IMAGE COMPRESSOR                                        -->
+    <!-- VIEW 4: SMART IMAGE COMPRESSOR (TINYPNG-INSPIRED)                     -->
     <!-- ===================================================================== -->
     <div id="view-compress" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
         <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-hidden relative">
@@ -652,146 +719,248 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- VIEW 5: YOUTUBE & COBALT DIRECT STUDIO (MOBILE + DESKTOP)             -->
+    <!-- VIEW 5: SMART MULTI-PLATFORM VIDEO DOWNLOADER                         -->
     <!-- ===================================================================== -->
     <div id="view-youtube" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
         <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-studio-bg dark:bg-zinc-950">
             <div class="max-w-4xl mx-auto space-y-4">
-                <!-- URL Input & Instant Cobalt Direct Download -->
-                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3.5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tải Video / Nhạc YouTube (Điện thoại & Máy tính)</span>
-                        <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">COBALT DIRECTORY API</span>
+                <!-- Smart 1-Tap URL Input & Instant Download Hero -->
+                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-3.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-zinc-900 dark:text-zinc-100">Tải Video Đa Nền Tảng</span>
+                            <span id="ytPlatformBadge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-red-500/10 text-red-600 dark:text-red-400">
+                                <i data-lucide="youtube" class="w-3 h-3"></i>
+                                <span>YouTube</span>
+                            </span>
+                        </div>
+                        <span class="text-[11px] text-zinc-400 hidden sm:inline">Hỗ trợ YouTube · TikTok · Facebook · Instagram · X · Bilibili · 1000+ trang</span>
                     </div>
+
+                    <!-- Single-Line Smart Paste & Download Bar -->
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <div class="flex-1 flex items-center bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3">
-                            <input type="text" id="ytUrlInput" value="https://www.youtube.com/watch?v=kTJczUoc26U" oninput="updateYtCommand()" placeholder="Dán link YouTube (watch?v=, youtu.be/, shorts/)..." class="w-full py-2.5 text-xs font-mono bg-transparent focus:outline-none">
-                            <button type="button" onclick="pasteYouTubeUrl()" title="Dán link" class="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
-                                <i data-lucide="clipboard-paste" class="w-4 h-4"></i>
+                        <div class="flex-1 flex items-center bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus-within:border-zinc-400 dark:focus-within:border-zinc-500 rounded-xl px-3 transition-colors">
+                            <i data-lucide="link-2" class="w-4 h-4 text-zinc-400 shrink-0 mr-2"></i>
+                            <input
+                                type="text"
+                                id="ytUrlInput"
+                                value=""
+                                oninput="handleVideoUrlInput(this.value)"
+                                onkeydown="if(event.key==='Enter'){event.preventDefault(); smartOneClickDownload();}"
+                                placeholder="Dán link bất kỳ (Ctrl+V ở đâu cũng được)..."
+                                class="w-full py-2.5 text-xs font-mono bg-transparent text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
+                            >
+                            <button type="button" id="ytClearBtn" onclick="clearVideoUrl()" title="Xóa link" class="hidden p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button type="button" onclick="pasteAndAnalyzeVideo()" title="Dán link từ Clipboard" class="ml-1 px-2.5 py-1 rounded-lg bg-zinc-200/70 dark:bg-zinc-700/70 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-[11px] font-medium text-zinc-700 dark:text-zinc-200 inline-flex items-center gap-1 shrink-0 transition-colors">
+                                <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
+                                <span>Dán</span>
                             </button>
                         </div>
-                        <button type="button" onclick="analyzeYouTubeUrl()" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
-                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
-                            <span>Kiểm tra</span>
-                        </button>
-                        <button type="button" id="btnCobaltDirect" onclick="downloadViaCobaltDirect()" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-zinc-800 dark:hover:bg-white transition-colors shadow-xs">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                            <span id="btnCobaltDirectLabel">Tải trực tiếp (Mobile/PC)</span>
+
+                        <button type="button" id="ytPrimaryDownloadBtn" onclick="smartOneClickDownload()" class="px-5 py-2.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white text-xs font-semibold inline-flex items-center justify-center gap-2 shrink-0 shadow-xs transition-all">
+                            <i id="ytPrimaryDlIcon" data-lucide="download" class="w-4 h-4"></i>
+                            <span id="ytPrimaryDlLabel">Tải ngay</span>
                         </button>
                     </div>
 
-                    <!-- Cobalt Direct Result / Fallback Bar -->
-                    <div id="cobaltStatusBanner" class="hidden p-3 rounded-lg border text-xs flex flex-wrap items-center justify-between gap-2">
-                        <span id="cobaltStatusText" class="font-medium">Đang kết nối tới node Cobalt...</span>
-                        <div id="cobaltActionLinks" class="flex items-center gap-2"></div>
-                    </div>
-                </div>
-
-                <!-- Cobalt Directory Live Node Selector -->
-                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="server" class="w-3.5 h-3.5"></i>Máy chủ Cobalt Community (cobalt.directory)</span>
-                            <p class="text-[11px] text-zinc-400 mt-0.5">Tự động xoay vòng qua các node điểm cao (96–100%) nếu một máy chủ bận hoặc yêu cầu Turnstile.</p>
+                    <!-- Quick Format Pills (1-click, right under input) -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button type="button" data-ytfmt="best" onclick="setYtFormat('best')" class="yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-semibold transition-colors">Tốt nhất</button>
+                            <button type="button" data-ytfmt="1080" onclick="setYtFormat('1080')" class="yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">1080p HD</button>
+                            <button type="button" data-ytfmt="2160" onclick="setYtFormat('2160')" class="yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">4K UHD</button>
+                            <button type="button" data-ytfmt="720" onclick="setYtFormat('720')" class="yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">720p</button>
+                            <button type="button" data-ytfmt="mp3" onclick="setYtFormat('mp3')" class="yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">MP3 Nhạc</button>
                         </div>
-                        <a href="https://cobalt.directory/" target="_blank" rel="noopener noreferrer" class="text-[11px] font-mono text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline">Xem bảng trạng thái gốc ↗</a>
-                    </div>
 
-                    <div id="cobaltNodeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
-
-                    <div class="pt-1 flex flex-col sm:flex-row gap-2">
-                        <input type="url" id="customCobaltApiInput" placeholder="Hoặc dán API Endpoint Cobalt tự host của bạn (VD: https://api.domain.com)..." class="flex-1 px-3 py-1.5 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none">
-                        <button type="button" onclick="applyCustomCobaltEndpoint()" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">Dùng API này</button>
+                        <div class="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                            <span id="ytAnalyzeStatus" class="font-mono text-[10px] text-zinc-400"></span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Video Metadata & Thumbnails -->
-                <div id="ytPreviewCard" class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-4">
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <img id="ytThumbImg" src="https://i.ytimg.com/vi/kTJczUoc26U/hqdefault.jpg" alt="Thumbnail" class="w-full md:w-56 aspect-video object-cover rounded-lg border border-zinc-200 dark:border-zinc-800">
-                        <div class="space-y-1.5 flex-1">
-                            <span class="text-[11px] font-mono text-zinc-400" id="ytVideoIdBadge">ID: kTJczUoc26U</span>
-                            <h3 id="ytVideoTitle" class="text-base font-bold text-zinc-900 dark:text-zinc-100">The Kid LAROI, Justin Bieber - STAY (Official Video)</h3>
-                            <p id="ytChannelName" class="text-xs text-zinc-500">The Kid LAROI</p>
-                            <div class="pt-2 flex flex-wrap gap-2">
-                                <a id="ytThumbMaxLink" href="https://i.ytimg.com/vi/kTJczUoc26U/maxresdefault.jpg" target="_blank" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium inline-flex items-center gap-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                    <i data-lucide="image" class="w-3.5 h-3.5"></i><span>Ảnh bìa HD 1280×720</span>
-                                </a>
-                                <button type="button" onclick="openSelectedCobaltFrontend()" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium inline-flex items-center gap-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>Mở Web Cobalt Node</span>
-                                </button>
+                <!-- Dynamic Preview & Instant Download Action Card -->
+                <div id="ytPreviewCard" class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-5 shadow-2xs space-y-4">
+                    <div id="ytEmptyPreview" class="py-4 text-center space-y-3">
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
+                            <span class="px-2.5 py-1 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 text-[11px] font-medium">YouTube / Shorts</span>
+                            <span class="px-2.5 py-1 rounded-full bg-zinc-900/10 dark:bg-zinc-100/10 text-zinc-800 dark:text-zinc-200 text-[11px] font-medium">TikTok (Không logo)</span>
+                            <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-medium">Facebook / Reels</span>
+                            <span class="px-2.5 py-1 rounded-full bg-pink-500/10 text-pink-600 dark:text-pink-400 text-[11px] font-medium">Instagram</span>
+                            <span class="px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[11px] font-medium">X / Twitter</span>
+                            <span class="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[11px] font-medium">Bilibili · Reddit · Threads</span>
+                        </div>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+                            Chỉ cần <strong class="text-zinc-800 dark:text-zinc-200">Dán link (Ctrl+V)</strong> — hệ thống tự nhận diện nền tảng, lấy thông tin video và sẵn sàng <strong class="text-zinc-800 dark:text-zinc-200">ấn là tải</strong>.
+                        </p>
+                    </div>
+
+                    <div id="ytLoadedPreview" class="hidden space-y-4">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="relative w-full md:w-56 aspect-video rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 shrink-0 flex items-center justify-center">
+                                <img id="ytThumbImg" src="" alt="Thumbnail" class="w-full h-full object-cover hidden">
+                                <div id="ytThumbFallback" class="flex flex-col items-center justify-center gap-1.5 text-zinc-400">
+                                    <i data-lucide="film" class="w-7 h-7"></i>
+                                    <span id="ytThumbFallbackLabel" class="text-[11px] font-mono">MEDIA</span>
+                                </div>
+                                <span id="ytDurationBadge" class="hidden absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/75 text-white text-[10px] font-mono"></span>
+                            </div>
+
+                            <div class="space-y-2 flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span id="ytVideoIdBadge" class="text-[11px] font-mono text-zinc-400 truncate"></span>
+                                </div>
+                                <h3 id="ytVideoTitle" class="text-base font-bold text-zinc-900 dark:text-zinc-100 line-clamp-2">Đang phân tích...</h3>
+                                <p id="ytChannelName" class="text-xs text-zinc-500 truncate"></p>
+
+                                <!-- Dynamic Direct / Smart Download Buttons -->
+                                <div id="ytDirectActionBar" class="pt-1.5 flex flex-wrap gap-2"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Browser FFmpeg Muxer (Merge Video + Audio) -->
-                <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3">
+                <!-- Recent Downloads (1-click re-load) -->
+                <div id="ytHistoryCard" class="hidden bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-4 shadow-2xs space-y-2.5">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="combine" class="w-3.5 h-3.5"></i>Ghép Video + Audio trực tiếp</span>
-                        <span class="text-[11px] font-mono text-zinc-400">MP4 + MP3/M4A</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
+                            <i data-lucide="history" class="w-3.5 h-3.5"></i>Liên kết gần đây
+                        </span>
+                        <button type="button" onclick="clearVideoHistory()" class="text-[11px] text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">Xóa</button>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <label class="p-3 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center justify-between">
-                            <span id="muxVideoName" class="truncate text-zinc-600 dark:text-zinc-300">1. Chọn file Video (.mp4/.webm)</span>
-                            <input type="file" accept="video/*" class="hidden" onchange="handleMuxFileSelect('video', this.files[0])">
-                            <i data-lucide="film" class="w-4 h-4 text-zinc-400 shrink-0"></i>
-                        </label>
-                        <label class="p-3 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center justify-between">
-                            <span id="muxAudioName" class="truncate text-zinc-600 dark:text-zinc-300">2. Chọn file Audio (.mp3/.m4a)</span>
-                            <input type="file" accept="audio/*" class="hidden" onchange="handleMuxFileSelect('audio', this.files[0])">
-                            <i data-lucide="music" class="w-4 h-4 text-zinc-400 shrink-0"></i>
-                        </label>
-                    </div>
-                    <button type="button" onclick="mergeVideoAndAudioBrowser()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5">
-                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                        <span>Ghép thành 1 file hoàn chỉnh</span>
-                    </button>
+                    <div id="ytHistoryList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 </div>
+
+                <!-- Batch Multi-Link & Browser Muxer (Collapsible / Compact) -->
+                <details class="group bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl shadow-2xs overflow-hidden">
+                    <summary class="px-5 py-3.5 cursor-pointer list-none flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="list-video" class="w-4 h-4 text-zinc-500"></i>
+                            <span>Tải hàng loạt nhiều link cùng lúc (Playlist / Đa nền tảng)</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="px-5 pb-5 pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+                        <textarea id="ytBatchInput" rows="4" placeholder="Dán nhiều link (mỗi dòng 1 link YouTube, TikTok, Facebook, IG...)..." class="w-full p-3 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-800 dark:text-zinc-200 focus:outline-none"></textarea>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="downloadBatchVideoScript()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5">
+                                <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                                <span>Tải file chạy hàng loạt (.BAT / .SH)</span>
+                            </button>
+                            <button type="button" onclick="copyBatchVideoCommand()" class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copy lệnh tải hàng loạt</span>
+                            </button>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="group bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl shadow-2xs overflow-hidden">
+                    <summary class="px-5 py-3.5 cursor-pointer list-none flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="combine" class="w-4 h-4 text-zinc-500"></i>
+                            <span>Ghép file Video + Audio trực tiếp trên trình duyệt</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400 transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="px-5 pb-5 pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="p-3 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center justify-between">
+                                <span id="muxVideoName" class="truncate text-zinc-600 dark:text-zinc-300">1. Chọn file Video (.mp4/.webm)</span>
+                                <input type="file" accept="video/*" class="hidden" onchange="handleMuxFileSelect('video', this.files[0])">
+                                <i data-lucide="film" class="w-4 h-4 text-zinc-400 shrink-0"></i>
+                            </label>
+                            <label class="p-3 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 flex items-center justify-between">
+                                <span id="muxAudioName" class="truncate text-zinc-600 dark:text-zinc-300">2. Chọn file Audio (.mp3/.m4a)</span>
+                                <input type="file" accept="audio/*" class="hidden" onchange="handleMuxFileSelect('audio', this.files[0])">
+                                <i data-lucide="music" class="w-4 h-4 text-zinc-400 shrink-0"></i>
+                            </label>
+                        </div>
+                        <button type="button" onclick="mergeVideoAndAudioBrowser()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                            <span>Ghép thành 1 file hoàn chỉnh</span>
+                        </button>
+                    </div>
+                </details>
             </div>
         </main>
 
-        <!-- Right: Quality + CLI Commands (Win / Android Termux / Mac) -->
-        <aside class="w-full lg:w-[360px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
+        <!-- Right Sidebar: 1-Click Mode & Power Options -->
+        <aside class="w-full lg:w-[340px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
             <div class="space-y-4">
                 <div class="space-y-2">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Chất lượng & Định dạng</span>
-                    <div class="grid grid-cols-2 gap-1.5">
-                        <button type="button" data-ytfmt="1080" onclick="setYtFormat('1080')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium">MP4 1080p Full HD</button>
-                        <button type="button" data-ytfmt="2160" onclick="setYtFormat('2160')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium">MP4 4K Ultra HD</button>
-                        <button type="button" data-ytfmt="720" onclick="setYtFormat('720')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium">MP4 720p HD</button>
-                        <button type="button" data-ytfmt="mp3" onclick="setYtFormat('mp3')" class="yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium">MP3 320kbps</button>
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Chế độ nút "Tải ngay"</span>
+                    <div class="space-y-1.5">
+                        <button type="button" data-dlmode="auto" onclick="setVideoDownloadMode('auto')" class="yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs transition-colors">
+                            <div class="font-semibold flex items-center justify-between">
+                                <span>Tự động thông minh</span>
+                                <span class="text-[10px] font-mono opacity-80">AUTO</span>
+                            </div>
+                            <div class="text-[10px] opacity-75 mt-0.5">TikTok tải thẳng · YT/FB/IG tải script 1-nhấp</div>
+                        </button>
+                        <button type="button" data-dlmode="web" onclick="setVideoDownloadMode('web')" class="yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                            <div class="font-semibold flex items-center justify-between">
+                                <span>Tải nhanh qua Web (Không cài gì)</span>
+                                <span class="text-[10px] font-mono text-zinc-400">WEB</span>
+                            </div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">TikTok tải thẳng · Các trang khác mở Cobalt đã copy sẵn link</div>
+                        </button>
+                        <button type="button" data-dlmode="script" onclick="setVideoDownloadMode('script')" class="yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                            <div class="font-semibold flex items-center justify-between">
+                                <span>File tự chạy (.BAT / .SH)</span>
+                                <span class="text-[10px] font-mono text-zinc-400">MAX HD</span>
+                            </div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">Tải 4K/60fps/MP3 mọi trang, tự lưu vào Downloads</div>
+                        </button>
+                        <button type="button" data-dlmode="copy" onclick="setVideoDownloadMode('copy')" class="yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                            <div class="font-semibold flex items-center justify-between">
+                                <span>Copy lệnh Terminal</span>
+                                <span class="text-[10px] font-mono text-zinc-400">CLI</span>
+                            </div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">1-chạm sao chép lệnh PowerShell / Bash</div>
+                        </button>
                     </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Xác thực Cookie (Khi chạy CLI trên máy)</label>
-                    <select id="ytCookieMode" onchange="updateYtCommand()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2.5 py-2">
-                        <option value="cookies_txt">Tự dùng cookies.txt trong Downloads (Khuyên dùng)</option>
-                        <option value="firefox">Lấy từ Firefox</option>
-                        <option value="bypass">Bypass (Android VR / TV)</option>
-                    </select>
-                </div>
+                <!-- Collapsible Power Options -->
+                <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
+                    <summary class="px-3 py-2.5 cursor-pointer list-none flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-zinc-500 bg-zinc-50 dark:bg-zinc-800/50">
+                        <span>Tùy chọn nâng cao (yt-dlp)</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="p-3 space-y-3 bg-white dark:bg-zinc-900">
+                        <div class="space-y-1">
+                            <label class="block text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Xác thực Cookie (Video riêng tư / 18+)</label>
+                            <select id="ytCookieMode" onchange="updateYtCommand()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5">
+                                <option value="auto">Tự động (Dùng cookies.txt nếu có)</option>
+                                <option value="chrome">Lấy từ Chrome / Edge</option>
+                                <option value="firefox">Lấy từ Firefox</option>
+                                <option value="bypass">Bypass YouTube (Android VR)</option>
+                            </select>
+                        </div>
 
-                <div class="space-y-1.5">
-                    <div class="flex items-center justify-between gap-1">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Lệnh 1-chạm</span>
-                        <div class="flex gap-1 text-[10px] font-mono">
-                            <button type="button" id="ytShellWin" onclick="setYtShell('win')" class="px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900">Win</button>
-                            <button type="button" id="ytShellTermux" onclick="setYtShell('termux')" class="px-1.5 py-0.5 rounded text-zinc-500">Android Termux</button>
-                            <button type="button" id="ytShellUnix" onclick="setYtShell('unix')" class="px-1.5 py-0.5 rounded text-zinc-500">Mac/Linux</button>
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Hệ điều hành</span>
+                                <div class="flex gap-1 text-[11px] font-mono">
+                                    <button type="button" id="ytShellWin" onclick="setYtShell('win')" class="px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900">Win</button>
+                                    <button type="button" id="ytShellUnix" onclick="setYtShell('unix')" class="px-1.5 py-0.5 rounded text-zinc-500">Mac/Linux</button>
+                                </div>
+                            </div>
+                            <textarea id="ytCliCommand" rows="4" readonly class="w-full p-2 text-[10px] font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-700 dark:text-zinc-300 focus:outline-none"></textarea>
                         </div>
                     </div>
-                    <textarea id="ytCliCommand" rows="5" readonly class="w-full p-2.5 text-[11px] font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-800 dark:text-zinc-200 focus:outline-none"></textarea>
-                </div>
+                </details>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 pt-3">
-                <button type="button" onclick="copyYtCommand()" class="py-2.5 px-3 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-1.5">
+            <div class="grid grid-cols-2 gap-2 pt-4">
+                <button type="button" onclick="copyYtCommand()" class="py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copy lệnh</span>
                 </button>
-                <button type="button" onclick="downloadYtBatchScript()" class="py-2.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-semibold flex items-center justify-center gap-1.5">
-                    <i data-lucide="file-terminal" class="w-3.5 h-3.5"></i><span>Tải file .BAT</span>
+                <button type="button" onclick="downloadYtBatchScript()" class="py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                    <i data-lucide="file-terminal" class="w-3.5 h-3.5"></i><span id="ytScriptBtnLabel">Tải .BAT</span>
                 </button>
             </div>
         </aside>
@@ -871,8 +1040,10 @@
     <!-- VIEW 7: QR & BARCODE STUDIO (DEEP CUSTOMIZATION & SCANNER)            -->
     <!-- ===================================================================== -->
     <div id="view-qr" class="app-view hidden flex-1 flex-col lg:flex-row overflow-hidden">
+        <!-- Left / Center: Live Preview Canvas + Data Payload + Scanner -->
         <main class="flex-1 flex flex-col min-w-0 bg-studio-bg dark:bg-zinc-950 overflow-y-auto p-4 lg:p-6">
             <div class="max-w-5xl w-full mx-auto space-y-4">
+                <!-- Mode Switcher Bar -->
                 <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-2 flex flex-wrap items-center justify-between gap-2 shadow-2xs">
                     <div class="inline-flex p-1 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60">
                         <button type="button" id="qrModeBtnQr" onclick="setQrStudioMode('qr')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs inline-flex items-center gap-1.5">
@@ -891,8 +1062,11 @@
                     <span id="qrPayloadLengthBadge" class="text-[11px] font-mono px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">PAYLOAD · READY</span>
                 </div>
 
+                <!-- MODE A & B: GENERATOR WORKSPACE -->
                 <div id="qrGeneratorWorkspace" class="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-4 items-start">
+                    <!-- Left: Content & Templates -->
                     <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-4">
+                        <!-- QR Templates -->
                         <div id="qrTemplateSection" class="space-y-2.5">
                             <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Loại nội dung QR</span>
                             <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
@@ -917,6 +1091,7 @@
                             </div>
                         </div>
 
+                        <!-- Dynamic Form Fields -->
                         <div id="qrFieldsUrl" class="qr-field-group space-y-2">
                             <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">Đường dẫn Website (URL)</label>
                             <input type="url" id="qrInputUrl" value="https://github.com/CheemsGalaxy" oninput="renderQrStudio()" placeholder="https://example.com" class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 focus:outline-none">
@@ -1022,6 +1197,7 @@
                             <textarea id="qrInputText" rows="3" oninput="renderQrStudio()" placeholder="Nhập ghi chú, mã giảm giá, chuỗi JSON..." class="w-full px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-zinc-100 focus:outline-none">Wea-T Studio — Precision QR Generator</textarea>
                         </div>
 
+                        <!-- Barcode 1D Fields -->
                         <div id="barcodeFieldsSection" class="hidden space-y-3">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
@@ -1041,6 +1217,7 @@
                             </div>
                         </div>
 
+                        <!-- Raw Payload Preview -->
                         <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-1.5">
                             <div class="flex items-center justify-between">
                                 <span class="text-[11px] font-mono text-zinc-400">ENCODED PAYLOAD</span>
@@ -1050,6 +1227,7 @@
                         </div>
                     </div>
 
+                    <!-- Right: Live High-Res Preview Card -->
                     <div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs flex flex-col items-center space-y-4">
                         <div class="w-full flex items-center justify-between text-[11px] font-mono text-zinc-400">
                             <span>LIVE PREVIEW</span>
@@ -1078,6 +1256,7 @@
                     </div>
                 </div>
 
+                <!-- MODE C: QR & BARCODE SCANNER -->
                 <div id="qrScannerWorkspace" class="hidden space-y-4">
                     <div onclick="document.getElementById('qrScanInput').click()" class="cursor-pointer min-h-[320px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
                         <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
@@ -1102,8 +1281,10 @@
             </div>
         </main>
 
+        <!-- Right: Deep QR & Barcode Customization Inspector -->
         <aside class="w-full lg:w-[350px] bg-white dark:bg-zinc-900 border-t lg:border-t-0 lg:border-l border-studio-border dark:border-zinc-800 flex flex-col shrink-0 h-[50vh] lg:h-full">
             <div id="qrCustomInspector" class="flex-1 overflow-y-auto divide-y divide-studio-border dark:divide-zinc-800">
+                <!-- 1. Dot & Eye Geometry -->
                 <div class="p-4 space-y-3">
                     <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Hình dáng chấm dữ liệu (Dots)</span>
                     <div class="grid grid-cols-4 gap-1.5">
@@ -1133,6 +1314,7 @@
                     </div>
                 </div>
 
+                <!-- 2. Color & Gradient Engine -->
                 <div class="p-4 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Màu sắc & Gradient</span>
@@ -1169,6 +1351,7 @@
                     </div>
                 </div>
 
+                <!-- 3. Center Logo Overlay -->
                 <div class="p-4 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Chèn Logo ở giữa</span>
@@ -1189,6 +1372,7 @@
                     </div>
                 </div>
 
+                <!-- 4. Precision Margin & Error Correction -->
                 <div class="p-4 space-y-3">
                     <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Kỹ thuật & Độ bền quét</span>
                     <div class="grid grid-cols-2 gap-2.5">
@@ -1209,6 +1393,7 @@
                 </div>
             </div>
 
+            <!-- Barcode Inspector (Shown when mode = barcode) -->
             <div id="barcodeCustomInspector" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
                 <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Tùy chỉnh Barcode 1D</span>
                 <div class="grid grid-cols-2 gap-2.5">
@@ -1283,7 +1468,7 @@
             toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 ${color} shrink-0"></i><span>${message}</span>`;
             container.appendChild(toast);
             lucide.createIcons();
-            setTimeout(() => toast.remove(), 3200);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         function triggerBlobDownload(blob, filename) {
@@ -1325,7 +1510,7 @@
                 weather: 'WEATHER & AQI STUDIO',
                 studio: 'CORNER ROUNDER',
                 compress: 'SMART COMPRESSOR',
-                youtube: 'YOUTUBE & COBALT DIRECT',
+                youtube: 'SMART VIDEO DOWNLOADER',
                 convert: 'UNIVERSAL CONVERTER',
                 qr: 'QR & BARCODE STUDIO'
             };
@@ -1334,132 +1519,786 @@
 
             if (viewName === 'weather' && !weatherInitialized) {
                 weatherInitialized = true;
-                fetchWeatherByCity(currentCity);
+                initWeatherModule();
             }
-            if (viewName === 'youtube') {
-                renderCobaltNodes();
-                updateYtCommand();
-            }
+            if (viewName === 'youtube') initVideoDownloader();
             if (viewName === 'qr') renderQrStudio();
             if (updateHash) history.replaceState(null, '', `#${viewName}`);
             lucide.createIcons();
         }
 
         // =========================================================================
-        // MODULE 2: WEATHER & AQI ENGINE
+        // MODULE 2: WEATHER & AQI ENGINE (Open-Meteo · No API Key · Smart Search)
         // =========================================================================
-        const OW_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
+        const WEATHER_PRESETS = [
+            { name: 'Hà Nội', admin1: 'Hà Nội', country: 'Việt Nam', country_code: 'VN', lat: 21.0285, lon: 105.8542, aliases: ['hn', 'ha noi', 'hanoi', 'hà nội'] },
+            { name: 'TP. Hồ Chí Minh', admin1: 'TP. Hồ Chí Minh', country: 'Việt Nam', country_code: 'VN', lat: 10.8231, lon: 106.6297, aliases: ['hcm', 'tphcm', 'tp hcm', 'tp.hcm', 'sai gon', 'saigon', 'sài gòn', 'sg', 'ho chi minh', 'ho chi minh city'] },
+            { name: 'Đà Nẵng', admin1: 'Đà Nẵng', country: 'Việt Nam', country_code: 'VN', lat: 16.0544, lon: 108.2022, aliases: ['dn', 'da nang', 'danang', 'đà nẵng'] },
+            { name: 'Đà Lạt', admin1: 'Lâm Đồng', country: 'Việt Nam', country_code: 'VN', lat: 11.9404, lon: 108.4583, aliases: ['dl', 'da lat', 'dalat', 'đà lạt'] },
+            { name: 'Nha Trang', admin1: 'Khánh Hòa', country: 'Việt Nam', country_code: 'VN', lat: 12.2388, lon: 109.1967, aliases: ['nt', 'nha trang', 'nhatrang'] },
+            { name: 'Hải Phòng', admin1: 'Hải Phòng', country: 'Việt Nam', country_code: 'VN', lat: 20.8449, lon: 106.6881, aliases: ['hp', 'hai phong', 'haiphong', 'hải phòng'] },
+            { name: 'Cần Thơ', admin1: 'Cần Thơ', country: 'Việt Nam', country_code: 'VN', lat: 10.0452, lon: 105.7469, aliases: ['ct', 'can tho', 'cantho', 'cần thơ'] },
+            { name: 'Huế', admin1: 'Thừa Thiên Huế', country: 'Việt Nam', country_code: 'VN', lat: 16.4637, lon: 107.5909, aliases: ['hue', 'huế', 'tp hue'] },
+            { name: 'Vũng Tàu', admin1: 'Bà Rịa - Vũng Tàu', country: 'Việt Nam', country_code: 'VN', lat: 10.3460, lon: 107.0843, aliases: ['vt', 'vung tau', 'vungtau', 'vũng tàu'] },
+            { name: 'Phú Quốc', admin1: 'Kiên Giang', country: 'Việt Nam', country_code: 'VN', lat: 10.2899, lon: 103.9840, aliases: ['pq', 'phu quoc', 'phuquoc', 'phú quốc'] },
+            { name: 'Sa Pa', admin1: 'Lào Cai', country: 'Việt Nam', country_code: 'VN', lat: 22.3364, lon: 103.8438, aliases: ['sapa', 'sa pa'] },
+            { name: 'Tokyo', admin1: 'Tokyo', country: 'Nhật Bản', country_code: 'JP', lat: 35.6762, lon: 139.6503, aliases: ['tokyo', 'tyo'] },
+            { name: 'Seoul', admin1: 'Seoul', country: 'Hàn Quốc', country_code: 'KR', lat: 37.5665, lon: 126.9780, aliases: ['seoul', 'sel'] },
+            { name: 'Singapore', admin1: 'Singapore', country: 'Singapore', country_code: 'SG', lat: 1.3521, lon: 103.8198, aliases: ['singapore', 'sgp', 'sing'] },
+            { name: 'Bangkok', admin1: 'Bangkok', country: 'Thái Lan', country_code: 'TH', lat: 13.7563, lon: 100.5018, aliases: ['bangkok', 'bkk'] },
+            { name: 'London', admin1: 'England', country: 'Vương quốc Anh', country_code: 'GB', lat: 51.5074, lon: -0.1278, aliases: ['london', 'ldn'] },
+            { name: 'New York', admin1: 'New York', country: 'Hoa Kỳ', country_code: 'US', lat: 40.7128, lon: -74.0060, aliases: ['new york', 'nyc', 'ny'] },
+            { name: 'Paris', admin1: 'Île-de-France', country: 'Pháp', country_code: 'FR', lat: 48.8566, lon: 2.3522, aliases: ['paris'] },
+            { name: 'Sydney', admin1: 'New South Wales', country: 'Úc', country_code: 'AU', lat: -33.8688, lon: 151.2093, aliases: ['sydney'] }
+        ];
+
+        const WEATHER_STORAGE_KEYS = {
+            lastCity: 'weat-weather-last-city',
+            recent: 'weat-weather-recent-cities',
+            pinned: 'weat-weather-pinned-cities'
+        };
+
+        let currentLocation = { ...WEATHER_PRESETS[0] };
+        let weatherSearchDebounce = null;
+        let weatherSearchAbort = null;
+        let weatherSuggestions = [];
+        let weatherActiveSuggestionIdx = -1;
+
+        function normalizeSearchText(str) {
+            return (str || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9\s.,-]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        function getStoredCities(key) {
+            try {
+                const raw = localStorage.getItem(key);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveStoredCities(key, list) {
+            try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {}
+        }
+
+        function isSameLocation(a, b) {
+            if (!a || !b) return false;
+            return Math.abs((a.lat || 0) - (b.lat || 0)) < 0.05 && Math.abs((a.lon || 0) - (b.lon || 0)) < 0.05;
+        }
+
+        function recordRecentCity(loc) {
+            if (!loc || typeof loc.lat !== 'number' || typeof loc.lon !== 'number') return;
+            const entry = {
+                name: loc.name,
+                admin1: loc.admin1 || '',
+                country: loc.country || '',
+                country_code: loc.country_code || '',
+                lat: loc.lat,
+                lon: loc.lon
+            };
+            try { localStorage.setItem(WEATHER_STORAGE_KEYS.lastCity, JSON.stringify(entry)); } catch (e) {}
+            const recent = getStoredCities(WEATHER_STORAGE_KEYS.recent).filter(c => !isSameLocation(c, entry));
+            recent.unshift(entry);
+            saveStoredCities(WEATHER_STORAGE_KEYS.recent, recent.slice(0, 6));
+            renderSavedAndRecentCities();
+            updatePinButtonState();
+        }
+
+        function togglePinnedCity() {
+            if (!currentLocation) return;
+            const pinned = getStoredCities(WEATHER_STORAGE_KEYS.pinned);
+            const exists = pinned.some(c => isSameLocation(c, currentLocation));
+            let next;
+            if (exists) {
+                next = pinned.filter(c => !isSameLocation(c, currentLocation));
+                showToast(`Đã bỏ lưu ${currentLocation.name}.`);
+            } else {
+                next = [{
+                    name: currentLocation.name,
+                    admin1: currentLocation.admin1 || '',
+                    country: currentLocation.country || '',
+                    country_code: currentLocation.country_code || '',
+                    lat: currentLocation.lat,
+                    lon: currentLocation.lon
+                }, ...pinned].slice(0, 8);
+                showToast(`Đã lưu ${currentLocation.name} vào danh sách nhanh.`);
+            }
+            saveStoredCities(WEATHER_STORAGE_KEYS.pinned, next);
+            renderSavedAndRecentCities();
+            updatePinButtonState();
+        }
+
+        function updatePinButtonState() {
+            const btn = document.getElementById('wPinCityBtn');
+            if (!btn) return;
+            const pinned = getStoredCities(WEATHER_STORAGE_KEYS.pinned);
+            const isPinned = pinned.some(c => isSameLocation(c, currentLocation));
+            btn.className = isPinned
+                ? 'px-2.5 py-2 rounded-lg border border-amber-400/60 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors'
+                : 'px-2.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center justify-center transition-colors';
+            btn.innerHTML = `<i data-lucide="${isPinned ? 'bookmark-check' : 'bookmark'}" class="w-3.5 h-3.5"></i>`;
+            lucide.createIcons();
+        }
+
+        function clearRecentCities() {
+            saveStoredCities(WEATHER_STORAGE_KEYS.recent, []);
+            renderSavedAndRecentCities();
+            showToast('Đã xóa lịch sử tìm kiếm.');
+        }
+
+        function renderSavedAndRecentCities() {
+            const section = document.getElementById('wSavedSection');
+            const listEl = document.getElementById('wSavedList');
+            if (!section || !listEl) return;
+            const pinned = getStoredCities(WEATHER_STORAGE_KEYS.pinned);
+            const recent = getStoredCities(WEATHER_STORAGE_KEYS.recent).filter(r => !pinned.some(p => isSameLocation(p, r)));
+            const combined = [
+                ...pinned.map(c => ({ ...c, _pinned: true })),
+                ...recent.map(c => ({ ...c, _pinned: false }))
+            ];
+            if (combined.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+            listEl.innerHTML = combined.map((c, idx) => `
+                <button type="button" onclick="selectStoredCity(${idx}, ${c._pinned ? 'true' : 'false'})" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border ${c._pinned ? 'border-amber-300/80 dark:border-amber-700/70 bg-amber-50/70 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300' : 'border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'} text-xs transition-colors">
+                    ${c._pinned ? '<i data-lucide="bookmark" class="w-3 h-3 fill-current"></i>' : '<i data-lucide="history" class="w-3 h-3 text-zinc-400"></i>'}
+                    <span>${escapeHtml(c.name)}</span>
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function selectStoredCity(idx, isPinned) {
+            const pinned = getStoredCities(WEATHER_STORAGE_KEYS.pinned);
+            const recent = getStoredCities(WEATHER_STORAGE_KEYS.recent).filter(r => !pinned.some(p => isSameLocation(p, r)));
+            const target = isPinned ? pinned[idx] : recent[idx - pinned.length];
+            if (target) loadWeatherForLocation(target);
+        }
+
+        function initWeatherModule() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEYS.lastCity) || 'null');
+                if (saved && typeof saved.lat === 'number' && typeof saved.lon === 'number') {
+                    currentLocation = saved;
+                }
+            } catch (e) {}
+            renderSavedAndRecentCities();
+            updatePinButtonState();
+            loadWeatherForLocation(currentLocation, false);
+        }
+
+        function selectWeatherPreset(name) {
+            const found = WEATHER_PRESETS.find(p => p.name === name);
+            if (found) {
+                closeWeatherDropdown();
+                const input = document.getElementById('wSearchInput');
+                if (input) input.value = found.name;
+                toggleWeatherClearBtn(found.name);
+                loadWeatherForLocation(found);
+            } else {
+                fetchWeatherByCity(name);
+            }
+        }
+
+        function toggleWeatherClearBtn(val) {
+            const clearBtn = document.getElementById('wSearchClearBtn');
+            if (!clearBtn) return;
+            if (val && val.length > 0) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+        }
+
+        function setWeatherSearchLoading(loading) {
+            const spinner = document.getElementById('wSearchSpinner');
+            if (!spinner) return;
+            spinner.classList.toggle('hidden', !loading);
+        }
+
+        function clearWeatherSearch() {
+            const input = document.getElementById('wSearchInput');
+            if (!input) return;
+            input.value = '';
+            toggleWeatherClearBtn('');
+            input.focus();
+            handleWeatherSearchFocus();
+        }
+
+        function closeWeatherDropdown() {
+            const dd = document.getElementById('wSearchDropdown');
+            if (dd) dd.classList.add('hidden');
+            weatherActiveSuggestionIdx = -1;
+        }
+
+        function openWeatherDropdown() {
+            const dd = document.getElementById('wSearchDropdown');
+            if (dd) dd.classList.remove('hidden');
+        }
+
+        function handleWeatherSearchFocus() {
+            const input = document.getElementById('wSearchInput');
+            const q = (input?.value || '').trim();
+            if (!q) {
+                const pinned = getStoredCities(WEATHER_STORAGE_KEYS.pinned);
+                const recent = getStoredCities(WEATHER_STORAGE_KEYS.recent).filter(r => !pinned.some(p => isSameLocation(p, r)));
+                const quickList = [...pinned, ...recent, ...WEATHER_PRESETS.slice(0, 6)]
+                    .filter((item, index, arr) => arr.findIndex(x => isSameLocation(x, item)) === index)
+                    .slice(0, 6);
+                weatherSuggestions = quickList;
+                weatherActiveSuggestionIdx = -1;
+                renderWeatherSuggestions(quickList, '', pinned.length || recent.length ? 'Gợi ý nhanh & Gần đây' : 'Thành phố phổ biến');
+            } else if (weatherSuggestions.length > 0) {
+                openWeatherDropdown();
+            } else {
+                handleWeatherSearchInput(q);
+            }
+        }
+
+        function handleWeatherSearchInput(rawVal) {
+            toggleWeatherClearBtn(rawVal);
+            const q = (rawVal || '').trim();
+            clearTimeout(weatherSearchDebounce);
+
+            if (!q) {
+                setWeatherSearchLoading(false);
+                handleWeatherSearchFocus();
+                return;
+            }
+
+            // Instant local preset matches while remote geocoding loads
+            const normQ = normalizeSearchText(q);
+            const localMatches = WEATHER_PRESETS.filter(p =>
+                normalizeSearchText(p.name).includes(normQ) ||
+                normalizeSearchText(p.admin1).includes(normQ) ||
+                (p.aliases || []).some(a => a.includes(normQ) || normQ.includes(a))
+            ).slice(0, 5);
+
+            if (localMatches.length > 0) {
+                weatherSuggestions = localMatches;
+                weatherActiveSuggestionIdx = 0;
+                renderWeatherSuggestions(localMatches, q, 'Gợi ý phù hợp');
+            }
+
+            weatherSearchDebounce = setTimeout(() => {
+                searchCitiesRemote(q, localMatches);
+            }, 220);
+        }
+
+        function parseCoordinatesQuery(q) {
+            const m = q.trim().match(/^(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)$/);
+            if (!m) return null;
+            const lat = parseFloat(m[1]), lon = parseFloat(m[2]);
+            if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
+            return { lat, lon };
+        }
+
+        async function geocodeQueryVariants(rawQuery) {
+            const trimmed = rawQuery.trim();
+            const norm = normalizeSearchText(trimmed);
+
+            // Check exact alias match first
+            const exactAlias = WEATHER_PRESETS.find(p =>
+                normalizeSearchText(p.name) === norm || (p.aliases || []).includes(norm)
+            );
+
+            // Build candidate queries (original, stripped admin prefix, ascii without diacritics)
+            const strippedPrefix = trimmed.replace(/^(tp\.?\s*|thành phố\s+|thanh pho\s+|tỉnh\s+|tinh\s+)/i, '').trim();
+            const asciiQuery = normalizeSearchText(strippedPrefix || trimmed);
+            const variants = [];
+            if (exactAlias) variants.push(exactAlias.name);
+            if (trimmed) variants.push(trimmed);
+            if (strippedPrefix && strippedPrefix !== trimmed) variants.push(strippedPrefix);
+            if (asciiQuery && asciiQuery.toLowerCase() !== trimmed.toLowerCase()) variants.push(asciiQuery);
+
+            const uniqueVariants = [...new Set(variants)].filter(v => v.length >= 2);
+            const merged = [];
+            if (exactAlias) merged.push({ ...exactAlias });
+
+            for (const q of uniqueVariants) {
+                if (weatherSearchAbort?.signal?.aborted) break;
+                const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=vi&format=json`;
+                const res = await fetch(url, weatherSearchAbort ? { signal: weatherSearchAbort.signal } : undefined);
+                if (!res.ok) continue;
+                const data = await res.json();
+                if (Array.isArray(data.results) && data.results.length > 0) {
+                    data.results.forEach(r => {
+                        const loc = {
+                            name: r.name,
+                            admin1: r.admin1 || '',
+                            country: r.country || r.country_code || '',
+                            country_code: r.country_code || '',
+                            lat: r.latitude,
+                            lon: r.longitude
+                        };
+                        if (!merged.some(m => isSameLocation(m, loc))) {
+                            merged.push(loc);
+                        }
+                    });
+                    if (merged.length >= 6) break;
+                }
+            }
+            return merged.slice(0, 7);
+        }
+
+        async function searchCitiesRemote(q, localMatches = []) {
+            if (parseCoordinatesQuery(q)) {
+                const coords = parseCoordinatesQuery(q);
+                weatherSuggestions = [{
+                    name: `Tọa độ (${coords.lat.toFixed(3)}, ${coords.lon.toFixed(3)})`,
+                    admin1: 'Tra cứu trực tiếp theo GPS',
+                    country: '',
+                    country_code: 'GPS',
+                    lat: coords.lat,
+                    lon: coords.lon
+                }];
+                weatherActiveSuggestionIdx = 0;
+                renderWeatherSuggestions(weatherSuggestions, q, 'Tọa độ trực tiếp');
+                return;
+            }
+
+            if (weatherSearchAbort) weatherSearchAbort.abort();
+            weatherSearchAbort = new AbortController();
+            setWeatherSearchLoading(true);
+            try {
+                const remote = await geocodeQueryVariants(q);
+                const combined = [...localMatches];
+                remote.forEach(r => {
+                    if (!combined.some(c => isSameLocation(c, r))) combined.push(r);
+                });
+                weatherSuggestions = combined.slice(0, 7);
+                weatherActiveSuggestionIdx = weatherSuggestions.length > 0 ? 0 : -1;
+                renderWeatherSuggestions(weatherSuggestions, q, 'Kết quả tìm kiếm');
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    if (localMatches.length === 0) {
+                        renderWeatherSuggestions([], q, 'Không thể kết nối máy chủ tìm kiếm');
+                    }
+                }
+            } finally {
+                setWeatherSearchLoading(false);
+            }
+        }
+
+        function highlightMatch(text, query) {
+            const safe = escapeHtml(text);
+            if (!query || query.length < 2) return safe;
+            const escapedQ = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            try {
+                return safe.replace(new RegExp(`(${escapedQ})`, 'ig'), '<mark class="bg-amber-200/70 dark:bg-amber-500/30 text-inherit rounded px-0.5">$1</mark>');
+            } catch (e) {
+                return safe;
+            }
+        }
+
+        function renderWeatherSuggestions(items, query, headerLabel) {
+            const content = document.getElementById('wSearchDropdownContent');
+            if (!content) return;
+            if (!items || items.length === 0) {
+                content.innerHTML = `
+                    <div class="px-3 py-4 text-center space-y-1">
+                        <p class="text-xs font-medium text-zinc-600 dark:text-zinc-300">Không tìm thấy "${escapeHtml(query)}"</p>
+                        <p class="text-[11px] text-zinc-400">Thử gõ tên không dấu, viết tắt (HN, HCM, ĐN) hoặc tọa độ lat, lon</p>
+                    </div>
+                `;
+                openWeatherDropdown();
+                return;
+            }
+
+            content.innerHTML = `
+                <div class="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-zinc-400 border-b border-zinc-100 dark:border-zinc-800">${escapeHtml(headerLabel)}</div>
+                ${items.map((item, idx) => {
+                    const subParts = [item.admin1 && item.admin1 !== item.name ? item.admin1 : '', item.country].filter(Boolean);
+                    const isActive = idx === weatherActiveSuggestionIdx;
+                    return `
+                        <button
+                            type="button"
+                            data-sugg-idx="${idx}"
+                            onmousedown="event.preventDefault(); selectWeatherSuggestion(${idx});"
+                            onmouseenter="weatherActiveSuggestionIdx = ${idx}; updateWeatherSuggestionHighlight();"
+                            class="w-full text-left px-3 py-2 flex items-center justify-between gap-2 text-xs transition-colors ${isActive ? 'bg-zinc-100 dark:bg-zinc-800' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/60'}"
+                        >
+                            <div class="min-w-0 flex items-center gap-2">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-zinc-400 shrink-0"></i>
+                                <div class="min-w-0">
+                                    <div class="font-medium text-zinc-900 dark:text-zinc-100 truncate">${highlightMatch(item.name, query)}</div>
+                                    ${subParts.length ? `<div class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">${escapeHtml(subParts.join(' · '))}</div>` : ''}
+                                </div>
+                            </div>
+                            ${item.country_code ? `<span class="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/70 dark:border-zinc-700 font-mono text-[10px] font-medium text-zinc-500 dark:text-zinc-400 shrink-0">${escapeHtml(item.country_code)}</span>` : ''}
+                        </button>
+                    `;
+                }).join('')}
+            `;
+            openWeatherDropdown();
+            lucide.createIcons();
+        }
+
+        function updateWeatherSuggestionHighlight() {
+            const buttons = document.querySelectorAll('#wSearchDropdownContent [data-sugg-idx]');
+            buttons.forEach(btn => {
+                const idx = parseInt(btn.getAttribute('data-sugg-idx'), 10);
+                if (idx === weatherActiveSuggestionIdx) {
+                    btn.classList.add('bg-zinc-100', 'dark:bg-zinc-800');
+                    btn.scrollIntoView({ block: 'nearest' });
+                } else {
+                    btn.classList.remove('bg-zinc-100', 'dark:bg-zinc-800');
+                }
+            });
+        }
+
+        function handleWeatherSearchKeydown(e) {
+            const dd = document.getElementById('wSearchDropdown');
+            const isOpen = dd && !dd.classList.contains('hidden');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!isOpen) { handleWeatherSearchFocus(); return; }
+                if (weatherSuggestions.length > 0) {
+                    weatherActiveSuggestionIdx = (weatherActiveSuggestionIdx + 1) % weatherSuggestions.length;
+                    updateWeatherSuggestionHighlight();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (isOpen && weatherSuggestions.length > 0) {
+                    weatherActiveSuggestionIdx = (weatherActiveSuggestionIdx - 1 + weatherSuggestions.length) % weatherSuggestions.length;
+                    updateWeatherSuggestionHighlight();
+                }
+            } else if (e.key === 'Escape') {
+                closeWeatherDropdown();
+                e.target.blur();
+            }
+        }
+
+        function selectWeatherSuggestion(idx) {
+            const item = weatherSuggestions[idx];
+            if (!item) return;
+            closeWeatherDropdown();
+            const input = document.getElementById('wSearchInput');
+            if (input) {
+                input.value = item.name;
+                input.blur();
+            }
+            toggleWeatherClearBtn(item.name);
+            loadWeatherForLocation(item);
+        }
+
+        function handleWeatherSearchSubmit() {
+            const input = document.getElementById('wSearchInput');
+            const q = (input?.value || '').trim();
+            if (!q) {
+                handleWeatherSearchFocus();
+                return;
+            }
+            const dd = document.getElementById('wSearchDropdown');
+            if (dd && !dd.classList.contains('hidden') && weatherActiveSuggestionIdx >= 0 && weatherSuggestions[weatherActiveSuggestionIdx]) {
+                selectWeatherSuggestion(weatherActiveSuggestionIdx);
+                return;
+            }
+            closeWeatherDropdown();
+            fetchWeatherByCity(q);
+        }
+
+        // Close search dropdown on outside click & support "/" quick focus in weather view
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('wSearchWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeWeatherDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (activeView !== 'weather') return;
+            if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+                e.preventDefault();
+                const input = document.getElementById('wSearchInput');
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }
+        });
 
         function setWeatherUnit(unit) {
             weatherUnit = unit;
             document.getElementById('wUnitC').className = unit === 'metric' ? 'py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 shadow-2xs' : 'py-1.5 rounded-md text-xs font-medium text-zinc-500';
             document.getElementById('wUnitF').className = unit === 'imperial' ? 'py-1.5 rounded-md text-xs font-semibold bg-white dark:bg-zinc-700 shadow-2xs' : 'py-1.5 rounded-md text-xs font-medium text-zinc-500';
-            fetchWeatherByCity(currentCity);
+            refreshCurrentWeather();
+        }
+
+        function refreshCurrentWeather() {
+            loadWeatherForLocation(currentLocation, false);
         }
 
         function fetchWeatherByGPS() {
-            if (!navigator.geolocation) return showToast('Trình duyệt không hỗ trợ GPS.', 'error');
-            navigator.geolocation.getCurrentPosition(pos => {
-                fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
-            }, () => showToast('Không thể lấy vị trí GPS.', 'error'));
+            if (!navigator.geolocation) {
+                showToast('Trình duyệt không hỗ trợ GPS.', 'error');
+                return;
+            }
+            const btn = document.getElementById('wGpsBtn');
+            if (btn) btn.disabled = true;
+            navigator.geolocation.getCurrentPosition(async pos => {
+                if (btn) btn.disabled = false;
+                await fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+            }, () => {
+                if (btn) btn.disabled = false;
+                showToast('Không thể lấy vị trí GPS. Hãy kiểm tra quyền truy cập vị trí.', 'error');
+            }, { timeout: 10000 });
         }
 
         async function fetchWeatherByCity(city) {
             if (!city || !city.trim()) return;
-            currentCity = city.trim();
+            const q = city.trim();
+            const coords = parseCoordinatesQuery(q);
+            if (coords) {
+                await fetchWeatherByCoords(coords.lat, coords.lon);
+                return;
+            }
+            setWeatherSearchLoading(true);
             try {
-                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(currentCity)}&units=${weatherUnit}&lang=vi&appid=${OW_API_KEY}`);
-                if (!res.ok) throw new Error('City not found');
-                const data = await res.json();
-                renderCurrentWeather(data);
-                fetchForecastAndAqi(data.coord.lat, data.coord.lon);
+                const results = await geocodeQueryVariants(q);
+                if (!results || results.length === 0) {
+                    showToast(`Không tìm thấy thành phố "${q}".`, 'error');
+                    return;
+                }
+                await loadWeatherForLocation(results[0]);
             } catch (e) {
-                showToast('Không tìm thấy thành phố này.', 'error');
+                showToast('Không thể tra cứu thành phố. Vui lòng thử lại.', 'error');
+            } finally {
+                setWeatherSearchLoading(false);
             }
         }
 
         async function fetchWeatherByCoords(lat, lon) {
+            let loc = {
+                name: 'Vị trí hiện tại',
+                admin1: '',
+                country: '',
+                country_code: '',
+                lat,
+                lon
+            };
             try {
-                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${weatherUnit}&lang=vi&appid=${OW_API_KEY}`);
-                const data = await res.json();
-                currentCity = data.name;
-                renderCurrentWeather(data);
-                fetchForecastAndAqi(lat, lon);
+                const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`);
+                if (revRes.ok) {
+                    const rev = await revRes.json();
+                    loc.name = rev.city || rev.locality || rev.principalSubdivision || 'Vị trí hiện tại';
+                    loc.admin1 = rev.principalSubdivision || '';
+                    loc.country = rev.countryName || '';
+                    loc.country_code = rev.countryCode || '';
+                }
+            } catch (e) {}
+            await loadWeatherForLocation(loc);
+        }
+
+        function getWmoWeatherInfo(code, isDay = 1) {
+            const map = {
+                0: { desc: 'Trời quang đãng', icon: isDay ? 'sun' : 'moon' },
+                1: { desc: 'Chủ yếu quang mây', icon: isDay ? 'sun' : 'moon' },
+                2: { desc: 'Có mây rải rác', icon: isDay ? 'cloud-sun' : 'cloud-moon' },
+                3: { desc: 'Nhiều mây u ám', icon: 'cloud' },
+                45: { desc: 'Có sương mù', icon: 'cloud-fog' },
+                48: { desc: 'Sương mù đọng băng', icon: 'cloud-fog' },
+                51: { desc: 'Mưa phùn nhẹ', icon: 'cloud-drizzle' },
+                53: { desc: 'Mưa phùn vừa', icon: 'cloud-drizzle' },
+                55: { desc: 'Mưa phùn dày', icon: 'cloud-drizzle' },
+                56: { desc: 'Mưa phùn lạnh nhẹ', icon: 'cloud-drizzle' },
+                57: { desc: 'Mưa phùn lạnh dày', icon: 'cloud-drizzle' },
+                61: { desc: 'Mưa nhỏ', icon: 'cloud-rain' },
+                63: { desc: 'Mưa vừa', icon: 'cloud-rain' },
+                65: { desc: 'Mưa to', icon: 'cloud-rain' },
+                66: { desc: 'Mưa lạnh nhẹ', icon: 'cloud-rain' },
+                67: { desc: 'Mưa lạnh lớn', icon: 'cloud-rain' },
+                71: { desc: 'Tuyết rơi nhẹ', icon: 'cloud-snow' },
+                73: { desc: 'Tuyết rơi vừa', icon: 'cloud-snow' },
+                75: { desc: 'Tuyết rơi dày', icon: 'cloud-snow' },
+                77: { desc: 'Mưa tuyết hạt', icon: 'cloud-snow' },
+                80: { desc: 'Mưa rào nhẹ', icon: 'cloud-rain' },
+                81: { desc: 'Mưa rào vừa', icon: 'cloud-rain' },
+                82: { desc: 'Mưa rào lớn', icon: 'cloud-rain' },
+                85: { desc: 'Mưa tuyết nhẹ', icon: 'cloud-snow' },
+                86: { desc: 'Mưa tuyết lớn', icon: 'cloud-snow' },
+                95: { desc: 'Có dông', icon: 'cloud-lightning' },
+                96: { desc: 'Dông kèm mưa đá nhẹ', icon: 'cloud-lightning' },
+                99: { desc: 'Dông kèm mưa đá lớn', icon: 'cloud-lightning' }
+            };
+            return map[code] || { desc: 'Có mây', icon: 'cloud-sun' };
+        }
+
+        async function loadWeatherForLocation(loc, saveHistory = true) {
+            if (!loc || typeof loc.lat !== 'number' || typeof loc.lon !== 'number') return;
+            currentLocation = { ...loc };
+            currentCity = loc.name;
+
+            const refreshIcon = document.getElementById('wRefreshIcon');
+            if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+            const tempUnit = weatherUnit === 'metric' ? 'celsius' : 'fahrenheit';
+            const windUnit = weatherUnit === 'metric' ? 'ms' : 'mph';
+
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,visibility&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&temperature_unit=${tempUnit}&wind_speed_unit=${windUnit}&timezone=auto&forecast_days=6`;
+            const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${loc.lat}&longitude=${loc.lon}&current=us_aqi,european_aqi,pm10,pm2_5,ozone,nitrogen_dioxide`;
+
+            try {
+                const [wRes, aRes] = await Promise.all([
+                    fetch(weatherUrl),
+                    fetch(aqiUrl).catch(() => null)
+                ]);
+                if (!wRes.ok) throw new Error('Weather API error');
+                const wData = await wRes.json();
+                renderOpenMeteoWeather(loc, wData);
+
+                if (aRes && aRes.ok) {
+                    const aData = await aRes.json();
+                    renderOpenMeteoAqi(aData);
+                }
+                if (saveHistory) recordRecentCity(loc);
+                else updatePinButtonState();
             } catch (e) {
-                showToast('Lỗi tải dữ liệu thời tiết.', 'error');
+                showToast('Lỗi tải dữ liệu thời tiết. Vui lòng thử lại.', 'error');
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('animate-spin');
             }
         }
 
-        function renderCurrentWeather(d) {
+        function renderOpenMeteoWeather(loc, data) {
+            const c = data.current;
+            const d = data.daily;
+            const h = data.hourly;
+            if (!c) return;
+
             const unitSym = weatherUnit === 'metric' ? '°C' : '°F';
             const speedUnit = weatherUnit === 'metric' ? 'm/s' : 'mph';
-            document.getElementById('wCityTitle').textContent = `${d.name}, ${d.sys?.country || ''}`;
-            document.getElementById('wDescText').textContent = d.weather?.[0]?.description || '';
-            document.getElementById('wTempVal').textContent = Math.round(d.main.temp);
+            const info = getWmoWeatherInfo(c.weather_code, c.is_day);
+
+            const titleSuffix = loc.country_code || loc.country || '';
+            document.getElementById('wCityTitle').textContent = titleSuffix ? `${loc.name}, ${titleSuffix}` : loc.name;
+            document.getElementById('wDescText').textContent = info.desc;
+
+            const mainIconWrap = document.getElementById('wMainIconWrap');
+            if (mainIconWrap) {
+                mainIconWrap.innerHTML = `<i data-lucide="${info.icon}" class="w-6 h-6"></i>`;
+            }
+
+            document.getElementById('wTempVal').textContent = Math.round(c.temperature_2m);
             document.getElementById('wTempUnit').textContent = unitSym;
-            document.getElementById('wFeelsVal').textContent = `${Math.round(d.main.feels_like)}${unitSym}`;
-            document.getElementById('wHumidity').textContent = `${d.main.humidity}%`;
-            document.getElementById('wWind').textContent = `${d.wind.speed} ${speedUnit}`;
+            document.getElementById('wFeelsVal').textContent = `${Math.round(c.apparent_temperature)}${unitSym}`;
+            document.getElementById('wHumidity').textContent = `${Math.round(c.relative_humidity_2m)}%`;
+            document.getElementById('wWind').textContent = `${Number(c.wind_speed_10m).toFixed(1)} ${speedUnit}`;
             const dirs = ['Bắc', 'Đông Bắc', 'Đông', 'Đông Nam', 'Nam', 'Tây Nam', 'Tây', 'Tây Bắc'];
-            document.getElementById('wWindDir').textContent = dirs[Math.round((d.wind.deg || 0) / 45) % 8];
-            document.getElementById('wVisibility').textContent = `${((d.visibility || 10000) / 1000).toFixed(1)} km`;
-            document.getElementById('wPressure').textContent = `${d.main.pressure} hPa`;
-            document.getElementById('wClouds').textContent = `${d.clouds?.all || 0}%`;
+            document.getElementById('wWindDir').textContent = dirs[Math.round((c.wind_direction_10m || 0) / 45) % 8];
+            const visKm = c.visibility != null ? (c.visibility / 1000).toFixed(1) : '10.0';
+            document.getElementById('wVisibility').textContent = `${visKm} km`;
+            document.getElementById('wPressure').textContent = `${Math.round(c.pressure_msl)} hPa`;
+            document.getElementById('wClouds').textContent = `${Math.round(c.cloud_cover || 0)}%`;
 
-            const fmtTime = (unix) => new Date((unix + d.timezone) * 1000).toUTCString().slice(17, 22);
-            document.getElementById('wLocalTime').textContent = fmtTime(Math.floor(Date.now() / 1000));
-            document.getElementById('wSunrise').textContent = fmtTime(d.sys.sunrise);
-            document.getElementById('wSunset').textContent = fmtTime(d.sys.sunset);
-            const pct = Math.min(100, Math.max(0, ((Math.floor(Date.now() / 1000) - d.sys.sunrise) / (d.sys.sunset - d.sys.sunrise)) * 100));
-            document.getElementById('wSunProgress').style.width = `${pct}%`;
-        }
+            // Local time & Sunrise/Sunset
+            const localTimeStr = (c.time || '').slice(11, 16) || '--:--';
+            document.getElementById('wLocalTime').textContent = localTimeStr;
+            if (d && d.sunrise?.[0] && d.sunset?.[0]) {
+                const srStr = d.sunrise[0].slice(11, 16);
+                const ssStr = d.sunset[0].slice(11, 16);
+                document.getElementById('wSunrise').textContent = srStr;
+                document.getElementById('wSunset').textContent = ssStr;
+                const toMin = (hhmm) => {
+                    const [hh, mm] = hhmm.split(':').map(Number);
+                    return hh * 60 + mm;
+                };
+                const nowMin = toMin(localTimeStr);
+                const srMin = toMin(srStr);
+                const ssMin = toMin(ssStr);
+                const pct = ssMin > srMin ? Math.min(100, Math.max(0, ((nowMin - srMin) / (ssMin - srMin)) * 100)) : 50;
+                document.getElementById('wSunProgress').style.width = `${pct}%`;
+            }
 
-        async function fetchForecastAndAqi(lat, lon) {
-            try {
-                const [fRes, aRes] = await Promise.all([
-                    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${weatherUnit}&lang=vi&appid=${OW_API_KEY}`),
-                    fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${OW_API_KEY}`)
-                ]);
-                if (fRes.ok) {
-                    const fData = await fRes.json();
-                    document.getElementById('wHourlyList').innerHTML = fData.list.slice(0, 8).map(item => `
-                        <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800 text-center space-y-1">
-                            <span class="block text-[11px] font-mono text-zinc-400">${item.dt_txt.slice(11, 16)}</span>
-                            <strong class="block text-sm font-mono">${Math.round(item.main.temp)}°</strong>
-                            <span class="block text-[10px] text-blue-500 font-mono">${Math.round((item.pop || 0) * 100)}% mưa</span>
-                        </div>
-                    `).join('');
-
-                    const dailyMap = {};
-                    fData.list.forEach(item => {
-                        const day = item.dt_txt.slice(0, 10);
-                        if (!dailyMap[day]) dailyMap[day] = { min: item.main.temp_min, max: item.main.temp_max, desc: item.weather[0].description };
-                        else {
-                            dailyMap[day].min = Math.min(dailyMap[day].min, item.main.temp_min);
-                            dailyMap[day].max = Math.max(dailyMap[day].max, item.main.temp_max);
-                        }
-                    });
-                    document.getElementById('wDailyList').innerHTML = Object.entries(dailyMap).slice(0, 5).map(([day, info]) => `
-                        <div class="py-2.5 flex items-center justify-between text-xs">
-                            <span class="font-mono font-medium">${day.slice(5)}</span>
-                            <span class="text-zinc-500 capitalize truncate max-w-[140px]">${info.desc}</span>
-                            <span class="font-mono font-semibold">${Math.round(info.min)}° / ${Math.round(info.max)}°</span>
-                        </div>
-                    `).join('');
-                }
-                if (aRes.ok) {
-                    const aData = await aRes.json();
-                    const entry = aData.list?.[0];
-                    if (entry) {
-                        const labels = ['', '1 · Tốt', '2 · Khá', '3 · Trung bình', '4 · Kém', '5 · Xấu'];
-                        document.getElementById('wAqiBadge').textContent = labels[entry.main.aqi] || 'Tốt';
-                        document.getElementById('wPm25').textContent = `${entry.components.pm2_5} µg/m³`;
-                        document.getElementById('wPm10').textContent = `${entry.components.pm10} µg/m³`;
-                        document.getElementById('wO3').textContent = `${entry.components.o3} µg/m³`;
-                        document.getElementById('wNo2').textContent = `${entry.components.no2} µg/m³`;
+            // Hourly forecast: next 24h in 3-hour steps (8 slots)
+            if (h && Array.isArray(h.time)) {
+                const curPrefix = (c.time || '').slice(0, 13);
+                let startIdx = h.time.findIndex(t => t.slice(0, 13) >= curPrefix);
+                if (startIdx < 0) startIdx = 0;
+                const slots = [];
+                for (let i = 0; i < 8; i++) {
+                    const idx = startIdx + i * 3;
+                    if (idx < h.time.length) {
+                        slots.push({
+                            time: h.time[idx].slice(11, 16),
+                            temp: Math.round(h.temperature_2m[idx]),
+                            pop: Math.round(h.precipitation_probability?.[idx] || 0),
+                            icon: getWmoWeatherInfo(h.weather_code?.[idx], h.is_day?.[idx] ?? 1).icon
+                        });
                     }
                 }
-            } catch (e) {}
+                document.getElementById('wHourlyList').innerHTML = slots.map(slot => `
+                    <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800 text-center space-y-1">
+                        <span class="block text-[11px] font-mono text-zinc-400">${slot.time}</span>
+                        <i data-lucide="${slot.icon}" class="w-4 h-4 mx-auto text-zinc-600 dark:text-zinc-300"></i>
+                        <strong class="block text-sm font-mono">${slot.temp}°</strong>
+                        <span class="block text-[10px] text-blue-500 font-mono">${slot.pop}% mưa</span>
+                    </div>
+                `).join('');
+            }
+
+            // 5-day forecast
+            if (d && Array.isArray(d.time)) {
+                const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+                document.getElementById('wDailyList').innerHTML = d.time.slice(0, 5).map((dateStr, i) => {
+                    const dt = new Date(`${dateStr}T12:00:00`);
+                    const dayLabel = i === 0 ? 'Hôm nay' : `${dayNames[dt.getDay()]} · ${dateStr.slice(5)}`;
+                    const wInfo = getWmoWeatherInfo(d.weather_code?.[i], 1);
+                    return `
+                        <div class="py-2.5 flex items-center justify-between gap-2 text-xs">
+                            <span class="font-mono font-medium w-20 shrink-0">${dayLabel}</span>
+                            <span class="flex items-center gap-1.5 text-zinc-500 dark:text-zinc-400 truncate flex-1">
+                                <i data-lucide="${wInfo.icon}" class="w-3.5 h-3.5 shrink-0"></i>
+                                <span class="truncate">${wInfo.desc}</span>
+                            </span>
+                            <span class="font-mono font-semibold shrink-0">${Math.round(d.temperature_2m_min[i])}° / ${Math.round(d.temperature_2m_max[i])}°</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            lucide.createIcons();
+        }
+
+        function renderOpenMeteoAqi(aData) {
+            const cur = aData?.current;
+            if (!cur) return;
+            const aqi = Math.round(cur.us_aqi ?? 0);
+            let label = 'Tốt';
+            let badgeCls = 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400';
+            if (aqi > 300) { label = 'Nguy hại'; badgeCls = 'bg-rose-500/15 text-rose-600 dark:text-rose-400'; }
+            else if (aqi > 200) { label = 'Rất xấu'; badgeCls = 'bg-purple-500/15 text-purple-600 dark:text-purple-400'; }
+            else if (aqi > 150) { label = 'Xấu'; badgeCls = 'bg-red-500/15 text-red-600 dark:text-red-400'; }
+            else if (aqi > 100) { label = 'Kém'; badgeCls = 'bg-orange-500/15 text-orange-600 dark:text-orange-400'; }
+            else if (aqi > 50) { label = 'Trung bình'; badgeCls = 'bg-amber-500/15 text-amber-600 dark:text-amber-400'; }
+
+            const badgeEl = document.getElementById('wAqiBadge');
+            if (badgeEl) {
+                badgeEl.textContent = `${aqi} · ${label}`;
+                badgeEl.className = `px-2.5 py-0.5 rounded-full text-xs font-semibold ${badgeCls}`;
+            }
+            document.getElementById('wPm25').textContent = `${cur.pm2_5 != null ? cur.pm2_5.toFixed(1) : '--'} µg/m³`;
+            document.getElementById('wPm10').textContent = `${cur.pm10 != null ? cur.pm10.toFixed(1) : '--'} µg/m³`;
+            document.getElementById('wO3').textContent = `${cur.ozone != null ? cur.ozone.toFixed(1) : '--'} µg/m³`;
+            document.getElementById('wNo2').textContent = `${cur.nitrogen_dioxide != null ? cur.nitrogen_dioxide.toFixed(1) : '--'} µg/m³`;
         }
 
         // =========================================================================
@@ -1772,233 +2611,626 @@
         function clearCompressQueue() { compressQueue = []; renderCompressList(); }
 
         // =========================================================================
-        // MODULE 5: YOUTUBE & COBALT DIRECTORY ENGINE (MOBILE + DESKTOP)
+        // MODULE 5: SMART MULTI-PLATFORM VIDEO DOWNLOADER
         // =========================================================================
-        const COBALT_DIRECTORY_NODES = [
-            { id: 'girlskissing', name: 'cobalt.girlskissing.top', api: 'https://apicobalt.girlskissing.top', web: 'https://cobalt.girlskissing.top', score: '100%', version: '11.8' },
-            { id: 'nuko', name: 'nuko-c.meowing.de', api: 'https://nuko-c.meowing.de', web: 'https://cobalt.meowing.de', score: '100%', version: '11.8' },
-            { id: 'yuuri', name: 'yuuri-c.meowing.de', api: 'https://yuuri-c.meowing.de', web: 'https://cobalt.meowing.de', score: '100%', version: '11.8' },
-            { id: 'bergung', name: 'bergung.hoffnungfuerdiezukunft.net', api: 'https://bergung-api.hoffnungfuerdiezukunft.net', web: 'https://bergung.hoffnungfuerdiezukunft.net', score: '96%', version: '11.8' },
-            { id: 'rpki', name: 'cobalt.rpkiinval.id', api: 'https://api.cobalt.rpkiinval.id', web: 'https://cobalt.rpkiinval.id', score: '96%', version: '11.8' },
-            { id: 'canine', name: 'cobalt.canine.tools', api: 'https://cobalt-omega.wolfy.love', web: 'https://cobalt.canine.tools', score: '88%', version: '11.8' }
-        ];
-
-        const ytState = {
-            format: '1080',
-            shell: 'win',
-            muxVideo: null,
-            muxAudio: null,
-            selectedNodeIdx: 0,
-            customApi: ''
+        const YT_STORAGE = {
+            format: 'weat-video-format',
+            mode: 'weat-video-dlmode',
+            history: 'weat-video-history'
         };
 
-        function renderCobaltNodes() {
-            const grid = document.getElementById('cobaltNodeGrid');
-            if (!grid) return;
-            grid.innerHTML = COBALT_DIRECTORY_NODES.map((node, idx) => {
-                const isSelected = !ytState.customApi && ytState.selectedNodeIdx === idx;
-                return `
-                    <button type="button" onclick="selectCobaltNode(${idx})" class="text-left p-2.5 rounded-lg border transition-all ${isSelected ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 hover:border-zinc-400'}">
-                        <div class="flex items-center justify-between gap-1 text-[11px] font-mono">
-                            <span class="font-semibold truncate">${node.name}</span>
-                            <span class="px-1.5 py-0.5 rounded ${isSelected ? 'bg-emerald-500/20 text-emerald-300 dark:text-emerald-700' : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'}">${node.score}</span>
-                        </div>
-                        <div class="mt-1 text-[10px] font-mono ${isSelected ? 'text-zinc-300 dark:text-zinc-600' : 'text-zinc-400'}">v${node.version} · 24/24 Services</div>
-                    </button>
-                `;
-            }).join('');
-        }
+        const ytState = {
+            initialized: false,
+            format: 'best',
+            mode: 'auto',
+            shell: /Mac|Linux|X11/i.test(navigator.platform || '') && !/Win/i.test(navigator.platform || '') ? 'unix' : 'win',
+            url: '',
+            platform: null,
+            meta: null,
+            directLinks: null,
+            muxVideo: null,
+            muxAudio: null,
+            analyzeTimer: null
+        };
 
-        function selectCobaltNode(idx) {
-            ytState.selectedNodeIdx = idx;
-            ytState.customApi = '';
-            document.getElementById('customCobaltApiInput').value = '';
-            renderCobaltNodes();
-            showToast(`Đã chọn máy chủ ${COBALT_DIRECTORY_NODES[idx].name}`);
-        }
+        const VIDEO_PLATFORMS = [
+            { id: 'youtube', name: 'YouTube', icon: 'youtube', badgeCls: 'bg-red-500/10 text-red-600 dark:text-red-400', regex: /(?:youtu\.be\/|youtube\.com|music\.youtube\.com)/i },
+            { id: 'tiktok', name: 'TikTok', icon: 'music-2', badgeCls: 'bg-zinc-900/10 dark:bg-zinc-100/15 text-zinc-900 dark:text-zinc-100', regex: /(?:tiktok\.com|douyin\.com)/i },
+            { id: 'facebook', name: 'Facebook', icon: 'facebook', badgeCls: 'bg-blue-500/10 text-blue-600 dark:text-blue-400', regex: /(?:facebook\.com|fb\.watch|fb\.com)/i },
+            { id: 'instagram', name: 'Instagram', icon: 'instagram', badgeCls: 'bg-pink-500/10 text-pink-600 dark:text-pink-400', regex: /(?:instagram\.com|instagr\.am)/i },
+            { id: 'twitter', name: 'X / Twitter', icon: 'twitter', badgeCls: 'bg-sky-500/10 text-sky-600 dark:text-sky-400', regex: /(?:x\.com|twitter\.com)/i },
+            { id: 'threads', name: 'Threads', icon: 'at-sign', badgeCls: 'bg-zinc-500/15 text-zinc-700 dark:text-zinc-300', regex: /threads\.net/i },
+            { id: 'bilibili', name: 'Bilibili', icon: 'tv', badgeCls: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400', regex: /(?:bilibili\.com|b23\.tv)/i },
+            { id: 'reddit', name: 'Reddit', icon: 'message-circle', badgeCls: 'bg-orange-500/10 text-orange-600 dark:text-orange-400', regex: /(?:reddit\.com|v\.redd\.it)/i },
+            { id: 'soundcloud', name: 'SoundCloud', icon: 'audio-lines', badgeCls: 'bg-amber-500/10 text-amber-600 dark:text-amber-400', regex: /soundcloud\.com/i },
+            { id: 'vimeo', name: 'Vimeo', icon: 'video', badgeCls: 'bg-sky-500/10 text-sky-600 dark:text-sky-400', regex: /vimeo\.com/i },
+            { id: 'twitch', name: 'Twitch', icon: 'radio', badgeCls: 'bg-purple-500/10 text-purple-600 dark:text-purple-400', regex: /twitch\.tv/i },
+            { id: 'pinterest', name: 'Pinterest', icon: 'pin', badgeCls: 'bg-rose-500/10 text-rose-600 dark:text-rose-400', regex: /(?:pinterest\.com|pin\.it)/i },
+            { id: 'direct', name: 'Direct Media', icon: 'file-video', badgeCls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400', regex: /\.(?:mp4|webm|mov|m4a|mp3|ogg|wav)(?:\?|$)/i }
+        ];
 
-        function applyCustomCobaltEndpoint() {
-            const val = document.getElementById('customCobaltApiInput').value.trim().replace(/\/+$/, '');
-            if (!val) return showToast('Vui lòng nhập URL API Cobalt hợp lệ.', 'error');
-            ytState.customApi = val;
-            renderCobaltNodes();
-            showToast(`Đã áp dụng Cobalt API tùy chỉnh.`);
-        }
-
-        function openSelectedCobaltFrontend() {
-            const node = COBALT_DIRECTORY_NODES[ytState.selectedNodeIdx] || COBALT_DIRECTORY_NODES[0];
-            window.open(node.web, '_blank', 'noopener,noreferrer');
-        }
-
-        async function downloadViaCobaltDirect() {
-            const rawUrl = document.getElementById('ytUrlInput').value.trim();
-            if (!rawUrl) return showToast('Vui lòng dán liên kết YouTube trước.', 'error');
-
-            const btn = document.getElementById('btnCobaltDirect');
-            const lbl = document.getElementById('btnCobaltDirectLabel');
-            const banner = document.getElementById('cobaltStatusBanner');
-            const statusText = document.getElementById('cobaltStatusText');
-            const actionLinks = document.getElementById('cobaltActionLinks');
-
-            btn.disabled = true;
-            lbl.textContent = 'Đang lấy link tải...';
-            banner.className = 'p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/70 text-xs flex flex-wrap items-center justify-between gap-2';
-            banner.classList.remove('hidden');
-            actionLinks.innerHTML = '';
-
-            const candidates = ytState.customApi
-                ? [{ name: 'Custom API', api: ytState.customApi, web: ytState.customApi }]
-                : [
-                    COBALT_DIRECTORY_NODES[ytState.selectedNodeIdx],
-                    ...COBALT_DIRECTORY_NODES.filter((_, i) => i !== ytState.selectedNodeIdx)
-                ];
-
-            const isAudio = ytState.format === 'mp3';
-            const payload = {
-                url: rawUrl,
-                videoQuality: isAudio ? '1080' : ytState.format,
-                audioFormat: 'mp3',
-                audioBitrate: '320',
-                downloadMode: isAudio ? 'audio' : 'auto',
-                filenameStyle: 'pretty'
-            };
-
-            let succeeded = false;
-            for (const node of candidates) {
-                statusText.textContent = `Đang thử máy chủ ${node.name}...`;
+        function initVideoDownloader() {
+            if (!ytState.initialized) {
+                ytState.initialized = true;
                 try {
-                    const controller = new AbortController();
-                    const timer = setTimeout(() => controller.abort(), 9000);
-                    const res = await fetch(`${node.api}/`, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload),
-                        signal: controller.signal
-                    });
-                    clearTimeout(timer);
-
-                    const data = await res.json();
-                    if ((data.status === 'tunnel' || data.status === 'redirect' || data.status === 'stream') && data.url) {
-                        succeeded = true;
-                        banner.className = 'p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs flex flex-wrap items-center justify-between gap-2';
-                        statusText.textContent = `Sẵn sàng tải xuống từ ${node.name}!`;
-                        actionLinks.innerHTML = `
-                            <a href="${data.url}" target="_blank" rel="noopener noreferrer" download="${data.filename || 'video.mp4'}" class="px-3 py-1.5 rounded-md bg-emerald-600 text-white font-semibold inline-flex items-center gap-1 hover:bg-emerald-500">
-                                <span>Lưu về máy ngay</span>
-                            </a>
-                        `;
-                        window.open(data.url, '_blank', 'noopener,noreferrer');
-                        showToast('Đã tạo liên kết tải trực tiếp!');
-                        break;
-                    }
-                } catch (err) {
-                    // Failover to next node in cobalt.directory list
-                }
+                    const savedFmt = localStorage.getItem(YT_STORAGE.format);
+                    if (savedFmt) ytState.format = savedFmt;
+                    const savedMode = localStorage.getItem(YT_STORAGE.mode);
+                    if (savedMode) ytState.mode = savedMode;
+                } catch (e) {}
+                setYtFormat(ytState.format, false);
+                setVideoDownloadMode(ytState.mode, false);
+                setYtShell(ytState.shell, false);
+                renderVideoHistory();
             }
-
-            if (!succeeded) {
-                const fallbackNode = candidates[0] || COBALT_DIRECTORY_NODES[0];
-                banner.className = 'p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 text-xs flex flex-wrap items-center justify-between gap-2';
-                statusText.textContent = 'Các node API yêu cầu xác minh Turnstile trên trình duyệt — mở trực tiếp giao diện node để tải 1 chạm:';
-                actionLinks.innerHTML = `
-                    <a href="${fallbackNode.web}" target="_blank" rel="noopener noreferrer" onclick="copyYtUrlOnly()" class="px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold inline-flex items-center gap-1">
-                        <span>Mở ${fallbackNode.name} (Đã copy link) ↗</span>
-                    </a>
-                `;
-                copyYtUrlOnly();
-            }
-
-            btn.disabled = false;
-            lbl.textContent = 'Tải trực tiếp (Mobile/PC)';
+            updateYtCommand();
         }
 
-        function copyYtUrlOnly() {
-            const url = document.getElementById('ytUrlInput').value.trim();
-            if (!url) return;
-            const ta = document.createElement('textarea');
-            ta.value = url;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            showToast('Đã copy link YouTube vào bộ nhớ tạm!');
+        function extractCleanUrl(raw) {
+            const text = (raw || '').trim();
+            if (!text) return '';
+            const match = text.match(/https?:\/\/[^\s"'<>]+/i);
+            if (match) return match[0].replace(/[.,!?;:)\]]+$/, '');
+            if (/^[a-zA-Z0-9_-]{11}$/.test(text)) return `https://www.youtube.com/watch?v=${text}`;
+            return text;
+        }
+
+        function detectVideoPlatform(url) {
+            if (!url) return { id: 'generic', name: 'Đa nền tảng', icon: 'globe', badgeCls: 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300' };
+            for (const p of VIDEO_PLATFORMS) {
+                if (p.regex.test(url)) return p;
+            }
+            return { id: 'generic', name: 'Web Media', icon: 'globe', badgeCls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' };
         }
 
         function extractYouTubeId(url) {
-            const m = (url || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
-            return m ? m[1] : (/^[a-zA-Z0-9_-]{11}$/.test((url || '').trim()) ? url.trim() : 'kTJczUoc26U');
+            const m = (url || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([a-zA-Z0-9_-]{11})/);
+            return m ? m[1] : (/^[a-zA-Z0-9_-]{11}$/.test((url || '').trim()) ? url.trim() : null);
         }
-        async function pasteYouTubeUrl() {
+
+        function updatePlatformBadge(platform) {
+            const badge = document.getElementById('ytPlatformBadge');
+            if (!badge) return;
+            badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold ${platform.badgeCls}`;
+            badge.innerHTML = `<i data-lucide="${platform.icon}" class="w-3 h-3"></i><span>${escapeHtml(platform.name)}</span>`;
+            lucide.createIcons();
+        }
+
+        function handleVideoUrlInput(raw) {
+            const clearBtn = document.getElementById('ytClearBtn');
+            if (clearBtn) clearBtn.classList.toggle('hidden', !raw || !raw.trim());
+
+            const cleanUrl = extractCleanUrl(raw);
+            if (cleanUrl && cleanUrl !== raw.trim() && /^https?:\/\//i.test(cleanUrl)) {
+                document.getElementById('ytUrlInput').value = cleanUrl;
+            }
+
+            ytState.url = cleanUrl;
+            ytState.platform = detectVideoPlatform(cleanUrl);
+            updatePlatformBadge(ytState.platform);
+            updateYtCommand();
+
+            clearTimeout(ytState.analyzeTimer);
+            if (!cleanUrl || !/^https?:\/\//i.test(cleanUrl)) {
+                ytState.meta = null;
+                ytState.directLinks = null;
+                document.getElementById('ytEmptyPreview')?.classList.remove('hidden');
+                document.getElementById('ytLoadedPreview')?.classList.add('hidden');
+                document.getElementById('ytAnalyzeStatus').textContent = '';
+                return;
+            }
+
+            ytState.analyzeTimer = setTimeout(() => {
+                analyzeVideoUrl(cleanUrl);
+            }, 260);
+        }
+
+        function clearVideoUrl() {
+            const input = document.getElementById('ytUrlInput');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            handleVideoUrlInput('');
+        }
+
+        async function pasteAndAnalyzeVideo() {
             try {
                 const txt = await navigator.clipboard.readText();
-                if (txt) { document.getElementById('ytUrlInput').value = txt; analyzeYouTubeUrl(); }
-            } catch (e) { showToast('Hãy nhấn giữ ô nhập và chọn Dán.', 'error'); }
+                const clean = extractCleanUrl(txt);
+                if (!clean) {
+                    showToast('Clipboard chưa có liên kết video.', 'error');
+                    return;
+                }
+                document.getElementById('ytUrlInput').value = clean;
+                handleVideoUrlInput(clean);
+                showToast(`Đã nhận link ${detectVideoPlatform(clean).name}!`);
+            } catch (e) {
+                const input = document.getElementById('ytUrlInput');
+                if (input) input.focus();
+                showToast('Hãy nhấn Ctrl+V để dán link.', 'error');
+            }
         }
-        async function analyzeYouTubeUrl() {
-            const url = document.getElementById('ytUrlInput').value.trim();
-            const id = extractYouTubeId(url);
-            document.getElementById('ytVideoIdBadge').textContent = `ID: ${id}`;
-            document.getElementById('ytThumbImg').src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-            document.getElementById('ytThumbMaxLink').href = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+
+        // Global Ctrl+V anywhere in Video Downloader tab -> instant paste & analyze!
+        document.addEventListener('paste', (e) => {
+            if (activeView !== 'youtube') return;
+            const tag = document.activeElement?.tagName;
+            if (tag === 'TEXTAREA' || (tag === 'INPUT' && document.activeElement.id !== 'ytUrlInput')) return;
+            const pasted = e.clipboardData?.getData('text') || '';
+            const clean = extractCleanUrl(pasted);
+            if (clean && /^https?:\/\//i.test(clean)) {
+                e.preventDefault();
+                const input = document.getElementById('ytUrlInput');
+                if (input) input.value = clean;
+                handleVideoUrlInput(clean);
+            }
+        });
+
+        function formatVideoDuration(sec) {
+            if (!sec || isNaN(sec)) return '';
+            const s = Math.floor(sec);
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const rem = s % 60;
+            return h > 0
+                ? `${h}:${String(m).padStart(2, '0')}:${String(rem).padStart(2, '0')}`
+                : `${m}:${String(rem).padStart(2, '0')}`;
+        }
+
+        async function analyzeVideoUrl(url) {
+            const cleanUrl = extractCleanUrl(url || document.getElementById('ytUrlInput')?.value);
+            if (!cleanUrl || !/^https?:\/\//i.test(cleanUrl)) return;
+
+            const platform = detectVideoPlatform(cleanUrl);
+            ytState.url = cleanUrl;
+            ytState.platform = platform;
+            ytState.directLinks = null;
+            updatePlatformBadge(platform);
             updateYtCommand();
-            try {
-                const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`);
-                const data = await res.json();
-                if (data.title) document.getElementById('ytVideoTitle').textContent = data.title;
-                if (data.author_name) document.getElementById('ytChannelName').textContent = data.author_name;
-            } catch (e) {}
+
+            const statusEl = document.getElementById('ytAnalyzeStatus');
+            const emptyEl = document.getElementById('ytEmptyPreview');
+            const loadedEl = document.getElementById('ytLoadedPreview');
+            const thumbImg = document.getElementById('ytThumbImg');
+            const thumbFallback = document.getElementById('ytThumbFallback');
+            const durBadge = document.getElementById('ytDurationBadge');
+
+            emptyEl?.classList.add('hidden');
+            loadedEl?.classList.remove('hidden');
+            durBadge?.classList.add('hidden');
+            if (statusEl) statusEl.textContent = 'Đang phân tích...';
+
+            const showThumb = (src) => {
+                if (src) {
+                    thumbImg.src = src;
+                    thumbImg.classList.remove('hidden');
+                    thumbFallback.classList.add('hidden');
+                } else {
+                    thumbImg.classList.add('hidden');
+                    thumbFallback.classList.remove('hidden');
+                    document.getElementById('ytThumbFallbackLabel').textContent = platform.name.toUpperCase();
+                }
+            };
+
+            let meta = {
+                url: cleanUrl,
+                platform: platform.id,
+                platformName: platform.name,
+                title: `${platform.name} Video`,
+                author: new URL(cleanUrl).hostname.replace(/^www\./, ''),
+                thumb: '',
+                idLabel: platform.name.toUpperCase()
+            };
+
+            // 1. Direct media URL (.mp4/.webm/.mp3)
+            if (platform.id === 'direct') {
+                const fname = decodeURIComponent(cleanUrl.split('/').pop().split('?')[0] || 'media.mp4');
+                meta.title = fname;
+                meta.idLabel = 'DIRECT FILE';
+                ytState.directLinks = { video: cleanUrl, filename: fname };
+                showThumb('');
+            }
+            // 2. TikTok / Douyin via TikWM (Live watermark-free direct MP4 & MP3!)
+            else if (platform.id === 'tiktok') {
+                showThumb('');
+                document.getElementById('ytVideoTitle').textContent = 'Đang lấy link tải không logo...';
+                document.getElementById('ytChannelName').textContent = 'TikTok Direct Engine';
+                try {
+                    const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}&hd=1`);
+                    const json = await res.json();
+                    if (json && json.code === 0 && json.data) {
+                        const d = json.data;
+                        meta.title = d.title || 'TikTok Video';
+                        meta.author = d.author?.nickname ? `${d.author.nickname} (@${d.author.unique_id || ''})` : 'TikTok';
+                        meta.thumb = d.cover || d.origin_cover || '';
+                        meta.idLabel = `TIKTOK · ${d.id || ''}`;
+                        if (d.duration) {
+                            durBadge.textContent = formatVideoDuration(d.duration);
+                            durBadge.classList.remove('hidden');
+                        }
+                        ytState.directLinks = {
+                            hd: d.hdplay || d.play,
+                            sd: d.play,
+                            mp3: d.music,
+                            cover: d.cover || d.origin_cover,
+                            filename: `tiktok-${d.id || Date.now()}.mp4`
+                        };
+                    }
+                } catch (e) {}
+                showThumb(meta.thumb);
+            }
+            // 3. YouTube
+            else if (platform.id === 'youtube') {
+                const id = extractYouTubeId(cleanUrl);
+                if (id) {
+                    meta.idLabel = `YT · ${id}`;
+                    meta.thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+                    meta.thumbMax = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+                    showThumb(meta.thumb);
+                    try {
+                        const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}`);
+                        const data = await res.json();
+                        if (data.title) meta.title = data.title;
+                        if (data.author_name) meta.author = data.author_name;
+                    } catch (e) {}
+                } else {
+                    showThumb('');
+                }
+            }
+            // 4. Other platforms (Facebook, Instagram, X, Vimeo, Reddit, SoundCloud, Bilibili...)
+            else {
+                showThumb('');
+                try {
+                    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(cleanUrl)}`);
+                    const data = await res.json();
+                    if (data && !data.error) {
+                        if (data.title) meta.title = data.title;
+                        if (data.author_name) meta.author = data.author_name;
+                        if (data.thumbnail_url) {
+                            meta.thumb = data.thumbnail_url;
+                            showThumb(meta.thumb);
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            ytState.meta = meta;
+            document.getElementById('ytVideoIdBadge').textContent = meta.idLabel;
+            document.getElementById('ytVideoTitle').textContent = meta.title;
+            document.getElementById('ytChannelName').textContent = meta.author;
+            if (statusEl) {
+                statusEl.textContent = ytState.directLinks ? 'Sẵn sàng tải trực tiếp' : 'Sẵn sàng tải 1-chạm';
+            }
+
+            renderDirectActionBar(meta);
+            saveVideoHistory(meta);
         }
-        function setYtFormat(fmt) {
+
+        function renderDirectActionBar(meta) {
+            const bar = document.getElementById('ytDirectActionBar');
+            if (!bar) return;
+
+            const buttons = [];
+            if (ytState.directLinks) {
+                if (ytState.directLinks.hd) {
+                    buttons.push(`<button type="button" onclick="downloadDirectMediaUrl('${escapeHtml(ytState.directLinks.hd)}', '${escapeHtml(ytState.directLinks.filename || 'video-hd.mp4')}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i><span>Tải HD không logo</span></button>`);
+                }
+                if (ytState.directLinks.sd && ytState.directLinks.sd !== ytState.directLinks.hd) {
+                    buttons.push(`<button type="button" onclick="downloadDirectMediaUrl('${escapeHtml(ytState.directLinks.sd)}', '${escapeHtml(ytState.directLinks.filename || 'video.mp4')}')" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="film" class="w-3.5 h-3.5"></i><span>MP4 chuẩn</span></button>`);
+                }
+                if (ytState.directLinks.mp3) {
+                    buttons.push(`<button type="button" onclick="downloadDirectMediaUrl('${escapeHtml(ytState.directLinks.mp3)}', 'audio-${Date.now()}.mp3')" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="music" class="w-3.5 h-3.5"></i><span>Tải MP3</span></button>`);
+                }
+                if (ytState.directLinks.video) {
+                    buttons.push(`<button type="button" onclick="downloadDirectMediaUrl('${escapeHtml(ytState.directLinks.video)}', '${escapeHtml(ytState.directLinks.filename || 'media.mp4')}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i><span>Tải file trực tiếp</span></button>`);
+                }
+            } else {
+                buttons.push(`<button type="button" onclick="downloadYtBatchScript()" class="px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i><span>Tải script 1-nhấp (${ytState.shell === 'win' ? '.BAT' : '.SH'})</span></button>`);
+                buttons.push(`<button type="button" onclick="openWebDownloader()" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>Tải qua Cobalt Web</span></button>`);
+            }
+
+            if (meta.thumbMax || meta.thumb) {
+                const thumbHref = meta.thumbMax || meta.thumb;
+                buttons.push(`<a href="${escapeHtml(thumbHref)}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="image" class="w-3.5 h-3.5"></i><span>Ảnh bìa HD</span></a>`);
+            }
+
+            bar.innerHTML = buttons.join('');
+            lucide.createIcons();
+        }
+
+        async function downloadDirectMediaUrl(mediaUrl, filename) {
+            if (!mediaUrl) return;
+            showToast('Đang bắt đầu tải trực tiếp...');
+            try {
+                const res = await fetch(mediaUrl);
+                if (!res.ok) throw new Error('CORS or network');
+                const blob = await res.blob();
+                triggerBlobDownload(blob, filename || `weat-video-${Date.now()}.mp4`);
+                showToast('Đã tải xong video!');
+            } catch (e) {
+                // Fallback: open direct stream URL in new tab so browser downloads/plays natively
+                const a = document.createElement('a');
+                a.href = mediaUrl;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.download = filename || 'video.mp4';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast('Đang mở luồng tải trực tiếp...');
+            }
+        }
+
+        async function openWebDownloader() {
+            const url = extractCleanUrl(document.getElementById('ytUrlInput')?.value);
+            if (!url) return showToast('Vui lòng dán link video trước.', 'error');
+            try { await navigator.clipboard.writeText(url); } catch (e) {}
+            window.open('https://cobalt.tools/', '_blank', 'noopener');
+            showToast('Đã copy sẵn link — chỉ cần Ctrl+V trên Cobalt để tải ngay!');
+        }
+
+        async function smartOneClickDownload() {
+            const input = document.getElementById('ytUrlInput');
+            let url = extractCleanUrl(input?.value);
+
+            // If input is empty, try reading clipboard automatically for true 1-click!
+            if (!url) {
+                try {
+                    const clip = extractCleanUrl(await navigator.clipboard.readText());
+                    if (clip && /^https?:\/\//i.test(clip)) {
+                        input.value = clip;
+                        handleVideoUrlInput(clip);
+                        url = clip;
+                    }
+                } catch (e) {}
+            }
+
+            if (!url || !/^https?:\/\//i.test(url)) {
+                input?.focus();
+                showToast('Hãy dán link video (YouTube, TikTok, Facebook, IG...) vào ô trên.', 'error');
+                return;
+            }
+
+            const platform = detectVideoPlatform(url);
+
+            // Wait for TikTok direct links if not fetched yet
+            if (platform.id === 'tiktok' && (!ytState.directLinks || ytState.url !== url)) {
+                await analyzeVideoUrl(url);
+            }
+
+            // Direct media or TikTok in Auto/Web mode -> download immediately in browser!
+            if ((ytState.mode === 'auto' || ytState.mode === 'web') && ytState.directLinks) {
+                if (ytState.format === 'mp3' && ytState.directLinks.mp3) {
+                    return downloadDirectMediaUrl(ytState.directLinks.mp3, `audio-${Date.now()}.mp3`);
+                }
+                const targetUrl = ytState.directLinks.hd || ytState.directLinks.sd || ytState.directLinks.video;
+                if (targetUrl) {
+                    return downloadDirectMediaUrl(targetUrl, ytState.directLinks.filename || `video-${Date.now()}.mp4`);
+                }
+            }
+
+            if (ytState.mode === 'web') {
+                return openWebDownloader();
+            }
+            if (ytState.mode === 'copy') {
+                updateYtCommand();
+                return copyYtCommand();
+            }
+            // Default ('auto' fallback & 'script'): download 1-click self-bootstrapping .BAT / .SH
+            downloadYtBatchScript();
+        }
+
+        function setVideoDownloadMode(mode, persist = true) {
+            ytState.mode = mode;
+            if (persist) {
+                try { localStorage.setItem(YT_STORAGE.mode, mode); } catch (e) {}
+            }
+            document.querySelectorAll('.yt-mode-btn').forEach(btn => {
+                const act = btn.getAttribute('data-dlmode') === mode;
+                btn.className = act
+                    ? 'yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs transition-colors'
+                    : 'yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors';
+            });
+            const lbl = document.getElementById('ytPrimaryDlLabel');
+            if (lbl) {
+                lbl.textContent = mode === 'web' ? 'Tải qua Web' : mode === 'copy' ? 'Copy lệnh tải' : 'Tải ngay';
+            }
+        }
+
+        function setYtFormat(fmt, persist = true) {
             ytState.format = fmt;
+            if (persist) {
+                try { localStorage.setItem(YT_STORAGE.format, fmt); } catch (e) {}
+            }
             document.querySelectorAll('.yt-fmt-btn').forEach(b => {
                 const act = b.getAttribute('data-ytfmt') === fmt;
-                b.className = act ? 'yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium' : 'yt-fmt-btn py-1.5 px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-xs font-medium';
+                b.className = act
+                    ? 'yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-semibold transition-colors'
+                    : 'yt-fmt-btn px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors';
             });
             updateYtCommand();
         }
-        function setYtShell(sh) {
+
+        function setYtShell(sh, persist = true) {
             ytState.shell = sh;
             document.getElementById('ytShellWin').className = sh === 'win' ? 'px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'px-1.5 py-0.5 rounded text-zinc-500';
-            document.getElementById('ytShellTermux').className = sh === 'termux' ? 'px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'px-1.5 py-0.5 rounded text-zinc-500';
             document.getElementById('ytShellUnix').className = sh === 'unix' ? 'px-1.5 py-0.5 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900' : 'px-1.5 py-0.5 rounded text-zinc-500';
+            const btnLbl = document.getElementById('ytScriptBtnLabel');
+            if (btnLbl) btnLbl.textContent = sh === 'win' ? 'Tải .BAT' : 'Tải .SH';
             updateYtCommand();
+            if (ytState.meta) renderDirectActionBar(ytState.meta);
         }
+
+        function getYtDlpFormatArgs() {
+            if (ytState.format === 'mp3') return `-x --audio-format mp3 --audio-quality 0`;
+            if (ytState.format === 'best') return `-f "bv*+ba/b" --merge-output-format mp4 --remux-video mp4`;
+            return `-f "bv*[height<=${ytState.format}]+ba/b" --merge-output-format mp4 --remux-video mp4`;
+        }
+
         function updateYtCommand() {
-            const url = document.getElementById('ytUrlInput').value.trim() || 'https://www.youtube.com/watch?v=kTJczUoc26U';
-            const ckMode = document.getElementById('ytCookieMode').value;
-            const fmtArg = ytState.format === 'mp3'
-                ? `-x --audio-format mp3 --audio-quality 0`
-                : `-f "bv*[height<=${ytState.format}]+ba/b" --merge-output-format mp4 --remux-video mp4 --postprocessor-args "Merger+ffmpeg:-c:v copy -c:a aac -b:a 192k"`;
+            const url = extractCleanUrl(document.getElementById('ytUrlInput')?.value) || 'https://www.youtube.com/watch?v=kTJczUoc26U';
+            const ckMode = document.getElementById('ytCookieMode')?.value || 'auto';
+            const fmtArg = getYtDlpFormatArgs();
 
             if (ytState.shell === 'win') {
-                const ckVar = ckMode === 'cookies_txt'
-                    ? `$ck=if(Test-Path .\\cookies.txt){@('--cookies','.\\cookies.txt')}else{@()};`
+                const ckVar = ckMode === 'chrome'
+                    ? `$ck=@('--cookies-from-browser','chrome');`
                     : ckMode === 'firefox'
                     ? `$ck=@('--cookies-from-browser','firefox');`
-                    : `$ck=@('--extractor-args','youtube:player_client=android_vr,tv');`;
-                document.getElementById('ytCliCommand').value = `$ProgressPreference='SilentlyContinue'; $dl="$HOME\\Downloads"; cd $dl; if(!(Test-Path .\\yt-dlp.exe)){iwr https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile yt-dlp.exe}; if(!(Test-Path .\\ffmpeg.exe)){iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; rm ff,ff.zip -Recurse -Force}; ${ckVar} .\\yt-dlp.exe @ck --ffmpeg-location . ${fmtArg} -o "$dl\\%(title)s.%(ext)s" "${url}"`;
-            } else if (ytState.shell === 'termux') {
-                document.getElementById('ytCliCommand').value = `pkg update -y && pkg install -y python ffmpeg && pip install -U yt-dlp && termux-setup-storage && yt-dlp ${fmtArg} -o "/sdcard/Download/%(title)s.%(ext)s" "${url}"`;
+                    : ckMode === 'bypass'
+                    ? `$ck=@('--extractor-args','youtube:player_client=android_vr,tv');`
+                    : `$ck=if(Test-Path .\\cookies.txt){@('--cookies','.\\cookies.txt')}else{@()};`;
+                document.getElementById('ytCliCommand').value = `$ProgressPreference='SilentlyContinue'; $dl="$HOME\\Downloads"; cd $dl; if(!(Test-Path .\\yt-dlp.exe)){iwr https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile yt-dlp.exe}; if(!(Test-Path .\\ffmpeg.exe)){iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; rm ff,ff.zip -Recurse -Force}; ${ckVar} .\\yt-dlp.exe @ck --ffmpeg-location . ${fmtArg} -o "$dl\\%(title).120s.%(ext)s" "${url}"`;
             } else {
-                const ckFlag = ckMode === 'cookies_txt' ? `[ -f ./cookies.txt ] && CK="--cookies ./cookies.txt" || CK=""` : ckMode === 'firefox' ? `CK="--cookies-from-browser firefox"` : `CK="--extractor-args youtube:player_client=android_vr,tv"`;
-                document.getElementById('ytCliCommand').value = `cd ~/Downloads && ${ckFlag} && yt-dlp $CK ${fmtArg} -o "~/Downloads/%(title)s.%(ext)s" "${url}"`;
+                const ckFlag = ckMode === 'chrome'
+                    ? `CK="--cookies-from-browser chrome"`
+                    : ckMode === 'firefox'
+                    ? `CK="--cookies-from-browser firefox"`
+                    : ckMode === 'bypass'
+                    ? `CK="--extractor-args youtube:player_client=android_vr,tv"`
+                    : `[ -f ./cookies.txt ] && CK="--cookies ./cookies.txt" || CK=""`;
+                document.getElementById('ytCliCommand').value = `cd ~/Downloads && ${ckFlag} && yt-dlp $CK ${fmtArg} -o "~/Downloads/%(title).120s.%(ext)s" "${url}"`;
             }
         }
-        function copyYtCommand() {
-            const el = document.getElementById('ytCliCommand');
-            el.select();
-            document.execCommand('copy');
+
+        async function copyYtCommand() {
+            updateYtCommand();
+            const val = document.getElementById('ytCliCommand').value;
+            try {
+                await navigator.clipboard.writeText(val);
+            } catch (e) {
+                const el = document.getElementById('ytCliCommand');
+                el.select();
+                document.execCommand('copy');
+            }
             showToast('Đã sao chép lệnh tải video!');
         }
-        function downloadYtBatchScript() {
-            const url = document.getElementById('ytUrlInput').value.trim();
-            const fmtArg = ytState.format === 'mp3' ? `-x --audio-format mp3` : `-f "bv*[height<=${ytState.format}]+ba/b" --merge-output-format mp4`;
-            const bat = `@echo off\r\ncd /d "%USERPROFILE%\\Downloads"\r\nif not exist yt-dlp.exe curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -o yt-dlp.exe\r\nif exist cookies.txt (set CK=--cookies cookies.txt) else (set CK=)\r\nyt-dlp.exe %CK% --ffmpeg-location . ${fmtArg} -o "%%(title)s.%%(ext)s" "${url}"\r\nexplorer "%USERPROFILE%\\Downloads"\r\npause`;
-            triggerBlobDownload(new Blob([bat], { type: 'text/plain' }), 'WeaT-YouTube-Downloader.bat');
+
+        function buildDownloaderScript(urls) {
+            const fmtArg = getYtDlpFormatArgs();
+            const ckMode = document.getElementById('ytCookieMode')?.value || 'auto';
+            const cleanUrls = urls.filter(Boolean);
+
+            if (ytState.shell === 'win') {
+                const ckLine = ckMode === 'chrome'
+                    ? `set CK=--cookies-from-browser chrome`
+                    : ckMode === 'firefox'
+                    ? `set CK=--cookies-from-browser firefox`
+                    : ckMode === 'bypass'
+                    ? `set CK=--extractor-args "youtube:player_client=android_vr,tv"`
+                    : `if exist cookies.txt (set CK=--cookies cookies.txt) else (set CK=)`;
+                const dlLines = cleanUrls.map(u => `yt-dlp.exe %CK% --ffmpeg-location . ${fmtArg} -o "%%(title).120s.%%(ext)s" "${u}"`).join('\r\n');
+                return `@echo off\r\nchcp 65001 >nul\r\ntitle Wea-T Smart Video Downloader\r\ncd /d "%USERPROFILE%\\Downloads"\r\nif not exist yt-dlp.exe (\r\n  echo [Wea-T] Dang tai yt-dlp lan dau...\r\n  curl -L -s https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -o yt-dlp.exe\r\n)\r\nif not exist ffmpeg.exe (\r\n  echo [Wea-T] Dang cai dat ffmpeg lan dau...\r\n  powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; rm ff,ff.zip -Recurse -Force"\r\n)\r\n${ckLine}\r\necho [Wea-T] Dang tai video vao Downloads...\r\n${dlLines}\r\necho.\r\necho [Wea-T] Hoan tat! Dang mo thu muc Downloads...\r\nexplorer "%USERPROFILE%\\Downloads"\r\ntimeout /t 3 >nul\r\n`;
+            } else {
+                const ckLine = ckMode === 'chrome'
+                    ? `CK="--cookies-from-browser chrome"`
+                    : ckMode === 'firefox'
+                    ? `CK="--cookies-from-browser firefox"`
+                    : ckMode === 'bypass'
+                    ? `CK="--extractor-args youtube:player_client=android_vr,tv"`
+                    : `[ -f ./cookies.txt ] && CK="--cookies ./cookies.txt" || CK=""`;
+                const dlLines = cleanUrls.map(u => `yt-dlp $CK ${fmtArg} -o "~/Downloads/%(title).120s.%(ext)s" "${u}"`).join('\n');
+                return `#!/usr/bin/env bash\nset -e\ncd ~/Downloads\nif ! command -v yt-dlp >/dev/null 2>&1; then\n  echo "[Wea-T] Installing yt-dlp..."\n  curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod +x ./yt-dlp\n  export PATH="$PWD:$PATH"\nfi\n${ckLine}\n${dlLines}\necho "[Wea-T] Done! Saved to ~/Downloads"\n`;
+            }
         }
+
+        function downloadYtBatchScript() {
+            const url = extractCleanUrl(document.getElementById('ytUrlInput')?.value);
+            if (!url || !/^https?:\/\//i.test(url)) {
+                showToast('Vui lòng dán link video trước khi tải.', 'error');
+                return;
+            }
+            const script = buildDownloaderScript([url]);
+            const ext = ytState.shell === 'win' ? 'bat' : 'sh';
+            const pName = (ytState.platform?.id || 'video').replace(/[^a-z0-9]/gi, '');
+            triggerBlobDownload(new Blob([script], { type: 'text/plain;charset=utf-8' }), `WeaT-Download-${pName}.${ext}`);
+            showToast(ytState.shell === 'win'
+                ? 'Đã tải file .BAT — chỉ cần nhấp đúp để tải video vào Downloads!'
+                : 'Đã tải file .SH — chạy "bash WeaT-Download.sh" để tải vào Downloads!');
+        }
+
+        function getBatchUrls() {
+            const raw = document.getElementById('ytBatchInput')?.value || '';
+            return raw.split(/\r?\n/).map(extractCleanUrl).filter(u => /^https?:\/\//i.test(u));
+        }
+
+        function downloadBatchVideoScript() {
+            const urls = getBatchUrls();
+            if (!urls.length) return showToast('Vui lòng dán ít nhất 1 liên kết vào danh sách.', 'error');
+            const script = buildDownloaderScript(urls);
+            const ext = ytState.shell === 'win' ? 'bat' : 'sh';
+            triggerBlobDownload(new Blob([script], { type: 'text/plain;charset=utf-8' }), `WeaT-Batch-${urls.length}-Videos.${ext}`);
+            showToast(`Đã tạo file tải hàng loạt cho ${urls.length} video!`);
+        }
+
+        async function copyBatchVideoCommand() {
+            const urls = getBatchUrls();
+            if (!urls.length) return showToast('Vui lòng dán ít nhất 1 liên kết vào danh sách.', 'error');
+            const fmtArg = getYtDlpFormatArgs();
+            const quoted = urls.map(u => `"${u}"`).join(' ');
+            const cmd = ytState.shell === 'win'
+                ? `cd "$HOME\\Downloads"; .\\yt-dlp.exe --ffmpeg-location . ${fmtArg} -o "%(title).120s.%(ext)s" ${quoted}`
+                : `cd ~/Downloads && yt-dlp ${fmtArg} -o "%(title).120s.%(ext)s" ${quoted}`;
+            try { await navigator.clipboard.writeText(cmd); } catch (e) {}
+            showToast(`Đã copy lệnh tải ${urls.length} video!`);
+        }
+
+        function saveVideoHistory(meta) {
+            if (!meta || !meta.url) return;
+            try {
+                const list = JSON.parse(localStorage.getItem(YT_STORAGE.history) || '[]');
+                const next = [
+                    { url: meta.url, title: meta.title, platformName: meta.platformName, thumb: meta.thumb || '' },
+                    ...list.filter(item => item.url !== meta.url)
+                ].slice(0, 6);
+                localStorage.setItem(YT_STORAGE.history, JSON.stringify(next));
+                renderVideoHistory();
+            } catch (e) {}
+        }
+
+        function renderVideoHistory() {
+            const card = document.getElementById('ytHistoryCard');
+            const listEl = document.getElementById('ytHistoryList');
+            if (!card || !listEl) return;
+            let list = [];
+            try { list = JSON.parse(localStorage.getItem(YT_STORAGE.history) || '[]'); } catch (e) {}
+            if (!list.length) {
+                card.classList.add('hidden');
+                return;
+            }
+            card.classList.remove('hidden');
+            listEl.innerHTML = list.map((item, idx) => `
+                <button type="button" onclick="loadVideoFromHistory(${idx})" class="text-left p-2.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/70 flex items-center gap-2.5 min-w-0 transition-colors">
+                    <div class="w-10 h-7 rounded-md bg-zinc-100 dark:bg-zinc-800 overflow-hidden shrink-0 flex items-center justify-center">
+                        ${item.thumb ? `<img src="${escapeHtml(item.thumb)}" class="w-full h-full object-cover" alt="">` : `<i data-lucide="play" class="w-3.5 h-3.5 text-zinc-400"></i>`}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate">${escapeHtml(item.title || item.url)}</div>
+                        <div class="text-[10px] font-mono text-zinc-400 truncate">${escapeHtml(item.platformName || 'Media')}</div>
+                    </div>
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function loadVideoFromHistory(idx) {
+            try {
+                const list = JSON.parse(localStorage.getItem(YT_STORAGE.history) || '[]');
+                const item = list[idx];
+                if (item?.url) {
+                    document.getElementById('ytUrlInput').value = item.url;
+                    handleVideoUrlInput(item.url);
+                }
+            } catch (e) {}
+        }
+
+        function clearVideoHistory() {
+            try { localStorage.removeItem(YT_STORAGE.history); } catch (e) {}
+            renderVideoHistory();
+            showToast('Đã xóa lịch sử liên kết.');
+        }
+
         function handleMuxFileSelect(kind, file) {
             if (!file) return;
             if (kind === 'video') { ytState.muxVideo = file; document.getElementById('muxVideoName').textContent = file.name; }
@@ -2091,9 +3323,15 @@
         function clearConvertQueue() { convertQueue = []; renderConvertList(); }
 
         // =========================================================================
-        // MODULE 7: QR & BARCODE STUDIO
+        // MODULE 7: QR & BARCODE STUDIO (DEEP CUSTOMIZATION + SCANNER)
         // =========================================================================
-        const qrState = { mode: 'qr', template: 'url', dotStyle: 'rounded', logoImg: null, lastPayload: '' };
+        const qrState = {
+            mode: 'qr',
+            template: 'url',
+            dotStyle: 'rounded',
+            logoImg: null,
+            lastPayload: ''
+        };
 
         function setQrStudioMode(mode) {
             qrState.mode = mode;
@@ -2223,7 +3461,9 @@
         }
 
         function getQrEncodedPayload() {
-            if (qrState.mode === 'barcode') return document.getElementById('barcodeValueInput').value || '12345678';
+            if (qrState.mode === 'barcode') {
+                return document.getElementById('barcodeValueInput').value || '12345678';
+            }
             const tpl = qrState.template;
             if (tpl === 'url') return document.getElementById('qrInputUrl').value.trim() || 'https://wea-t.studio';
             if (tpl === 'wifi') {
