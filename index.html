@@ -6053,12 +6053,113 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
+        function parseWeatDeepLinkParams() {
+            const params = new URLSearchParams(window.location.search || '');
+            const hashRaw = window.location.hash || '';
+            const qIdx = hashRaw.indexOf('?');
+            if (qIdx !== -1) {
+                const hashParams = new URLSearchParams(hashRaw.slice(qIdx + 1));
+                hashParams.forEach((v, k) => {
+                    if (!params.has(k)) params.set(k, v);
+                });
+            }
+            return params;
+        }
+
+        function highlightYtPrimaryBtn() {
+            const btn = document.getElementById('ytPrimaryDownloadBtn');
+            if (!btn) return;
+            btn.classList.add('ring-2', 'ring-amber-500', 'ring-offset-2', 'dark:ring-offset-zinc-900', 'animate-pulse');
+            setTimeout(() => {
+                btn.classList.remove('ring-2', 'ring-amber-500', 'ring-offset-2', 'dark:ring-offset-zinc-900', 'animate-pulse');
+            }, 4500);
+        }
+
+        async function handleWeatDeepLink() {
+            const params = parseWeatDeepLinkParams();
+            const rawUrl = params.get('url');
+            if (!rawUrl) return false;
+
+            const cleanUrl = extractCleanUrl(rawUrl);
+            if (!cleanUrl || !/^https?:\/\//i.test(cleanUrl)) return false;
+
+            const validFmts = ['best', '2160', '1080', '720', 'mp3'];
+            const rawFmt = (params.get('fmt') || '').toLowerCase();
+            const fmt = validFmts.includes(rawFmt) ? rawFmt : null;
+
+            const validModes = ['auto', 'web', 'script', 'copy'];
+            const rawMode = (params.get('mode') || '').toLowerCase();
+            const mode = validModes.includes(rawMode) ? rawMode : null;
+
+            const auto = params.get('auto') === '1';
+            const src = params.get('src') || '';
+
+            switchView('youtube', false);
+            initVideoDownloader();
+
+            if (fmt) setYtFormat(fmt, false);
+            if (mode) setVideoDownloadMode(mode, false);
+
+            const input = document.getElementById('ytUrlInput');
+            if (input) input.value = cleanUrl;
+            const clearBtn = document.getElementById('ytClearBtn');
+            if (clearBtn) clearBtn.classList.remove('hidden');
+
+            ytState.url = cleanUrl;
+            ytState.platform = detectVideoPlatform(cleanUrl);
+            updatePlatformBadge(ytState.platform);
+            updateYtCommand();
+
+            // Clean query string & hash params immediately so F5 won't re-trigger
+            const cleanBase = window.location.pathname + '#youtube';
+            history.replaceState(null, '', cleanBase);
+
+            const fmtLabels = { best: 'Tốt nhất', '2160': '4K UHD', '1080': '1080p HD', '720': '720p', mp3: 'MP3 Nhạc' };
+            if (src === 'ytst') {
+                const fText = fmt ? ` · ${fmtLabels[fmt] || fmt}` : '';
+                showToast(`Đã nhận video từ YT SuperTool${fText}`);
+            }
+
+            // Start metadata analysis
+            const analyzePromise = analyzeVideoUrl(cleanUrl);
+
+            if (auto) {
+                const effMode = ytState.mode || 'auto';
+                if (effMode === 'script' || effMode === 'auto') {
+                    await smartOneClickDownload();
+                } else if (effMode === 'copy') {
+                    try {
+                        updateYtCommand();
+                        const val = document.getElementById('ytCliCommand')?.value || '';
+                        await navigator.clipboard.writeText(val);
+                        showToast('Đã sao chép lệnh tải video!');
+                    } catch (e) {
+                        highlightYtPrimaryBtn();
+                        showToast('Nhấn nút "Copy lệnh tải" bên trên để sao chép lệnh!');
+                    }
+                } else if (effMode === 'web') {
+                    highlightYtPrimaryBtn();
+                    showToast('Nhấn nút "Tải qua Web" bên trên để mở trình tải!');
+                }
+            }
+
+            await analyzePromise;
+            return true;
+        }
+
+        window.addEventListener('hashchange', () => {
+            handleWeatDeepLink();
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
             updateNetworkStatusBadge();
             if (typeof loadRounderSettings === 'function') loadRounderSettings();
             loadQrSettings();
-            const initialHash = (window.location.hash || '').replace('#', '');
-            switchView(initialHash || 'home', false);
+            const handledDeepLink = await handleWeatDeepLink();
+            if (!handledDeepLink) {
+                const initialHash = (window.location.hash || '').replace(/^#/, '').split('?')[0];
+                switchView(initialHash || 'home', false);
+            }
             lucide.createIcons();
         });
     </script>
