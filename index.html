@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
     <title>Wea-T — Unified Personal Tech Studio</title>
-    <meta name="description" content="Wea-T Studio: Thời tiết & AQI, Bo tròn góc ảnh hàng loạt, Nén ảnh thông minh, YouTube & FFmpeg, Chuyển đổi 30+ định dạng và QR & Barcode Studio.">
+    <meta name="description" content="Wea-T Studio: Thời tiết & AQI, Bo tròn góc ảnh hàng loạt, Nén ảnh thông minh, Tải video đa nền tảng, Chuyển đổi 30+ định dạng và QR & Barcode Studio.">
 
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,14 +14,6 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- JSZip for Batch ZIP Export & EPUB Packaging -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-    <!-- QRCode Matrix Generator, JsBarcode & jsQR Scanner -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -70,6 +62,32 @@
         html.dark body {
             background-color: #09090B;
             color: #F4F4F5;
+        }
+
+        /* 3-Tier Surface System (Dark Mode: #09090B -> #101012 -> #17171A) */
+        html.dark .surface-panel,
+        html.dark header,
+        html.dark aside {
+            background-color: #101012 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        html.dark .surface-card,
+        html.dark main section,
+        html.dark #view-home section,
+        html.dark #compressList > div,
+        html.dark #previewGrid > div {
+            background-color: #17171A;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        html.dark main {
+            background-color: #09090B;
+        }
+
+        /* Tabular numbers for dynamic metrics */
+        .font-mono,
+        .tabular-nums,
+        input[type="number"] {
+            font-variant-numeric: tabular-nums;
         }
 
         /* Checkerboard transparency preview */
@@ -184,147 +202,203 @@
     <!-- ===================================================================== -->
     <!-- UNIFIED RESPONSIVE TOPBAR NAVIGATION                                  -->
     <!-- ===================================================================== -->
-    <header class="h-14 bg-white dark:bg-zinc-900 border-b border-studio-border dark:border-zinc-800 px-3 sm:px-4 lg:px-6 flex md:grid md:grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center justify-between gap-2 sm:gap-3 shrink-0 z-30 transition-colors duration-150">
+    <header class="h-12 bg-white dark:bg-[#101012] border-b border-studio-border dark:border-white/[0.08] px-3 sm:px-4 lg:px-5 flex md:grid md:grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center justify-between gap-2 sm:gap-3 shrink-0 z-30 transition-colors duration-150">
         <!-- Left: Brand Identity -->
         <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
-            <button type="button" onclick="switchView('home')" class="flex items-center gap-2 sm:gap-2.5 text-left group focus:outline-none shrink-0">
-                <div class="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-xs shrink-0 transition-transform group-hover:scale-105">
-                    <i data-lucide="layers" class="w-4 h-4"></i>
+            <button type="button" onclick="switchView('home')" class="flex items-center gap-2 text-left group focus:outline-none shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 7h16" />
+                        <path d="M12 7v11" />
+                        <path d="M4 13l4 5 4-5" />
+                        <circle cx="17.5" cy="14.5" r="2.5" />
+                    </svg>
                 </div>
                 <span class="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Wea-T</span>
             </button>
-            <span id="headerModuleBadge" class="inline-flex md:hidden xl:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/80 truncate max-w-[160px] sm:max-w-none">
-                PERSONAL TECH STUDIO
+            <span id="headerModuleBadge" class="hidden xl:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-[#17171A] text-zinc-500 dark:text-zinc-400 border border-zinc-200/80 dark:border-white/[0.08] truncate max-w-[170px]">
+                WORKSPACE
             </span>
         </div>
 
         <!-- Center: Desktop / Tablet Pill Navigation Bar -->
-        <nav class="hidden md:flex items-center justify-self-center gap-0.5 max-w-full overflow-x-auto no-scrollbar p-1 border border-zinc-200 dark:border-zinc-800 rounded-[10px] bg-zinc-50 dark:bg-zinc-800/60" aria-label="Điều hướng chính">
-            <button type="button" data-nav="home" onclick="switchView('home')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 shadow-xs transition-all shrink-0">
+        <nav class="hidden md:flex items-center justify-self-center gap-0.5 max-w-full overflow-x-auto no-scrollbar p-1 border border-zinc-200 dark:border-white/[0.08] rounded-lg bg-zinc-50 dark:bg-[#09090B]" aria-label="Điều hướng chính">
+            <button type="button" data-nav="home" onclick="switchView('home')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-[#17171A] shadow-xs transition-all shrink-0">
                 <i data-lucide="home" class="w-3.5 h-3.5"></i>
                 <span>Home</span>
             </button>
-            <button type="button" data-nav="weather" onclick="switchView('weather')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+            <button type="button" data-nav="weather" onclick="switchView('weather')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="cloud-sun" class="w-3.5 h-3.5"></i>
                 <span>Weather</span>
             </button>
-            <button type="button" data-nav="studio" onclick="switchView('studio')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+            <button type="button" data-nav="studio" onclick="switchView('studio')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="crop" class="w-3.5 h-3.5"></i>
                 <span>Rounder</span>
             </button>
-            <button type="button" data-nav="compress" onclick="switchView('compress')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+            <button type="button" data-nav="compress" onclick="switchView('compress')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="package" class="w-3.5 h-3.5"></i>
                 <span>Compress</span>
             </button>
-            <button type="button" data-nav="youtube" onclick="switchView('youtube')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+            <button type="button" data-nav="youtube" onclick="switchView('youtube')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="download" class="w-3.5 h-3.5"></i>
                 <span>Video DL</span>
             </button>
-            <button type="button" data-nav="convert" onclick="switchView('convert')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+            <button type="button" data-nav="convert" onclick="switchView('convert')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
                 <span>Convert</span>
             </button>
-            <button type="button" data-nav="qr" onclick="switchView('qr')" class="nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
+            <button type="button" data-nav="qr" onclick="switchView('qr')" class="nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0">
                 <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
                 <span>QR Studio</span>
             </button>
         </nav>
 
-        <!-- Right: Status & Theme Toggle -->
-        <div class="flex items-center justify-self-end gap-2">
-            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 font-mono text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>ONLINE</span>
+        <!-- Right: Offline Indicator, Command Palette & Theme Toggle -->
+        <div class="flex items-center justify-self-end gap-1.5">
+            <span id="networkOfflineBadge" class="hidden items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 font-mono text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span>OFFLINE</span>
             </span>
-            <button type="button" id="themeToggleBtn" onclick="toggleTheme()" title="Chuyển đổi giao diện Sáng / Tối" class="w-8 h-8 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700/80 flex items-center justify-center transition-colors shrink-0">
-                <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
-                <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-zinc-700"></i>
+            <button type="button" onclick="openCommandPalette()" title="Mở Command Palette (Ctrl+K)" class="h-7 px-2 rounded-md border border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#17171A] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 inline-flex items-center gap-1.5 text-[11px] font-mono transition-colors shrink-0">
+                <i data-lucide="search" class="w-3 h-3"></i>
+                <span class="hidden sm:inline">Tìm nhanh</span>
+                <kbd class="hidden sm:inline px-1 py-0.2 rounded bg-white dark:bg-[#09090B] border border-zinc-200 dark:border-white/10 text-[10px]">Ctrl K</kbd>
+            </button>
+            <button type="button" id="themeToggleBtn" onclick="toggleTheme()" title="Chuyển đổi giao diện Sáng / Tối" class="w-7 h-7 rounded-md border border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#17171A] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors shrink-0">
+                <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block text-amber-400"></i>
+                <i data-lucide="moon" class="w-3.5 h-3.5 block dark:hidden text-zinc-700"></i>
             </button>
         </div>
     </header>
 
     <!-- ===================================================================== -->
-    <!-- VIEW 1: HOME STUDIO DASHBOARD                                         -->
+    <!-- VIEW 1: HOME UTILITY WORKSPACE                                        -->
     <!-- ===================================================================== -->
-    <div id="view-home" class="app-view flex-1 overflow-y-auto p-3.5 sm:p-5 lg:p-8 pb-24 md:pb-8">
-        <div class="max-w-5xl mx-auto space-y-6">
-            <section class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-2xl p-6 lg:p-8 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div class="space-y-3 max-w-2xl">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 font-mono text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-                        100% CLIENT-SIDE · ZERO SERVER UPLOAD
-                    </span>
-                    <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Wea-T Personal Tech Studio</h1>
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                        Không gian công cụ đa năng xử lý trực tiếp trên trình duyệt: theo dõi thời tiết & chất lượng không khí, bo tròn góc ảnh hàng loạt, nén ảnh siêu nhẹ, tải & ghép video YouTube, chuyển đổi 30+ định dạng và tạo mã QR/Barcode tùy biến sâu.
+    <div id="view-home" class="app-view flex-1 overflow-y-auto p-3.5 sm:p-5 lg:p-8 pb-24 md:pb-8 bg-studio-bg dark:bg-[#09090B]">
+        <div class="max-w-5xl mx-auto space-y-5">
+            <!-- Top Row: Live Weather Mini-Card + Quick Tools Bar -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <!-- Live Weather Mini-Card -->
+                <button type="button" onclick="switchView('weather')" class="lg:col-span-5 text-left bg-white dark:bg-[#17171A] border border-studio-border dark:border-white/[0.08] hover:border-zinc-400 dark:hover:border-white/20 rounded-xl p-4 flex items-center justify-between gap-4 transition-colors group">
+                    <div class="min-w-0 space-y-1">
+                        <div class="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>THỜI TIẾT TRỰC TIẾP</span>
+                        </div>
+                        <div id="homeWeatherCity" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">Đang tải...</div>
+                        <div class="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                            <span id="homeWeatherDesc" class="truncate">--</span>
+                            <span>·</span>
+                            <span id="homeWeatherAqi" class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-[#101012] border border-zinc-200/70 dark:border-white/[0.06]">AQI --</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div id="homeWeatherIcon" class="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-[#101012] border border-zinc-200/60 dark:border-white/[0.06] flex items-center justify-center text-zinc-700 dark:text-zinc-200">
+                            <i data-lucide="cloud-sun" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-right">
+                            <div id="homeWeatherTemp" class="text-2xl font-bold font-mono tabular-nums tracking-tight text-zinc-900 dark:text-zinc-100">--°</div>
+                            <span class="text-[10px] font-mono text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">Mở Weather →</span>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Quick Tool Shortcuts -->
+                <div class="lg:col-span-7 bg-white dark:bg-[#17171A] border border-studio-border dark:border-white/[0.08] rounded-xl p-4 flex flex-col justify-between gap-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400">TRUY CẬP NHANH MODULE</span>
+                        <span class="text-[10px] font-mono text-zinc-400">Alt + 1..7 · Ctrl + K</span>
+                    </div>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                        <button type="button" onclick="switchView('weather')" class="px-2 py-2 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 flex flex-col items-center gap-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <i data-lucide="cloud-sun" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">Weather</span>
+                        </button>
+                        <button type="button" onclick="switchView('studio')" class="px-2 py-2 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 flex flex-col items-center gap-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <i data-lucide="crop" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">Rounder</span>
+                        </button>
+                        <button type="button" onclick="switchView('compress')" class="px-2 py-2 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 flex flex-col items-center gap-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <i data-lucide="package" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">Compress</span>
+                        </button>
+                        <button type="button" onclick="switchView('youtube')" class="px-2 py-2 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 flex flex-col items-center gap-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">Video DL</span>
+                        </button>
+                        <button type="button" onclick="switchView('convert')" class="px-2 py-2 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 flex flex-col items-center gap-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">Convert</span>
+                        </button>
+                        <button type="button" onclick="switchView('qr')" class="px-2 py-2 rounded-lg border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] hover:bg-zinc-100 dark:hover:bg-zinc-800/80 flex flex-col items-center gap-1 text-[11px] font-medium text-zinc-700 dark:text-zinc-300 transition-colors">
+                            <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">QR Studio</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Universal Dropzone -->
+            <section id="homeUniversalDropzone" class="bg-white dark:bg-[#17171A] border border-dashed border-zinc-300 dark:border-white/15 hover:border-zinc-500 dark:hover:border-white/30 rounded-xl p-6 sm:p-10 text-center space-y-5 transition-colors">
+                <div class="w-11 h-11 mx-auto rounded-lg bg-zinc-100 dark:bg-[#101012] border border-zinc-200 dark:border-white/[0.08] flex items-center justify-center text-zinc-700 dark:text-zinc-200">
+                    <i data-lucide="inbox" class="w-5 h-5"></i>
+                </div>
+                <div class="space-y-1.5 max-w-xl mx-auto">
+                    <h1 class="text-base sm:text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                        Universal Dropzone — Thả file, ảnh hoặc dán link / text (Ctrl + V)
+                    </h1>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                        Tự động nhận diện: Ảnh → Bo góc / Nén ảnh · Video / Audio / Tài liệu → Universal Converter · Link video → Video Downloader · Văn bản → QR Studio
                     </p>
                 </div>
-                <div class="flex flex-wrap gap-2 shrink-0">
-                    <button type="button" onclick="switchView('qr')" class="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
-                        <i data-lucide="qr-code" class="w-4 h-4"></i>
-                        <span>Mở QR Studio</span>
+
+                <!-- Image target selector + quick actions -->
+                <div class="flex flex-wrap items-center justify-center gap-2">
+                    <button type="button" onclick="document.getElementById('homeUniversalFileInput').click()" class="px-3.5 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-zinc-800 dark:hover:bg-white transition-colors">
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                        <span>Chọn file bất kỳ</span>
                     </button>
-                    <button type="button" onclick="switchView('studio')" class="px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold inline-flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
-                        <i data-lucide="crop" class="w-4 h-4"></i>
-                        <span>Mở Rounder</span>
+                    <button type="button" onclick="pasteToHomeWorkspace()" class="px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-[#101012] text-zinc-700 dark:text-zinc-300 text-xs font-medium inline-flex items-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                        <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
+                        <span>Dán từ Clipboard</span>
                     </button>
+                    <div class="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] text-[11px]">
+                        <span class="text-zinc-400">Ảnh thả vào →</span>
+                        <select id="homeImageRouteMode" class="bg-transparent font-medium text-zinc-800 dark:text-zinc-200 focus:outline-none cursor-pointer">
+                            <option value="studio">Rounder (Bo góc)</option>
+                            <option value="compress">Compress (Nén nhẹ)</option>
+                            <option value="convert">Convert (Đổi đuôi)</option>
+                        </select>
+                    </div>
                 </div>
+
+                <!-- Quick input bar for URL / Text -->
+                <form onsubmit="event.preventDefault(); routeHomeTextInput(document.getElementById('homeQuickInput').value);" class="max-w-lg mx-auto flex items-center gap-2 pt-1">
+                    <input type="text" id="homeQuickInput" placeholder="Dán link YouTube/TikTok, JSON, hoặc nội dung cần tạo QR..." class="flex-1 px-3 py-2 text-xs font-mono bg-zinc-50 dark:bg-[#101012] border border-zinc-200 dark:border-white/[0.08] focus:border-zinc-400 dark:focus:border-white/25 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none">
+                    <button type="submit" class="px-3 py-2 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-[#101012] hover:bg-zinc-200 dark:hover:bg-zinc-800 text-xs font-semibold text-zinc-800 dark:text-zinc-200 shrink-0 transition-colors">
+                        Xử lý →
+                    </button>
+                </form>
+                <input type="file" id="homeUniversalFileInput" multiple class="hidden" onchange="routeUniversalFiles(Array.from(this.files || [])); this.value='';">
             </section>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <button type="button" onclick="switchView('weather')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+            <!-- Bottom Row: Recent Activity -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <section class="bg-white dark:bg-[#17171A] border border-studio-border dark:border-white/[0.08] rounded-xl p-4 space-y-2.5">
                     <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="cloud-sun" class="w-4 h-4"></i></div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400">THÀNH PHỐ GẦN ĐÂY</span>
+                        <button type="button" onclick="switchView('weather')" class="text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">Xem tất cả</button>
                     </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Weather & AQI Studio</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Thời tiết trực tiếp, dự báo 24h & 5 ngày, chỉ số bụi mịn PM2.5/PM10 và chu kỳ Mặt trời.</p>
-                </button>
+                    <div id="homeRecentCities" class="flex flex-wrap gap-1.5 text-xs text-zinc-400">Chưa có lịch sử thành phố.</div>
+                </section>
 
-                <button type="button" onclick="switchView('studio')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
+                <section class="bg-white dark:bg-[#17171A] border border-studio-border dark:border-white/[0.08] rounded-xl p-4 space-y-2.5">
                     <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="crop" class="w-4 h-4"></i></div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-zinc-400">LIÊN KẾT VIDEO GẦN ĐÂY</span>
+                        <button type="button" onclick="switchView('youtube')" class="text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">Mở Video DL</button>
                     </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Corner Rounder</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Bo tròn góc ảnh hàng loạt chuẩn Circular & iOS Squircle, thêm viền, nền và xuất ZIP.</p>
-                </button>
-
-                <button type="button" onclick="switchView('compress')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
-                    <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="package" class="w-4 h-4"></i></div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
-                    </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Smart Image Compressor</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Nén siêu nhẹ không giới hạn số lượng file, xóa EXIF và soi độ nét Before/After.</p>
-                </button>
-
-                <button type="button" onclick="switchView('youtube')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
-                    <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="download" class="w-4 h-4"></i></div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
-                    </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Smart Video Downloader</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Tải video đa nền tảng (YouTube, TikTok không logo, Facebook, IG, X...) 1-chạm ấn là tải và ghép Video + Audio.</p>
-                </button>
-
-                <button type="button" onclick="switchView('convert')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
-                    <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="repeat" class="w-4 h-4"></i></div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
-                    </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Universal Converter</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Chuyển đổi 30+ định dạng Ảnh, Audio, Video, PDF, EPUB, DXF, ZIP.</p>
-                </button>
-
-                <button type="button" onclick="switchView('qr')" class="text-left bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl p-5 space-y-2.5 transition-all shadow-2xs">
-                    <div class="flex items-center justify-between">
-                        <div class="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100"><i data-lucide="qr-code" class="w-4 h-4"></i></div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-400"></i>
-                    </div>
-                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">QR & Barcode Studio</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Tạo mã QR tùy biến sâu (chấm, mắt, gradient, logo, VietQR, Wi-Fi), Barcode & Quét mã.</p>
-                </button>
+                    <div id="homeRecentVideos" class="space-y-1.5 text-xs text-zinc-400">Chưa có liên kết video gần đây.</div>
+                </section>
             </div>
         </div>
     </div>
@@ -406,6 +480,7 @@
                         <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i>Dự báo 24 giờ tới</span>
                         <span class="text-[11px] font-mono text-zinc-400">3H INTERVAL</span>
                     </div>
+                    <div id="wHourlySparkline" class="w-full overflow-hidden"></div>
                     <div id="wHourlyList" class="grid grid-cols-4 sm:grid-cols-8 gap-2"></div>
                 </section>
 
@@ -670,7 +745,7 @@
                             <option value="image/webp">WebP (Nhẹ)</option>
                             <option value="image/jpeg">JPEG (Nền đặc)</option>
                         </select>
-                        <input type="text" id="fileSuffix" value="-rounded" class="text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2.5 py-1.5">
+                        <input type="text" id="fileSuffix" value="-rounded" oninput="saveRounderSettings()" class="text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2.5 py-1.5">
                     </div>
                 </div>
             </div>
@@ -912,10 +987,29 @@
                                 <i data-lucide="music" class="w-4 h-4 text-zinc-400 shrink-0"></i>
                             </label>
                         </div>
-                        <button type="button" onclick="mergeVideoAndAudioBrowser()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5">
-                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                            <span>Ghép thành 1 file hoàn chỉnh</span>
-                        </button>
+                        <div class="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/25 text-[11px] text-amber-700 dark:text-amber-300 flex items-center gap-2">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 shrink-0"></i>
+                            <span>Lưu ý: Trình duyệt ghép luồng bằng <strong>MediaRecorder</strong> nên sẽ chạy theo thời gian thực (tương đương độ dài video).</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="btnMuxStart" onclick="mergeVideoAndAudioBrowser()" class="px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold inline-flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                                <span>Ghép thành 1 file hoàn chỉnh</span>
+                            </button>
+                            <button type="button" id="btnMuxCancel" onclick="cancelMuxVideoAudio()" class="hidden px-3.5 py-2 rounded-lg border border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-red-500/20">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                <span>Hủy ghép</span>
+                            </button>
+                        </div>
+                        <div id="muxProgressWrap" class="hidden space-y-1.5">
+                            <div class="flex items-center justify-between text-[11px] font-mono tabular-nums text-zinc-500 dark:text-zinc-400">
+                                <span id="muxProgressStatus">Đang khởi tạo luồng...</span>
+                                <span id="muxProgressPct">0%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                <div id="muxProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%"></div>
+                            </div>
+                        </div>
                     </div>
                 </details>
             </div>
@@ -1436,22 +1530,43 @@
                                 <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
                                 <span>Tải SVG Vector</span>
                             </button>
+                            <button type="button" onclick="copyQrImage()" class="col-span-2 py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-semibold flex items-center justify-center gap-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copy ảnh QR vào Clipboard</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- MODE C: QR & BARCODE SCANNER -->
                 <div id="qrScannerWorkspace" class="hidden space-y-4">
-                    <div onclick="document.getElementById('qrScanInput').click()" class="cursor-pointer min-h-[320px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-zinc-900/60 p-8 text-center transition-all">
+                    <div id="qrCameraWrap" class="hidden bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden relative">
+                        <video id="qrCameraVideo" autoplay playsinline muted class="w-full max-h-[360px] object-cover"></video>
+                        <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                            <div class="w-48 h-48 border-2 border-emerald-400/80 rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]"></div>
+                        </div>
+                        <div class="absolute top-3 right-3 flex items-center gap-2">
+                            <span class="px-2 py-1 rounded bg-zinc-900/80 text-emerald-400 text-[10px] font-mono">SCANNING LIVE</span>
+                            <button type="button" onclick="stopQrCameraScanner()" class="px-2.5 py-1 rounded-md bg-red-600 text-white text-xs font-semibold hover:bg-red-700">Tắt Camera</button>
+                        </div>
+                    </div>
+
+                    <div onclick="document.getElementById('qrScanInput').click()" class="cursor-pointer min-h-[280px] flex flex-col items-center justify-center border border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl bg-white dark:bg-[#17171A] p-8 text-center transition-all">
                         <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 mb-4">
                             <i data-lucide="scan-line" class="w-6 h-6 stroke-[1.75]"></i>
                         </div>
                         <h2 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Kéo thả ảnh chứa mã QR hoặc dán ảnh (Ctrl + V)</h2>
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mb-5">Giải mã tức thì nội dung ẩn bên trong mã QR trên trình duyệt, không tải ảnh lên máy chủ.</p>
-                        <button type="button" onclick="event.stopPropagation(); document.getElementById('qrScanInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg">
-                            <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
-                            <span>Chọn ảnh cần quét</span>
-                        </button>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mb-5">Giải mã tức thì nội dung ẩn bên trong mã QR trên trình duyệt bằng ảnh hoặc Camera trực tiếp.</p>
+                        <div class="flex flex-wrap items-center justify-center gap-2.5">
+                            <button type="button" onclick="event.stopPropagation(); document.getElementById('qrScanInput').click()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white dark:text-zinc-900 bg-zinc-900 dark:bg-zinc-100 rounded-lg">
+                                <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                                <span>Chọn ảnh cần quét</span>
+                            </button>
+                            <button type="button" id="btnToggleQrCamera" onclick="event.stopPropagation(); toggleQrCameraScanner()" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700">
+                                <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                                <span>Quét bằng Camera</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div id="qrScanResultCard" class="hidden bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-5 shadow-2xs space-y-3">
@@ -1606,16 +1721,69 @@
     <!-- LIGHTBOX MODAL & TOAST NOTIFICATIONS                                  -->
     <!-- ===================================================================== -->
     <div id="lightboxModal" class="hidden fixed inset-0 z-50 bg-zinc-950/75 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target===this) closeLightbox()">
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-            <div class="h-12 px-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+        <div class="bg-white dark:bg-[#17171A] border border-zinc-200 dark:border-white/[0.08] rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="h-12 px-4 border-b border-zinc-200 dark:border-white/[0.08] flex items-center justify-between shrink-0">
                 <span id="lbTitle" class="text-xs font-semibold truncate">preview.png</span>
                 <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyLightboxImage()" class="px-2.5 py-1 text-[11px] font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md inline-flex items-center gap-1 hover:opacity-90">
+                        <i data-lucide="copy" class="w-3 h-3"></i>
+                        <span>Copy ảnh</span>
+                    </button>
                     <button type="button" onmousedown="showOriginalInLightbox(true)" onmouseup="showOriginalInLightbox(false)" ontouchstart="showOriginalInLightbox(true)" ontouchend="showOriginalInLightbox(false)" class="px-2.5 py-1 text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 rounded-md">Giữ xem gốc</button>
                     <button type="button" onclick="closeLightbox()" class="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
             </div>
             <div class="flex-1 bg-checkerboard p-6 flex items-center justify-center overflow-auto">
                 <canvas id="lightboxCanvas" class="max-w-full max-h-[70vh] object-contain"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette (Ctrl + K / Cmd + K) -->
+    <div id="commandPaletteModal" class="hidden fixed inset-0 z-50 bg-zinc-950/60 backdrop-blur-xs flex items-start justify-center pt-[12vh] p-4" onclick="if(event.target===this) closeCommandPalette()">
+        <div class="bg-white dark:bg-[#17171A] border border-zinc-200 dark:border-white/[0.1] rounded-xl max-w-xl w-full overflow-hidden shadow-2xl">
+            <div class="flex items-center gap-2.5 px-4 h-12 border-b border-zinc-200 dark:border-white/[0.08]">
+                <i data-lucide="search" class="w-4 h-4 text-zinc-400 shrink-0"></i>
+                <input type="text" id="cmdPaletteInput" autocomplete="off" spellcheck="false" placeholder="Tìm module, thành phố thời tiết, đổi giao diện, chất lượng video..." oninput="renderCommandPaletteList(this.value)" onkeydown="handleCommandPaletteKeydown(event)" class="flex-1 bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none">
+                <kbd class="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-[#101012] border border-zinc-200 dark:border-white/[0.08] font-mono text-[10px] text-zinc-400">ESC</kbd>
+            </div>
+            <div id="cmdPaletteList" class="max-h-[52vh] overflow-y-auto p-1.5 divide-y divide-zinc-100/50 dark:divide-white/[0.04]"></div>
+            <div class="px-3.5 py-2 border-t border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#101012] flex items-center justify-between text-[10px] font-mono text-zinc-400">
+                <span>↑↓ Di chuyển · Enter Chọn</span>
+                <span>Alt+1..7 Chuyển tab nhanh</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Smart Image Compressor Before/After Split-Slider Modal -->
+    <div id="compressCompareModal" class="hidden fixed inset-0 z-50 bg-zinc-950/75 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target===this) closeCompressCompare()">
+        <div class="bg-white dark:bg-[#17171A] border border-zinc-200 dark:border-white/[0.08] rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="h-12 px-4 border-b border-zinc-200 dark:border-white/[0.08] flex items-center justify-between gap-3 shrink-0">
+                <div class="min-w-0 flex items-center gap-2">
+                    <span id="cmpModalTitle" class="text-xs font-semibold truncate">compare.png</span>
+                    <span id="cmpModalStats" class="text-[11px] font-mono tabular-nums text-emerald-600 dark:text-emerald-400 shrink-0"></span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="copyCompressedModalImage()" class="px-2.5 py-1 text-[11px] font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md inline-flex items-center gap-1">
+                        <i data-lucide="copy" class="w-3 h-3"></i>
+                        <span>Copy ảnh</span>
+                    </button>
+                    <button type="button" onclick="closeCompressCompare()" class="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+            <div class="flex-1 bg-checkerboard p-4 sm:p-6 flex flex-col items-center justify-center overflow-hidden gap-3">
+                <div id="cmpSplitStage" class="relative max-w-full max-h-[64vh] select-none overflow-hidden rounded-lg border border-zinc-200 dark:border-white/10">
+                    <img id="cmpImgAfter" alt="Sau nén" class="block max-w-full max-h-[64vh] object-contain pointer-events-none">
+                    <div id="cmpOrigClip" class="absolute inset-0 overflow-hidden pointer-events-none" style="clip-path: inset(0 50% 0 0);">
+                        <img id="cmpImgBefore" alt="Ảnh gốc" class="block w-full h-full object-contain">
+                    </div>
+                    <div id="cmpSplitDivider" class="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.4)] pointer-events-none" style="left: 50%;">
+                        <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white text-zinc-900 shadow-md border border-zinc-300 flex items-center justify-center text-[10px] font-mono font-bold">↔</div>
+                    </div>
+                    <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-zinc-950/75 text-white text-[10px] font-mono pointer-events-none">GỐC</span>
+                    <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded bg-emerald-600/85 text-white text-[10px] font-mono pointer-events-none">SAU NÉN</span>
+                    <input type="range" id="cmpSplitRange" min="0" max="100" value="50" oninput="updateCompressSplit(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize m-0">
+                </div>
             </div>
         </div>
     </div>
@@ -1672,6 +1840,62 @@
         let currentCity = 'Ha Noi';
         let weatherUnit = 'metric';
 
+        const CDN_LIBS = {
+            jszip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+            qrcode: 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js',
+            jsbarcode: 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js',
+            jsqr: 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js',
+            upng: 'https://cdnjs.cloudflare.com/ajax/libs/upng-js/2.1.0/UPNG.min.js',
+            pako: 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js'
+        };
+        const _scriptPromises = {};
+
+        function loadScriptOnce(url) {
+            if (_scriptPromises[url]) return _scriptPromises[url];
+            _scriptPromises[url] = new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = url;
+                s.async = true;
+                s.onload = () => resolve(true);
+                s.onerror = () => {
+                    delete _scriptPromises[url];
+                    reject(new Error('Không thể tải thư viện: ' + url));
+                };
+                document.head.appendChild(s);
+            });
+            return _scriptPromises[url];
+        }
+
+        async function ensureUPNG() {
+            if (typeof window.UPNG !== 'undefined') return true;
+            await loadScriptOnce(CDN_LIBS.pako);
+            await loadScriptOnce(CDN_LIBS.upng);
+            return typeof window.UPNG !== 'undefined';
+        }
+
+        async function copyImageBlobToClipboard(blob, successMsg = 'Đã sao chép ảnh vào Clipboard!') {
+            if (!blob) return showToast('Chưa có ảnh để sao chép.', 'error');
+            if (!navigator.clipboard || typeof ClipboardItem === 'undefined') {
+                return showToast('Trình duyệt không hỗ trợ copy ảnh trực tiếp. Hãy dùng nút tải về.', 'error');
+            }
+            try {
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                showToast(successMsg);
+            } catch (err) {
+                showToast('Không thể ghi ảnh vào Clipboard (cần HTTPS hoặc quyền trình duyệt).', 'error');
+            }
+        }
+
+        function updateNetworkStatusBadge() {
+            const badge = document.getElementById('networkOfflineBadge');
+            if (!badge) return;
+            const isOffline = navigator.onLine === false;
+            badge.classList.toggle('hidden', !isOffline);
+            badge.classList.toggle('inline-flex', isOffline);
+        }
+        window.addEventListener('online', updateNetworkStatusBadge);
+        window.addEventListener('offline', updateNetworkStatusBadge);
+
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('studio-theme', isDark ? 'dark' : 'light');
@@ -1697,12 +1921,17 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
         function switchView(viewName, updateHash = true) {
             const validViews = ['home', 'weather', 'studio', 'compress', 'youtube', 'convert', 'qr'];
             if (!validViews.includes(viewName)) viewName = 'home';
+
+            if (activeView === 'qr' && viewName !== 'qr' && typeof stopQrCameraScanner === 'function') {
+                stopQrCameraScanner();
+            }
+
             activeView = viewName;
 
             document.querySelectorAll('.app-view').forEach(el => {
@@ -1719,8 +1948,8 @@
             document.querySelectorAll('.nav-tab').forEach(btn => {
                 const isActive = btn.getAttribute('data-nav') === viewName;
                 btn.className = isActive
-                    ? 'nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 shadow-xs transition-all shrink-0'
-                    : 'nav-tab h-7 px-3 inline-flex items-center gap-1.5 rounded-lg text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0';
+                    ? 'nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-[#17171A] shadow-xs transition-all shrink-0'
+                    : 'nav-tab h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all shrink-0';
             });
 
             document.querySelectorAll('.mobile-nav-tab').forEach(btn => {
@@ -1733,25 +1962,289 @@
             if (target) target.scrollTop = 0;
 
             const badges = {
-                home: 'PERSONAL TECH STUDIO',
-                weather: 'WEATHER & AQI STUDIO',
+                home: 'WORKSPACE',
+                weather: 'WEATHER & AQI',
                 studio: 'CORNER ROUNDER',
-                compress: 'SMART COMPRESSOR',
-                youtube: 'SMART VIDEO DOWNLOADER',
+                compress: 'IMAGE COMPRESSOR',
+                youtube: 'VIDEO DOWNLOADER',
                 convert: 'UNIVERSAL CONVERTER',
-                qr: 'QR & BARCODE STUDIO'
+                qr: 'QR & BARCODE'
             };
             const badgeEl = document.getElementById('headerModuleBadge');
             if (badgeEl) badgeEl.textContent = badges[viewName] || 'STUDIO';
 
+            if (viewName === 'home') refreshHomeWorkspace();
             if (viewName === 'weather' && !weatherInitialized) {
                 weatherInitialized = true;
                 initWeatherModule();
             }
             if (viewName === 'youtube') initVideoDownloader();
-            if (viewName === 'qr') renderQrStudio();
+            if (viewName === 'qr') {
+                Promise.all([loadScriptOnce(CDN_LIBS.qrcode), loadScriptOnce(CDN_LIBS.jsbarcode)])
+                    .then(() => renderQrStudio())
+                    .catch(err => showToast(err.message, 'error'));
+            }
             if (updateHash) history.replaceState(null, '', `#${viewName}`);
             lucide.createIcons();
+        }
+
+        // =========================================================================
+        // MODULE 1: HOME UTILITY WORKSPACE & COMMAND PALETTE
+        // =========================================================================
+        function routeUniversalFiles(files) {
+            if (!files || !files.length) return;
+            const allImages = files.every(f => f.type.startsWith('image/'));
+            if (allImages) {
+                const target = document.getElementById('homeImageRouteMode')?.value || 'studio';
+                if (target === 'compress') return processCompressFiles(files);
+                if (target === 'convert') return processConvertFiles(files);
+                return processIncomingFiles(files);
+            }
+            processConvertFiles(files);
+        }
+
+        function routeHomeTextInput(raw) {
+            const txt = (raw || '').trim();
+            if (!txt) return showToast('Vui lòng nhập hoặc dán link / văn bản.', 'error');
+            const cleanUrl = extractCleanUrl(txt);
+            if (cleanUrl && /^https?:\/\//i.test(cleanUrl)) {
+                const plat = detectVideoPlatform(cleanUrl);
+                if (plat) {
+                    switchView('youtube');
+                    const input = document.getElementById('ytUrlInput');
+                    if (input) input.value = cleanUrl;
+                    handleVideoUrlInput(cleanUrl);
+                    return;
+                }
+                switchView('qr');
+                setQrStudioMode('qr');
+                setQrTemplate('url');
+                const qrUrl = document.getElementById('qrInputUrl');
+                if (qrUrl) qrUrl.value = cleanUrl;
+                loadScriptOnce(CDN_LIBS.qrcode).then(() => renderQrStudio());
+                return;
+            }
+            const dataExt = detectPastedTextExt(txt);
+            if (['json', 'csv', 'xml', 'yaml', 'html'].includes(dataExt)) {
+                const f = new File([txt], `pasted-${Date.now()}.${dataExt}`, { type: 'text/plain' });
+                processConvertFiles([f]);
+                return;
+            }
+            switchView('qr');
+            setQrStudioMode('qr');
+            setQrTemplate('text');
+            const qrTxt = document.getElementById('qrInputText');
+            if (qrTxt) qrTxt.value = txt;
+            loadScriptOnce(CDN_LIBS.qrcode).then(() => renderQrStudio());
+        }
+
+        async function pasteToHomeWorkspace() {
+            try {
+                if (navigator.clipboard?.read) {
+                    const items = await navigator.clipboard.read();
+                    for (const item of items) {
+                        const imgType = item.types.find(t => t.startsWith('image/'));
+                        if (imgType) {
+                            const blob = await item.getType(imgType);
+                            const f = new File([blob], `clipboard-${Date.now()}.png`, { type: imgType });
+                            return routeUniversalFiles([f]);
+                        }
+                    }
+                }
+                const txt = await navigator.clipboard.readText();
+                if (txt) {
+                    document.getElementById('homeQuickInput').value = txt;
+                    return routeHomeTextInput(txt);
+                }
+            } catch (e) {
+                showToast('Hãy nhấn Ctrl+V trực tiếp trên trang Home.', 'error');
+            }
+        }
+
+        async function fetchHomeWeatherMini() {
+            let loc = WEATHER_PRESETS[0];
+            try {
+                const saved = JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEYS.lastCity) || 'null');
+                if (saved && saved.lat != null && saved.lon != null) loc = saved;
+            } catch (e) {}
+
+            const cityEl = document.getElementById('homeWeatherCity');
+            const descEl = document.getElementById('homeWeatherDesc');
+            const tempEl = document.getElementById('homeWeatherTemp');
+            const aqiEl = document.getElementById('homeWeatherAqi');
+            const iconEl = document.getElementById('homeWeatherIcon');
+            if (cityEl) cityEl.textContent = loc.country_code ? `${loc.name}, ${loc.country_code}` : loc.name;
+
+            try {
+                const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,weather_code,is_day&timezone=auto`;
+                const aUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${loc.lat}&longitude=${loc.lon}&current=us_aqi&timezone=auto`;
+                const [wRes, aRes] = await Promise.all([fetch(wUrl), fetch(aUrl)]);
+                if (wRes.ok) {
+                    const wData = await wRes.json();
+                    const c = wData.current;
+                    if (c) {
+                        const info = getWmoWeatherInfo(c.weather_code, c.is_day);
+                        if (tempEl) tempEl.textContent = `${Math.round(c.temperature_2m)}°C`;
+                        if (descEl) descEl.textContent = info.desc;
+                        if (iconEl) iconEl.innerHTML = `<i data-lucide="${info.icon}" class="w-5 h-5"></i>`;
+                    }
+                }
+                if (aRes.ok) {
+                    const aData = await aRes.json();
+                    const aqi = aData?.current?.us_aqi;
+                    if (aqiEl && aqi != null) aqiEl.textContent = `AQI ${Math.round(aqi)}`;
+                }
+                lucide.createIcons();
+            } catch (e) {
+                if (descEl) descEl.textContent = 'Không có kết nối';
+            }
+        }
+
+        function refreshHomeWorkspace() {
+            fetchHomeWeatherMini();
+            const citiesEl = document.getElementById('homeRecentCities');
+            if (citiesEl) {
+                const recent = getStoredCities(WEATHER_STORAGE_KEYS.recent);
+                if (!recent.length) {
+                    citiesEl.innerHTML = '<span class="text-xs text-zinc-400">Chưa có lịch sử thành phố.</span>';
+                } else {
+                    citiesEl.innerHTML = recent.slice(0, 6).map((c, idx) => `
+                        <button type="button" onclick="switchView('weather'); selectStoredCity(${idx}, false);" class="px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-[#101012] border border-zinc-200 dark:border-white/[0.08] hover:border-zinc-400 text-xs text-zinc-700 dark:text-zinc-300 transition-colors">
+                            ${escapeHtml(c.name)}
+                        </button>
+                    `).join('');
+                }
+            }
+
+            const videosEl = document.getElementById('homeRecentVideos');
+            if (videosEl) {
+                let hist = [];
+                try { hist = JSON.parse(localStorage.getItem(YT_STORAGE.history) || '[]'); } catch (e) {}
+                if (!hist.length) {
+                    videosEl.innerHTML = '<span class="text-xs text-zinc-400">Chưa có liên kết video gần đây.</span>';
+                } else {
+                    videosEl.innerHTML = hist.slice(0, 3).map((item, idx) => `
+                        <button type="button" onclick="switchView('youtube'); loadVideoFromHistory(${idx});" class="w-full text-left px-2.5 py-1.5 rounded-md bg-zinc-50 dark:bg-[#101012] border border-zinc-200 dark:border-white/[0.08] hover:border-zinc-400 flex items-center justify-between gap-2 transition-colors">
+                            <span class="truncate text-xs font-medium text-zinc-800 dark:text-zinc-200">${escapeHtml(item.title || item.url)}</span>
+                            <span class="text-[10px] font-mono text-zinc-400 shrink-0">${escapeHtml(item.platform || 'URL')}</span>
+                        </button>
+                    `).join('');
+                }
+            }
+        }
+
+        // --- Command Palette (Ctrl + K / Cmd + K) ---
+        let cmdPaletteItems = [];
+        let cmdPaletteActiveIdx = 0;
+
+        function buildCommandPaletteItems(query) {
+            const q = normalizeSearchText(query);
+            const items = [
+                { group: 'Điều hướng', title: 'Mở Home Workspace', sub: 'Alt + 1', icon: 'home', run: () => switchView('home') },
+                { group: 'Điều hướng', title: 'Mở Weather & AQI', sub: 'Alt + 2', icon: 'cloud-sun', run: () => switchView('weather') },
+                { group: 'Điều hướng', title: 'Mở Corner Rounder', sub: 'Alt + 3', icon: 'crop', run: () => switchView('studio') },
+                { group: 'Điều hướng', title: 'Mở Smart Image Compressor', sub: 'Alt + 4', icon: 'package', run: () => switchView('compress') },
+                { group: 'Điều hướng', title: 'Mở Smart Video Downloader', sub: 'Alt + 5', icon: 'download', run: () => switchView('youtube') },
+                { group: 'Điều hướng', title: 'Mở Universal Converter', sub: 'Alt + 6', icon: 'repeat', run: () => switchView('convert') },
+                { group: 'Điều hướng', title: 'Mở QR & Barcode Studio', sub: 'Alt + 7', icon: 'qr-code', run: () => switchView('qr') },
+                { group: 'Hệ thống', title: 'Đổi giao diện Sáng / Tối (Light / Dark)', sub: 'Theme', icon: 'moon', run: () => toggleTheme() },
+                { group: 'Video Downloader', title: 'Chọn chất lượng Video: 1080p Full HD', sub: 'Video DL', icon: 'film', run: () => { switchView('youtube'); setYtFormat('1080'); showToast('Đã chọn chất lượng 1080p'); } },
+                { group: 'Video Downloader', title: 'Chọn chất lượng Video: 4K Ultra HD', sub: 'Video DL', icon: 'tv', run: () => { switchView('youtube'); setYtFormat('best'); showToast('Đã chọn chất lượng 4K / Best'); } },
+                { group: 'Video Downloader', title: 'Chọn tải Audio: MP3 320kbps', sub: 'Video DL', icon: 'music', run: () => { switchView('youtube'); setYtFormat('mp3'); showToast('Đã chọn tải MP3'); } }
+            ];
+
+            WEATHER_PRESETS.forEach(city => {
+                items.push({
+                    group: 'Thời tiết thành phố',
+                    title: `Xem thời tiết: ${city.name}`,
+                    sub: city.country,
+                    icon: 'map-pin',
+                    keywords: (city.aliases || []).join(' '),
+                    run: () => {
+                        switchView('weather');
+                        fetchWeatherByLocation(city);
+                    }
+                });
+            });
+
+            if (!q) return items.slice(0, 14);
+            return items.filter(it => {
+                const hay = normalizeSearchText(`${it.title} ${it.group} ${it.sub} ${it.keywords || ''}`);
+                return hay.includes(q);
+            }).slice(0, 16);
+        }
+
+        function openCommandPalette() {
+            const modal = document.getElementById('commandPaletteModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            const input = document.getElementById('cmdPaletteInput');
+            if (input) {
+                input.value = '';
+                renderCommandPaletteList('');
+                setTimeout(() => input.focus(), 10);
+            }
+        }
+
+        function closeCommandPalette() {
+            const modal = document.getElementById('commandPaletteModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function renderCommandPaletteList(query = '') {
+            cmdPaletteItems = buildCommandPaletteItems(query);
+            cmdPaletteActiveIdx = 0;
+            const listEl = document.getElementById('cmdPaletteList');
+            if (!listEl) return;
+            if (!cmdPaletteItems.length) {
+                listEl.innerHTML = '<div class="py-8 text-center text-xs text-zinc-400">Không tìm thấy lệnh phù hợp.</div>';
+                return;
+            }
+            listEl.innerHTML = cmdPaletteItems.map((it, idx) => `
+                <button type="button" data-cmd-idx="${idx}" onclick="executeCommandItem(${idx})" class="w-full text-left px-3 py-2 rounded-lg flex items-center justify-between gap-3 text-xs transition-colors ${idx === 0 ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60'}">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <i data-lucide="${it.icon}" class="w-3.5 h-3.5 text-zinc-400 shrink-0"></i>
+                        <span class="font-medium truncate">${escapeHtml(it.title)}</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400 shrink-0">${escapeHtml(it.sub)}</span>
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function handleCommandPaletteKeydown(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!cmdPaletteItems.length) return;
+                cmdPaletteActiveIdx = (cmdPaletteActiveIdx + 1) % cmdPaletteItems.length;
+                highlightCommandItem();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (!cmdPaletteItems.length) return;
+                cmdPaletteActiveIdx = (cmdPaletteActiveIdx - 1 + cmdPaletteItems.length) % cmdPaletteItems.length;
+                highlightCommandItem();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                executeCommandItem(cmdPaletteActiveIdx);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeCommandPalette();
+            }
+        }
+
+        function highlightCommandItem() {
+            document.querySelectorAll('#cmdPaletteList [data-cmd-idx]').forEach((el, idx) => {
+                const active = idx === cmdPaletteActiveIdx;
+                el.className = `w-full text-left px-3 py-2 rounded-lg flex items-center justify-between gap-3 text-xs transition-colors ${active ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60'}`;
+                if (active) el.scrollIntoView({ block: 'nearest' });
+            });
+        }
+
+        function executeCommandItem(idx) {
+            const item = cmdPaletteItems[idx];
+            if (!item) return;
+            closeCommandPalette();
+            item.run();
         }
 
         // =========================================================================
@@ -2476,10 +2969,49 @@
                     <div class="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-800 text-center space-y-1">
                         <span class="block text-[11px] font-mono text-zinc-400">${slot.time}</span>
                         <i data-lucide="${slot.icon}" class="w-4 h-4 mx-auto text-zinc-600 dark:text-zinc-300"></i>
-                        <strong class="block text-sm font-mono">${slot.temp}°</strong>
-                        <span class="block text-[10px] text-blue-500 font-mono">${slot.pop}% mưa</span>
+                        <strong class="block text-sm font-mono tabular-nums">${slot.temp}°</strong>
+                        <span class="block text-[10px] text-blue-500 font-mono tabular-nums">${slot.pop}% mưa</span>
                     </div>
                 `).join('');
+
+                // 24h Smooth Cubic Bezier SVG Sparkline
+                const sparkEl = document.getElementById('wHourlySparkline');
+                if (sparkEl && slots.length >= 2) {
+                    const W = 640, H = 96, padX = 28, padTop = 22, padBot = 16;
+                    const temps = slots.map(s => s.temp);
+                    const minT = Math.min(...temps);
+                    const maxT = Math.max(...temps);
+                    const span = Math.max(1, maxT - minT);
+                    const pts = slots.map((s, i) => ({
+                        x: padX + (i * (W - padX * 2)) / (slots.length - 1),
+                        y: padTop + ((maxT - s.temp) / span) * (H - padTop - padBot),
+                        temp: s.temp
+                    }));
+                    let linePath = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+                    for (let i = 0; i < pts.length - 1; i++) {
+                        const p0 = pts[i], p1 = pts[i + 1];
+                        const cx = (p0.x + p1.x) / 2;
+                        linePath += ` C ${cx.toFixed(1)} ${p0.y.toFixed(1)}, ${cx.toFixed(1)} ${p1.y.toFixed(1)}, ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
+                    }
+                    const areaPath = `${linePath} L ${pts[pts.length - 1].x.toFixed(1)} ${H} L ${pts[0].x.toFixed(1)} ${H} Z`;
+                    const dotsSvg = pts.map(p => `
+                        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="currentColor" class="text-amber-500 dark:text-amber-400"/>
+                        <text x="${p.x.toFixed(1)}" y="${(p.y - 8).toFixed(1)}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="currentColor" class="text-zinc-700 dark:text-zinc-200">${p.temp}°</text>
+                    `).join('');
+                    sparkEl.innerHTML = `
+                        <svg viewBox="0 0 ${W} ${H}" class="w-full h-24 overflow-visible" aria-label="Biểu đồ nhiệt độ 24 giờ">
+                            <defs>
+                                <linearGradient id="wSparkGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.28"/>
+                                    <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="${areaPath}" fill="url(#wSparkGrad)"/>
+                            <path d="${linePath}" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round"/>
+                            ${dotsSvg}
+                        </svg>
+                    `;
+                }
             }
 
             // 5-day forecast
@@ -2613,7 +3145,79 @@
             }
         }
 
+        const ROUNDER_STORAGE_KEY = 'weat-rounder-settings';
+        function saveRounderSettings() {
+            try {
+                const payload = {
+                    curveType: state.curveType,
+                    unit: state.unit,
+                    uniformRadius: state.uniformRadius,
+                    corners: state.corners,
+                    bgMode: state.bgMode,
+                    bgColor: state.bgColor,
+                    borderEnabled: state.borderEnabled,
+                    borderWidth: state.borderWidth,
+                    borderColor: state.borderColor,
+                    exportFormat: state.exportFormat,
+                    fileSuffix: document.getElementById('fileSuffix')?.value ?? '-rounded'
+                };
+                localStorage.setItem(ROUNDER_STORAGE_KEY, JSON.stringify(payload));
+            } catch (e) {}
+        }
+
+        function loadRounderSettings() {
+            try {
+                const raw = localStorage.getItem(ROUNDER_STORAGE_KEY);
+                if (!raw) return;
+                const s = JSON.parse(raw);
+                if (s.curveType) setCurveType(s.curveType);
+                if (s.unit) {
+                    state.unit = s.unit;
+                    document.getElementById('uniformUnitLabel').textContent = s.unit;
+                    document.getElementById('unitPx').className = s.unit === 'px' ? 'px-1.5 py-0.5 rounded bg-white dark:bg-zinc-700 font-semibold' : 'px-1.5 py-0.5 rounded text-zinc-500';
+                    document.getElementById('unitPct').className = s.unit === '%' ? 'px-1.5 py-0.5 rounded bg-white dark:bg-zinc-700 font-semibold' : 'px-1.5 py-0.5 rounded text-zinc-500';
+                }
+                if (s.uniformRadius != null) {
+                    state.uniformRadius = Math.max(0, Number(s.uniformRadius) || 0);
+                    document.getElementById('uniformSlider').value = state.uniformRadius;
+                    document.getElementById('uniformInput').value = state.uniformRadius;
+                }
+                if (s.corners) {
+                    state.corners = { ...state.corners, ...s.corners };
+                    document.getElementById('radTL').value = state.corners.tl;
+                    document.getElementById('radTR').value = state.corners.tr;
+                    document.getElementById('radBL').value = state.corners.bl;
+                    document.getElementById('radBR').value = state.corners.br;
+                }
+                if (s.bgMode) state.bgMode = s.bgMode;
+                if (s.bgColor) {
+                    state.bgColor = s.bgColor;
+                    document.getElementById('bgColorPicker').value = s.bgColor;
+                }
+                if (typeof s.borderEnabled === 'boolean') {
+                    state.borderEnabled = s.borderEnabled;
+                    document.getElementById('borderToggle').checked = s.borderEnabled;
+                    document.getElementById('borderControls').classList.toggle('hidden', !s.borderEnabled);
+                }
+                if (s.borderWidth != null) {
+                    state.borderWidth = Number(s.borderWidth) || 4;
+                    document.getElementById('borderWidthSlider').value = state.borderWidth;
+                }
+                if (s.borderColor) {
+                    state.borderColor = s.borderColor;
+                    document.getElementById('borderColorPicker').value = s.borderColor;
+                }
+                if (s.exportFormat) {
+                    state.exportFormat = s.exportFormat;
+                    document.getElementById('exportFormat').value = s.exportFormat;
+                }
+                if (s.fileSuffix != null) document.getElementById('fileSuffix').value = s.fileSuffix;
+                updateStatusSummary();
+            } catch (e) {}
+        }
+
         function scheduleRender() {
+            saveRounderSettings();
             updateStatusSummary();
             requestAnimationFrame(() => {
                 state.images.forEach(it => it.previewCanvas && renderProcessedImage(it, it.previewCanvas, 600));
@@ -2658,7 +3262,11 @@
 
                 const foot = document.createElement('div');
                 foot.className = 'px-3 py-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2 text-xs';
-                foot.innerHTML = `<span class="truncate font-medium">${item.name}</span><button type="button" onclick="removeImage('${item.id}')" class="text-zinc-400 hover:text-red-500"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`;
+                foot.innerHTML = `<span class="truncate font-medium">${escapeHtml(item.name)}</span>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" onclick="copyRounderCardImage('${item.id}')" title="Copy ảnh" class="p-1 rounded text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                        <button type="button" onclick="removeImage('${item.id}')" title="Xóa" class="p-1 rounded text-zinc-400 hover:text-red-500"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                    </div>`;
                 card.appendChild(wrap);
                 card.appendChild(foot);
                 grid.appendChild(card);
@@ -2741,6 +3349,19 @@
         }
         function closeLightbox() { state.lightboxImageId = null; document.getElementById('lightboxModal').classList.add('hidden'); }
 
+        function copyRounderCardImage(id) {
+            const it = state.images.find(i => i.id === id);
+            if (!it) return;
+            const c = document.createElement('canvas');
+            renderProcessedImage(it, c);
+            c.toBlob(b => copyImageBlobToClipboard(b, 'Đã sao chép ảnh đã bo góc!'), 'image/png');
+        }
+
+        function copyLightboxImage() {
+            if (!state.lightboxImageId) return;
+            copyRounderCardImage(state.lightboxImageId);
+        }
+
         async function handlePrimaryExport() {
             if (!state.images.length) return;
             const ext = state.exportFormat === 'image/jpeg' ? 'jpg' : state.exportFormat.split('/')[1];
@@ -2752,6 +3373,11 @@
                 const b = await toBlob(state.images[0]);
                 triggerBlobDownload(b, state.images[0].name.replace(/\.[^.]+$/, '') + suffix + '.' + ext);
                 return;
+            }
+            try {
+                await loadScriptOnce(CDN_LIBS.jszip);
+            } catch (e) {
+                return showToast(e.message, 'error');
             }
             const zip = new JSZip();
             for (const it of state.images) {
@@ -2765,6 +3391,9 @@
         // MODULE 4: SMART COMPRESSOR ENGINE
         // =========================================================================
         let compressQueue = [];
+        let cmpModalItemId = null;
+        let cmpModalUrls = [];
+
         function handleCompressSelect(e) { processCompressFiles(Array.from(e.target.files || [])); e.target.value = ''; }
         function processCompressFiles(files) {
             const imgs = files.filter(f => f.type.startsWith('image/'));
@@ -2775,7 +3404,7 @@
                 reader.onload = ev => {
                     const img = new Image();
                     img.onload = () => {
-                        const item = { id: 'cmp_' + Date.now() + Math.random().toString(36).slice(2, 5), file, img, origSize: file.size, compBlob: null };
+                        const item = { id: 'cmp_' + Date.now() + Math.random().toString(36).slice(2, 5), file, img, origSize: file.size, compBlob: null, outLabel: '' };
                         compressQueue.push(item);
                         compressSingleItem(item);
                     };
@@ -2784,19 +3413,49 @@
                 reader.readAsDataURL(file);
             });
         }
-        function compressSingleItem(item) {
+
+        async function compressSingleItem(item) {
             const q = Number(document.getElementById('compQualitySlider').value) / 100;
             const target = document.getElementById('compTargetFormat').value;
+            const origExt = (item.file.type.split('/')[1] || 'img').toUpperCase();
             const mime = target === 'auto' ? (item.file.type === 'image/png' ? 'image/webp' : item.file.type) : target;
-            const c = document.createElement('canvas'); c.width = item.img.naturalWidth; c.height = item.img.naturalHeight;
-            c.getContext('2d').drawImage(item.img, 0, 0);
+
+            const c = document.createElement('canvas');
+            c.width = item.img.naturalWidth;
+            c.height = item.img.naturalHeight;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(item.img, 0, 0);
+
+            if (mime === 'image/png') {
+                item.outExt = 'png';
+                try {
+                    await ensureUPNG();
+                    const rgba = ctx.getImageData(0, 0, c.width, c.height).data.buffer;
+                    const cnum = q >= 0.96 ? 0 : Math.max(16, Math.min(256, Math.round(q * 256)));
+                    const buf = UPNG.encode([rgba], c.width, c.height, cnum);
+                    item.compBlob = new Blob([buf], { type: 'image/png' });
+                    item.outLabel = cnum === 0 ? 'PNG Lossless' : `PNG ${cnum} màu (UPNG)`;
+                    renderCompressList();
+                    return;
+                } catch (e) {
+                    // Fallback to standard canvas PNG if UPNG CDN unavailable
+                }
+            }
+
             c.toBlob(blob => {
                 item.compBlob = blob;
                 item.outExt = mime.split('/')[1];
+                if (target === 'auto' && item.file.type === 'image/png' && mime === 'image/webp') {
+                    item.outLabel = 'PNG → WEBP';
+                } else {
+                    item.outLabel = `${origExt} → ${item.outExt.toUpperCase()}`;
+                }
                 renderCompressList();
             }, mime, q);
         }
+
         function recompressAll() { compressQueue.forEach(compressSingleItem); }
+
         function renderCompressList() {
             const has = compressQueue.length > 0;
             document.getElementById('compressEmptyState').classList.toggle('hidden', has);
@@ -2811,12 +3470,21 @@
                 const newSz = it.compBlob ? it.compBlob.size : it.origSize;
                 totalNew += newSz;
                 const pct = Math.max(0, Math.round((1 - newSz / it.origSize) * 100));
-                return `<div class="bg-white dark:bg-zinc-900 border border-studio-border dark:border-zinc-800 rounded-xl p-3.5 flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="text-xs font-semibold truncate">${it.file.name}</p>
-                        <p class="text-[11px] font-mono text-zinc-400">${(it.origSize / 1024).toFixed(1)} KB → <span class="text-emerald-500 font-semibold">${(newSz / 1024).toFixed(1)} KB (-${pct}%)</span></p>
+                const badge = it.outLabel ? `<span class="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-[10px] font-mono text-zinc-500 dark:text-zinc-400">${escapeHtml(it.outLabel)}</span>` : '';
+                return `<div onclick="openCompressCompare('${it.id}')" class="cursor-pointer bg-white dark:bg-[#17171A] border border-studio-border dark:border-white/[0.08] hover:border-zinc-400 dark:hover:border-white/20 rounded-xl p-3.5 flex items-center justify-between gap-3 transition-colors">
+                    <div class="min-w-0 space-y-1">
+                        <div class="flex items-center gap-2">
+                            <p class="text-xs font-semibold truncate">${escapeHtml(it.file.name)}</p>
+                            ${badge}
+                        </div>
+                        <p class="text-[11px] font-mono tabular-nums text-zinc-400">${(it.origSize / 1024).toFixed(1)} KB → <span class="text-emerald-500 font-semibold">${(newSz / 1024).toFixed(1)} KB (-${pct}%)</span> · <span class="underline decoration-dotted">So sánh</span></p>
                     </div>
-                    <button type="button" onclick="downloadSingleCompressed('${it.id}')" class="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs font-medium">Tải về</button>
+                    <div class="flex items-center gap-1.5 shrink-0" onclick="event.stopPropagation()">
+                        <button type="button" onclick="copyCompressedItem('${it.id}')" title="Copy ảnh" class="px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-700 inline-flex items-center gap-1">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button type="button" onclick="downloadSingleCompressed('${it.id}')" class="px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-xs font-medium">Tải về</button>
+                    </div>
                 </div>`;
             }).join('');
 
@@ -2824,13 +3492,79 @@
             const savedPct = totalOrig > 0 ? Math.max(0, Math.round((1 - totalNew / totalOrig) * 100)) : 0;
             document.getElementById('compTotalSavedText').textContent = `${savedKb} KB (${savedPct}%)`;
             document.getElementById('compCountBadge').textContent = `${compressQueue.length} ảnh`;
+            lucide.createIcons();
         }
+
+        function openCompressCompare(id) {
+            const it = compressQueue.find(i => i.id === id);
+            if (!it || !it.compBlob) return;
+            closeCompressCompare();
+            cmpModalItemId = id;
+            const origUrl = URL.createObjectURL(it.file);
+            const afterUrl = URL.createObjectURL(it.compBlob);
+            cmpModalUrls = [origUrl, afterUrl];
+
+            document.getElementById('cmpImgBefore').src = origUrl;
+            document.getElementById('cmpImgAfter').src = afterUrl;
+            document.getElementById('cmpModalTitle').textContent = it.file.name;
+            const pct = Math.max(0, Math.round((1 - it.compBlob.size / it.origSize) * 100));
+            document.getElementById('cmpModalStats').textContent = `${(it.origSize / 1024).toFixed(1)} KB → ${(it.compBlob.size / 1024).toFixed(1)} KB (-${pct}%)`;
+            document.getElementById('cmpSplitRange').value = 50;
+            updateCompressSplit(50);
+            document.getElementById('compressCompareModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function updateCompressSplit(val) {
+            const pct = Math.max(0, Math.min(100, Number(val) || 50));
+            const clipEl = document.getElementById('cmpOrigClip');
+            const divEl = document.getElementById('cmpSplitDivider');
+            if (clipEl) clipEl.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+            if (divEl) divEl.style.left = `${pct}%`;
+        }
+
+        function closeCompressCompare() {
+            cmpModalItemId = null;
+            cmpModalUrls.forEach(u => URL.revokeObjectURL(u));
+            cmpModalUrls = [];
+            const modal = document.getElementById('compressCompareModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function copyCompressedItem(id) {
+            const it = compressQueue.find(i => i.id === id);
+            if (!it || !it.compBlob) return;
+            if (it.compBlob.type === 'image/png') {
+                return copyImageBlobToClipboard(it.compBlob, 'Đã sao chép ảnh đã nén!');
+            }
+            const img = new Image();
+            const u = URL.createObjectURL(it.compBlob);
+            img.onload = () => {
+                const c = document.createElement('canvas');
+                c.width = img.naturalWidth;
+                c.height = img.naturalHeight;
+                c.getContext('2d').drawImage(img, 0, 0);
+                URL.revokeObjectURL(u);
+                c.toBlob(b => copyImageBlobToClipboard(b, 'Đã sao chép ảnh đã nén!'), 'image/png');
+            };
+            img.src = u;
+        }
+
+        function copyCompressedModalImage() {
+            if (cmpModalItemId) copyCompressedItem(cmpModalItemId);
+        }
+
         function downloadSingleCompressed(id) {
             const it = compressQueue.find(i => i.id === id);
             if (it && it.compBlob) triggerBlobDownload(it.compBlob, it.file.name.replace(/\.[^.]+$/, '') + '-min.' + it.outExt);
         }
         async function downloadCompressedBatch() {
             if (compressQueue.length === 1) return downloadSingleCompressed(compressQueue[0].id);
+            try {
+                await loadScriptOnce(CDN_LIBS.jszip);
+            } catch (e) {
+                return showToast(e.message, 'error');
+            }
             const zip = new JSZip();
             compressQueue.forEach(it => it.compBlob && zip.file(it.file.name.replace(/\.[^.]+$/, '') + '-min.' + it.outExt, it.compBlob));
             triggerBlobDownload(await zip.generateAsync({ type: 'blob' }), `weat-compressed-${Date.now()}.zip`);
@@ -2979,20 +3713,7 @@
             }
         }
 
-        // Global Ctrl+V anywhere in Video Downloader tab -> instant paste & analyze!
-        document.addEventListener('paste', (e) => {
-            if (activeView !== 'youtube') return;
-            const tag = document.activeElement?.tagName;
-            if (tag === 'TEXTAREA' || (tag === 'INPUT' && document.activeElement.id !== 'ytUrlInput')) return;
-            const pasted = e.clipboardData?.getData('text') || '';
-            const clean = extractCleanUrl(pasted);
-            if (clean && /^https?:\/\//i.test(clean)) {
-                e.preventDefault();
-                const input = document.getElementById('ytUrlInput');
-                if (input) input.value = clean;
-                handleVideoUrlInput(clean);
-            }
-        });
+        // (Global paste & drop routing is handled centrally at window level)
 
         function formatVideoDuration(sec) {
             if (!sec || isNaN(sec)) return '';
@@ -3463,24 +4184,104 @@
             if (kind === 'video') { ytState.muxVideo = file; document.getElementById('muxVideoName').textContent = file.name; }
             else { ytState.muxAudio = file; document.getElementById('muxAudioName').textContent = file.name; }
         }
+        let activeMuxSession = null;
+
+        function cleanupMuxSession() {
+            if (!activeMuxSession) return;
+            const s = activeMuxSession;
+            activeMuxSession = null;
+            if (s.raf) cancelAnimationFrame(s.raf);
+            try { s.video.pause(); } catch (e) {}
+            try { s.audio.pause(); } catch (e) {}
+            if (s.stream) s.stream.getTracks().forEach(t => t.stop());
+            (s.urls || []).forEach(u => URL.revokeObjectURL(u));
+            document.getElementById('btnMuxStart').disabled = false;
+            document.getElementById('btnMuxCancel').classList.add('hidden');
+            document.getElementById('muxProgressWrap').classList.add('hidden');
+        }
+
+        function cancelMuxVideoAudio() {
+            if (!activeMuxSession) return;
+            activeMuxSession.cancelled = true;
+            try {
+                if (activeMuxSession.recorder && activeMuxSession.recorder.state !== 'inactive') {
+                    activeMuxSession.recorder.stop();
+                }
+            } catch (e) {}
+            cleanupMuxSession();
+            showToast('Đã hủy quá trình ghép Video + Audio.');
+        }
+
         function mergeVideoAndAudioBrowser() {
             if (!ytState.muxVideo || !ytState.muxAudio) return showToast('Vui lòng chọn đủ cả file Video và Audio.', 'error');
-            showToast('Đang ghép luồng hình & tiếng trên trình duyệt...');
+            if (activeMuxSession) return showToast('Đang có tiến trình ghép khác chạy.', 'error');
+
             const video = document.createElement('video');
             const audio = document.createElement('audio');
-            video.src = URL.createObjectURL(ytState.muxVideo);
-            audio.src = URL.createObjectURL(ytState.muxAudio);
+            const vUrl = URL.createObjectURL(ytState.muxVideo);
+            const aUrl = URL.createObjectURL(ytState.muxAudio);
+            video.src = vUrl;
+            audio.src = aUrl;
             video.muted = true;
+            video.playsInline = true;
+
+            const progWrap = document.getElementById('muxProgressWrap');
+            const progBar = document.getElementById('muxProgressBar');
+            const progPct = document.getElementById('muxProgressPct');
+            const progStatus = document.getElementById('muxProgressStatus');
+            const btnStart = document.getElementById('btnMuxStart');
+            const btnCancel = document.getElementById('btnMuxCancel');
+
+            btnStart.disabled = true;
+            btnCancel.classList.remove('hidden');
+            progWrap.classList.remove('hidden');
+            progBar.style.width = '0%';
+            progPct.textContent = '0%';
+            progStatus.textContent = 'Đang ghép luồng thời gian thực...';
+
+            const session = { video, audio, urls: [vUrl, aUrl], recorder: null, stream: null, raf: null, cancelled: false };
+            activeMuxSession = session;
+
             Promise.all([video.play(), audio.play()]).then(() => {
+                if (session.cancelled) return;
                 const vStream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
                 const aStream = audio.captureStream ? audio.captureStream() : audio.mozCaptureStream();
                 const mixed = new MediaStream([...vStream.getVideoTracks(), ...aStream.getAudioTracks()]);
+                session.stream = mixed;
+
                 const rec = new MediaRecorder(mixed);
+                session.recorder = rec;
                 const chunks = [];
-                rec.ondataavailable = e => chunks.push(e.data);
-                rec.onstop = () => triggerBlobDownload(new Blob(chunks, { type: 'video/webm' }), `merged-${Date.now()}.webm`);
-                rec.start();
-                video.onended = () => { rec.stop(); audio.pause(); };
+                rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+                rec.onstop = () => {
+                    const wasCancelled = session.cancelled;
+                    cleanupMuxSession();
+                    if (!wasCancelled && chunks.length) {
+                        triggerBlobDownload(new Blob(chunks, { type: 'video/webm' }), `merged-${Date.now()}.webm`);
+                        showToast('Ghép Video + Audio hoàn tất!');
+                    }
+                };
+                rec.start(250);
+
+                const updateProgress = () => {
+                    if (!activeMuxSession || session.cancelled) return;
+                    const dur = video.duration || 0;
+                    const pct = dur > 0 ? Math.min(100, Math.round((video.currentTime / dur) * 100)) : 0;
+                    progBar.style.width = `${pct}%`;
+                    progPct.textContent = `${pct}%`;
+                    if (dur > 0) {
+                        progStatus.textContent = `Đang ghép: ${formatVideoDuration(video.currentTime)} / ${formatVideoDuration(dur)}`;
+                    }
+                    session.raf = requestAnimationFrame(updateProgress);
+                };
+                session.raf = requestAnimationFrame(updateProgress);
+
+                video.onended = () => {
+                    if (rec.state !== 'inactive') rec.stop();
+                };
+            }).catch(() => {
+                cleanupMuxSession();
+                showToast('Trình duyệt không thể phát hoặc ghép 2 tệp này.', 'error');
             });
         }
 
@@ -3730,36 +4531,7 @@
             lucide.createIcons();
         }
 
-        // --- Drag & Drop + Ctrl+V Paste for Universal Converter ---
-        (function setupConvertDragAndPaste() {
-            document.addEventListener('dragover', (e) => {
-                if (activeView !== 'convert') return;
-                e.preventDefault();
-            });
-            document.addEventListener('drop', (e) => {
-                if (activeView !== 'convert') return;
-                e.preventDefault();
-                const files = Array.from(e.dataTransfer?.files || []);
-                if (files.length) processConvertFiles(files);
-            });
-            document.addEventListener('paste', (e) => {
-                if (activeView !== 'convert') return;
-                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
-                const files = Array.from(e.clipboardData?.files || []);
-                if (files.length) {
-                    e.preventDefault();
-                    processConvertFiles(files);
-                    return;
-                }
-                const txt = e.clipboardData?.getData('text');
-                if (txt && txt.trim()) {
-                    e.preventDefault();
-                    const ext = detectPastedTextExt(txt);
-                    const f = new File([txt], `pasted-${Date.now()}.${ext}`, { type: 'text/plain' });
-                    processConvertFiles([f]);
-                }
-            });
-        })();
+        // (Drag & Drop + Ctrl+V Paste for Universal Converter is routed centrally at window level)
 
         function detectPastedTextExt(txt) {
             const s = (txt || '').trim();
@@ -4084,6 +4856,7 @@
         }
 
         async function buildEpubBlob(title, htmlBody) {
+            await loadScriptOnce(CDN_LIBS.jszip);
             const zip = new JSZip();
             zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
             zip.file('META-INF/container.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>`);
@@ -4298,6 +5071,7 @@
 
             // 1. ZIP wrap for any file
             if (t === 'zip') {
+                await loadScriptOnce(CDN_LIBS.jszip);
                 const zip = new JSZip();
                 zip.file(it.file.name, it.file);
                 return await zip.generateAsync({ type: 'blob' });
@@ -4483,6 +5257,7 @@
                 triggerBlobDownload(only.outBlob, only.outName);
                 showToast(`Đã chuyển đổi & tải ${only.outName}!`);
             } else {
+                await loadScriptOnce(CDN_LIBS.jszip);
                 const zip = new JSZip();
                 convertQueue.forEach(it => { if (it.status === 'done' && it.outBlob) zip.file(it.outName, it.outBlob); });
                 triggerBlobDownload(await zip.generateAsync({ type: 'blob' }), `weat-converted-${okCount}-files.zip`);
@@ -4525,7 +5300,63 @@
             lastPayload: ''
         };
 
+        const QR_STORAGE_KEY = 'weat-qr-settings';
+        let qrCameraStream = null;
+        let qrCameraRaf = null;
+
+        function saveQrSettings() {
+            try {
+                const payload = {
+                    dotStyle: qrState.dotStyle,
+                    eyeFrameStyle: document.getElementById('qrEyeFrameStyle')?.value || 'squircle',
+                    eyePupilStyle: document.getElementById('qrEyePupilStyle')?.value || 'rounded',
+                    fgColor1: document.getElementById('qrFgColor1')?.value || '#18181B',
+                    fgColor2: document.getElementById('qrFgColor2')?.value || '#2563EB',
+                    eyeColor: document.getElementById('qrEyeColor')?.value || '#18181B',
+                    bgColor: document.getElementById('qrBgColor')?.value || '#FFFFFF',
+                    transparentBg: !!document.getElementById('qrTransparentBg')?.checked,
+                    gradientToggle: !!document.getElementById('qrGradientToggle')?.checked,
+                    eccLevel: document.getElementById('qrEccLevel')?.value || 'H',
+                    margin: document.getElementById('qrMarginInput')?.value ?? '2'
+                };
+                localStorage.setItem(QR_STORAGE_KEY, JSON.stringify(payload));
+            } catch (e) {}
+        }
+
+        function loadQrSettings() {
+            try {
+                const raw = localStorage.getItem(QR_STORAGE_KEY);
+                if (!raw) return;
+                const s = JSON.parse(raw);
+                if (s.dotStyle) {
+                    qrState.dotStyle = s.dotStyle;
+                    document.querySelectorAll('.qr-dot-btn').forEach(btn => {
+                        const active = btn.getAttribute('data-qrdot') === s.dotStyle;
+                        btn.className = active
+                            ? 'qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900'
+                            : 'qr-dot-btn py-1.5 px-1 text-[11px] font-medium rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300';
+                    });
+                }
+                if (s.eyeFrameStyle) document.getElementById('qrEyeFrameStyle').value = s.eyeFrameStyle;
+                if (s.eyePupilStyle) document.getElementById('qrEyePupilStyle').value = s.eyePupilStyle;
+                if (s.fgColor1) document.getElementById('qrFgColor1').value = s.fgColor1;
+                if (s.fgColor2) document.getElementById('qrFgColor2').value = s.fgColor2;
+                if (s.eyeColor) document.getElementById('qrEyeColor').value = s.eyeColor;
+                if (s.bgColor) document.getElementById('qrBgColor').value = s.bgColor;
+                if (typeof s.transparentBg === 'boolean') document.getElementById('qrTransparentBg').checked = s.transparentBg;
+                if (typeof s.gradientToggle === 'boolean') {
+                    document.getElementById('qrGradientToggle').checked = s.gradientToggle;
+                    const wrap = document.getElementById('qrFgColor2Wrap');
+                    wrap.classList.toggle('opacity-40', !s.gradientToggle);
+                    wrap.classList.toggle('pointer-events-none', !s.gradientToggle);
+                }
+                if (s.eccLevel) document.getElementById('qrEccLevel').value = s.eccLevel;
+                if (s.margin != null) document.getElementById('qrMarginInput').value = s.margin;
+            } catch (e) {}
+        }
+
         function setQrStudioMode(mode) {
+            if (mode !== 'scan') stopQrCameraScanner();
             qrState.mode = mode;
             ['qr', 'barcode', 'scan'].forEach(m => {
                 const btn = document.getElementById(`qrModeBtn${m.charAt(0).toUpperCase() + m.slice(1)}`);
@@ -4693,6 +5524,7 @@
         }
 
         function renderQrStudio() {
+            saveQrSettings();
             const payload = getQrEncodedPayload();
             qrState.lastPayload = payload;
             document.getElementById('qrEncodedPreview').textContent = payload;
@@ -4884,20 +5716,149 @@
             }, 'image/png');
         }
 
+        function copyQrImage() {
+            if (qrState.mode === 'barcode') {
+                const svg = document.getElementById('barcodeLiveSvg');
+                const xml = new XMLSerializer().serializeToString(svg);
+                const img = new Image();
+                img.onload = () => {
+                    const c = document.createElement('canvas');
+                    c.width = img.width * 2;
+                    c.height = img.height * 2;
+                    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                    c.toBlob(b => copyImageBlobToClipboard(b, 'Đã sao chép Barcode vào Clipboard!'), 'image/png');
+                };
+                img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+                return;
+            }
+            document.getElementById('qrLiveCanvas').toBlob(blob => {
+                copyImageBlobToClipboard(blob, 'Đã sao chép ảnh QR vào Clipboard!');
+            }, 'image/png');
+        }
+
         function downloadQrSvg() {
             if (qrState.mode === 'barcode') {
                 const xml = new XMLSerializer().serializeToString(document.getElementById('barcodeLiveSvg'));
                 triggerBlobDownload(new Blob([xml], { type: 'image/svg+xml' }), `weat-barcode-${Date.now()}.svg`);
                 return;
             }
-            const dataUrl = document.getElementById('qrLiveCanvas').toDataURL('image/png');
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><image href="${dataUrl}" width="1024" height="1024"/></svg>`;
-            triggerBlobDownload(new Blob([svg], { type: 'image/svg+xml' }), `weat-qr-${Date.now()}.svg`);
-            showToast('Đã xuất mã QR (.SVG)!');
+            if (typeof qrcode === 'undefined') return showToast('Thư viện QR đang tải, vui lòng thử lại.', 'error');
+
+            const payload = getQrEncodedPayload();
+            const ecc = document.getElementById('qrEccLevel').value || 'H';
+            const qr = qrcode(0, ecc);
+            qr.addData(payload);
+            qr.make();
+
+            const count = qr.getModuleCount();
+            const margin = Math.max(0, Number(document.getElementById('qrMarginInput').value) || 0);
+            const size = 1024;
+            const totalModules = count + margin * 2;
+            const cell = size / totalModules;
+
+            const isTransparent = document.getElementById('qrTransparentBg').checked;
+            const bgColor = document.getElementById('qrBgColor').value;
+            const fg1 = document.getElementById('qrFgColor1').value;
+            const fg2 = document.getElementById('qrFgColor2').value;
+            const useGrad = document.getElementById('qrGradientToggle').checked;
+            const eyeColor = document.getElementById('qrEyeColor').value;
+            const frameStyle = document.getElementById('qrEyeFrameStyle').value;
+            const pupilStyle = document.getElementById('qrEyePupilStyle').value;
+            const dotFill = useGrad ? 'url(#qrDotGrad)' : fg1;
+
+            const parts = [];
+            parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`);
+            if (useGrad) {
+                parts.push(`<defs><linearGradient id="qrDotGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${fg1}"/><stop offset="100%" stop-color="${fg2}"/></linearGradient></defs>`);
+            }
+            if (!isTransparent) {
+                parts.push(`<rect width="${size}" height="${size}" fill="${bgColor}"/>`);
+            }
+
+            // Data modules (pure vector)
+            parts.push(`<g fill="${dotFill}">`);
+            for (let r = 0; r < count; r++) {
+                for (let c = 0; c < count; c++) {
+                    if (!qr.isDark(r, c) || isFinderZone(r, c, count)) continue;
+                    const x = (c + margin) * cell;
+                    const y = (r + margin) * cell;
+                    const pad = cell * 0.08;
+                    const w = cell - pad * 2;
+                    if (qrState.dotStyle === 'circle') {
+                        parts.push(`<circle cx="${(x + cell / 2).toFixed(2)}" cy="${(y + cell / 2).toFixed(2)}" r="${(w / 2).toFixed(2)}"/>`);
+                    } else if (qrState.dotStyle === 'diamond') {
+                        const p1 = `${(x + cell / 2).toFixed(2)},${(y + pad).toFixed(2)}`;
+                        const p2 = `${(x + cell - pad).toFixed(2)},${(y + cell / 2).toFixed(2)}`;
+                        const p3 = `${(x + cell / 2).toFixed(2)},${(y + cell - pad).toFixed(2)}`;
+                        const p4 = `${(x + pad).toFixed(2)},${(y + cell / 2).toFixed(2)}`;
+                        parts.push(`<path d="M${p1}L${p2}L${p3}L${p4}Z"/>`);
+                    } else if (qrState.dotStyle === 'rounded') {
+                        const rx = (w * 0.36).toFixed(2);
+                        parts.push(`<rect x="${(x + pad).toFixed(2)}" y="${(y + pad).toFixed(2)}" width="${w.toFixed(2)}" height="${w.toFixed(2)}" rx="${rx}" ry="${rx}"/>`);
+                    } else {
+                        parts.push(`<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${(cell + 0.3).toFixed(2)}" height="${(cell + 0.3).toFixed(2)}"/>`);
+                    }
+                }
+            }
+            parts.push('</g>');
+
+            // Finder eyes (pure vector)
+            const eyePositions = [[0, 0], [count - 7, 0], [0, count - 7]];
+            eyePositions.forEach(([mc, mr]) => {
+                const ex = (mc + margin) * cell;
+                const ey = (mr + margin) * cell;
+                const ew = cell * 7;
+                const fx = ex + cell * 0.5;
+                const fy = ey + cell * 0.5;
+                const fw = cell * 6;
+                if (frameStyle === 'circle') {
+                    parts.push(`<circle cx="${(ex + ew / 2).toFixed(2)}" cy="${(ey + ew / 2).toFixed(2)}" r="${(cell * 3).toFixed(2)}" fill="none" stroke="${eyeColor}" stroke-width="${cell.toFixed(2)}"/>`);
+                } else if (frameStyle === 'squircle') {
+                    const frx = (cell * 1.8).toFixed(2);
+                    parts.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fw.toFixed(2)}" rx="${frx}" ry="${frx}" fill="none" stroke="${eyeColor}" stroke-width="${cell.toFixed(2)}"/>`);
+                } else {
+                    parts.push(`<rect x="${fx.toFixed(2)}" y="${fy.toFixed(2)}" width="${fw.toFixed(2)}" height="${fw.toFixed(2)}" fill="none" stroke="${eyeColor}" stroke-width="${cell.toFixed(2)}"/>`);
+                }
+
+                const px = ex + cell * 2;
+                const py = ey + cell * 2;
+                const pw = cell * 3;
+                if (pupilStyle === 'circle') {
+                    parts.push(`<circle cx="${(ex + ew / 2).toFixed(2)}" cy="${(ey + ew / 2).toFixed(2)}" r="${(pw / 2).toFixed(2)}" fill="${eyeColor}"/>`);
+                } else if (pupilStyle === 'rounded') {
+                    const prx = (cell * 0.9).toFixed(2);
+                    parts.push(`<rect x="${px.toFixed(2)}" y="${py.toFixed(2)}" width="${pw.toFixed(2)}" height="${pw.toFixed(2)}" rx="${prx}" ry="${prx}" fill="${eyeColor}"/>`);
+                } else {
+                    parts.push(`<rect x="${px.toFixed(2)}" y="${py.toFixed(2)}" width="${pw.toFixed(2)}" height="${pw.toFixed(2)}" fill="${eyeColor}"/>`);
+                }
+            });
+
+            // Center Logo if uploaded
+            if (qrState.logoImg) {
+                const scalePct = Number(document.getElementById('qrLogoScaleSlider').value) / 100;
+                const logoSize = size * scalePct;
+                const lx = (size - logoSize) / 2;
+                const ly = (size - logoSize) / 2;
+                const pad = logoSize * 0.14;
+                const bgRx = ((logoSize + pad * 2) * 0.24).toFixed(2);
+                const imgRx = (logoSize * 0.2).toFixed(2);
+                parts.push(`<defs><clipPath id="qrLogoClip"><rect x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" width="${logoSize.toFixed(2)}" height="${logoSize.toFixed(2)}" rx="${imgRx}" ry="${imgRx}"/></clipPath></defs>`);
+                parts.push(`<rect x="${(lx - pad).toFixed(2)}" y="${(ly - pad).toFixed(2)}" width="${(logoSize + pad * 2).toFixed(2)}" height="${(logoSize + pad * 2).toFixed(2)}" rx="${bgRx}" ry="${bgRx}" fill="${isTransparent ? '#FFFFFF' : bgColor}"/>`);
+                parts.push(`<image href="${qrState.logoImg.src}" x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" width="${logoSize.toFixed(2)}" height="${logoSize.toFixed(2)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#qrLogoClip)"/>`);
+            }
+
+            parts.push('</svg>');
+            triggerBlobDownload(new Blob([parts.join('')], { type: 'image/svg+xml;charset=utf-8' }), `weat-qr-${Date.now()}.svg`);
+            showToast('Đã xuất mã QR Vector (.SVG chuẩn)!');
         }
 
-        function handleQrScanFile(file) {
+        async function handleQrScanFile(file) {
             if (!file) return;
+            try {
+                await loadScriptOnce(CDN_LIBS.jsqr);
+            } catch (e) {
+                return showToast(e.message, 'error');
+            }
             const reader = new FileReader();
             reader.onload = (ev) => {
                 const img = new Image();
@@ -4922,6 +5883,67 @@
             reader.readAsDataURL(file);
         }
 
+        function toggleQrCameraScanner() {
+            if (qrCameraStream) stopQrCameraScanner();
+            else startQrCameraScanner();
+        }
+
+        async function startQrCameraScanner() {
+            if (!navigator.mediaDevices?.getUserMedia) {
+                return showToast('Trình duyệt không hỗ trợ truy cập Camera.', 'error');
+            }
+            try {
+                await loadScriptOnce(CDN_LIBS.jsqr);
+                qrCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            } catch (err) {
+                return showToast('Không thể mở Camera (hãy cấp quyền hoặc kiểm tra thiết bị).', 'error');
+            }
+
+            const wrap = document.getElementById('qrCameraWrap');
+            const video = document.getElementById('qrCameraVideo');
+            if (!wrap || !video) return stopQrCameraScanner();
+            video.srcObject = qrCameraStream;
+            wrap.classList.remove('hidden');
+
+            const scanCanvas = document.createElement('canvas');
+            const scanCtx = scanCanvas.getContext('2d', { willReadFrequently: true });
+
+            const tick = () => {
+                if (!qrCameraStream) return;
+                if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+                    scanCanvas.width = video.videoWidth;
+                    scanCanvas.height = video.videoHeight;
+                    scanCtx.drawImage(video, 0, 0, scanCanvas.width, scanCanvas.height);
+                    const imgData = scanCtx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+                    const code = typeof jsQR !== 'undefined' ? jsQR(imgData.data, scanCanvas.width, scanCanvas.height, { inversionAttempts: 'dontInvert' }) : null;
+                    if (code && code.data) {
+                        document.getElementById('qrScanResultCard').classList.remove('hidden');
+                        document.getElementById('qrScanResultText').textContent = code.data;
+                        showToast('Đã quét được mã QR từ Camera!');
+                        stopQrCameraScanner();
+                        return;
+                    }
+                }
+                qrCameraRaf = requestAnimationFrame(tick);
+            };
+            qrCameraRaf = requestAnimationFrame(tick);
+        }
+
+        function stopQrCameraScanner() {
+            if (qrCameraRaf) {
+                cancelAnimationFrame(qrCameraRaf);
+                qrCameraRaf = null;
+            }
+            if (qrCameraStream) {
+                qrCameraStream.getTracks().forEach(t => t.stop());
+                qrCameraStream = null;
+            }
+            const video = document.getElementById('qrCameraVideo');
+            if (video) video.srcObject = null;
+            const wrap = document.getElementById('qrCameraWrap');
+            if (wrap) wrap.classList.add('hidden');
+        }
+
         function copyScannedQrText() {
             const ta = document.createElement('textarea');
             ta.value = document.getElementById('qrScanResultText').textContent;
@@ -4933,36 +5955,108 @@
         }
 
         // =========================================================================
-        // GLOBAL DRAG-AND-DROP, PASTE & INITIALIZATION
+        // UNIFIED GLOBAL ROUTER (DRAG-AND-DROP, PASTE, SHORTCUTS & INIT)
         // =========================================================================
         window.addEventListener('dragover', e => e.preventDefault());
+
         window.addEventListener('drop', e => {
             e.preventDefault();
             const files = Array.from(e.dataTransfer?.files || []);
             if (!files.length) return;
-            if (activeView === 'compress') processCompressFiles(files);
+            if (activeView === 'home') routeUniversalFiles(files);
+            else if (activeView === 'compress') processCompressFiles(files);
             else if (activeView === 'convert') processConvertFiles(files);
             else if (activeView === 'qr' && qrState.mode === 'scan') handleQrScanFile(files[0]);
             else processIncomingFiles(files);
         });
 
         window.addEventListener('paste', e => {
-            const items = e.clipboardData?.items;
-            if (!items) return;
-            const imgs = [];
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.startsWith('image/')) {
-                    const f = items[i].getAsFile();
-                    if (f) imgs.push(new File([f], `pasted-${Date.now()}.png`, { type: f.type }));
+            const activeEl = document.activeElement;
+            const isTyping = activeEl && (activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT');
+
+            const items = Array.from(e.clipboardData?.items || []);
+            const files = items.filter(it => it.kind === 'file').map(it => it.getAsFile()).filter(Boolean);
+            const text = e.clipboardData?.getData('text') || '';
+
+            if (activeView === 'home') {
+                if (isTyping && activeEl.id !== 'homeQuickInput') return;
+                if (files.length) {
+                    e.preventDefault();
+                    return routeUniversalFiles(files);
                 }
+                if (text.trim() && !isTyping) {
+                    e.preventDefault();
+                    return routeHomeTextInput(text);
+                }
+                return;
             }
+
+            if (activeView === 'youtube') {
+                if (activeEl?.tagName === 'TEXTAREA' || (activeEl?.tagName === 'INPUT' && activeEl.id !== 'ytUrlInput')) return;
+                const clean = extractCleanUrl(text);
+                if (clean && /^https?:\/\//i.test(clean)) {
+                    e.preventDefault();
+                    const input = document.getElementById('ytUrlInput');
+                    if (input) input.value = clean;
+                    handleVideoUrlInput(clean);
+                }
+                return;
+            }
+
+            if (activeView === 'convert') {
+                if (isTyping) return;
+                if (files.length) {
+                    e.preventDefault();
+                    return processConvertFiles(files);
+                }
+                if (text.trim()) {
+                    e.preventDefault();
+                    const ext = detectPastedTextExt(text);
+                    const f = new File([text], `pasted-${Date.now()}.${ext}`, { type: 'text/plain' });
+                    return processConvertFiles([f]);
+                }
+                return;
+            }
+
+            if (isTyping) return;
+            const imgs = files.filter(f => f.type.startsWith('image/'));
             if (imgs.length) {
-                if (activeView === 'qr' && qrState.mode === 'scan') handleQrScanFile(imgs[0]);
+                e.preventDefault();
+                if (activeView === 'compress') processCompressFiles(imgs);
+                else if (activeView === 'qr' && qrState.mode === 'scan') handleQrScanFile(imgs[0]);
                 else processIncomingFiles(imgs);
             }
         });
 
+        window.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                const modal = document.getElementById('commandPaletteModal');
+                if (modal && !modal.classList.contains('hidden')) closeCommandPalette();
+                else openCommandPalette();
+                return;
+            }
+            if (e.key === 'Escape') {
+                closeCommandPalette();
+                closeLightbox();
+                if (typeof closeCompressCompare === 'function') closeCompressCompare();
+                if (typeof toggleConvertTextModal === 'function') toggleConvertTextModal(false);
+                if (typeof toggleConvertPreviewModal === 'function') toggleConvertPreviewModal(false);
+                return;
+            }
+            if (e.altKey && !e.ctrlKey && !e.metaKey) {
+                const viewMap = { '1': 'home', '2': 'weather', '3': 'studio', '4': 'compress', '5': 'youtube', '6': 'convert', '7': 'qr' };
+                if (viewMap[e.key]) {
+                    e.preventDefault();
+                    switchView(viewMap[e.key]);
+                }
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
+            updateNetworkStatusBadge();
+            if (typeof loadRounderSettings === 'function') loadRounderSettings();
+            loadQrSettings();
             const initialHash = (window.location.hash || '').replace('#', '');
             switchView(initialHash || 'home', false);
             lucide.createIcons();
