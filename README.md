@@ -7,13 +7,15 @@
 
 Wea-T là bộ công cụ tiện ích cá nhân gói gọn trong một file `index.html` duy nhất. Mọi thao tác xử lý ảnh, nén tệp, chuyển đổi định dạng, tạo và quét mã QR đều chạy trực tiếp trên trình duyệt, không cần cài đặt hay máy chủ trung gian.
 
-[Discord](https://discord.gg/n7JTT7ssNR) | [YouTube](https://www.youtube.com/@cheemsnogy) | [GitHub](https://github.com/CheemsGalaxy)
+[Mở trên web](https://cheemsgalaxy.github.io/wea-t/) | [Discord](https://discord.gg/n7JTT7ssNR) | [YouTube](https://www.youtube.com/@cheemsnogy) | [GitHub](https://github.com/CheemsGalaxy)
 
 ### Cách sử dụng
 
-1. Tải file `index.html` về máy hoặc clone repository.
-2. Mở trực tiếp `index.html` bằng trình duyệt (Chrome, Edge, Firefox, Safari).
-3. Có thể deploy tĩnh lên GitHub Pages, Cloudflare Pages hoặc Vercel mà không cần bước build.
+- **Dùng trực tiếp trên web:** Mở [cheemsgalaxy.github.io/wea-t](https://cheemsgalaxy.github.io/wea-t/).
+- **Chạy cục bộ (Offline):**
+  1. Tải file `index.html` về máy hoặc clone repository.
+  2. Mở trực tiếp `index.html` bằng trình duyệt bất kỳ (Chrome, Edge, Firefox, Safari).
+- **Tự deploy:** Có thể đẩy thẳng lên GitHub Pages, Cloudflare Pages hoặc Vercel mà không cần bước build.
 
 ### Các module chính
 
@@ -84,13 +86,15 @@ Dữ liệu thời tiết và AQI từ [Open-Meteo](https://open-meteo.com/).
 
 Wea-T is a personal utility studio packaged into a single `index.html` file. Image editing, file compression, format conversion, and QR generation/scanning run directly in the browser with no installation or backend server.
 
-[Discord](https://discord.gg/n7JTT7ssNR) | [YouTube](https://www.youtube.com/@cheemsnogy) | [GitHub](https://github.com/CheemsGalaxy)
+[Open Web App](https://cheemsgalaxy.github.io/wea-t/) | [Discord](https://discord.gg/n7JTT7ssNR) | [YouTube](https://www.youtube.com/@cheemsnogy) | [GitHub](https://github.com/CheemsGalaxy)
 
 ### Usage
 
-1. Download `index.html` or clone the repository.
-2. Open `index.html` directly in any modern browser (Chrome, Edge, Firefox, Safari).
-3. Can be deployed statically to GitHub Pages, Cloudflare Pages, or Vercel with no build step.
+- **Use online:** Open [cheemsgalaxy.github.io/wea-t](https://cheemsgalaxy.github.io/wea-t/).
+- **Run locally (Offline):**
+  1. Download `index.html` or clone the repository.
+  2. Open `index.html` directly in any modern browser (Chrome, Edge, Firefox, Safari).
+- **Self-host:** Deploy statically to GitHub Pages, Cloudflare Pages, or Vercel with no build step.
 
 ### Core modules
 
