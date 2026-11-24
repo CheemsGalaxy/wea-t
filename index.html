@@ -1042,6 +1042,13 @@
                             </div>
                             <div class="text-[10px] text-zinc-500 mt-0.5">Tải 4K/60fps/MP3 mọi trang, tự lưu vào Downloads</div>
                         </button>
+                        <button type="button" data-dlmode="share" onclick="setVideoDownloadMode('share')" class="yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                            <div class="font-semibold flex items-center justify-between">
+                                <span>Gửi sang App tải (Mobile)</span>
+                                <span class="text-[10px] font-mono text-zinc-400">SHARE</span>
+                            </div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">Android (Seal/YTDLnis) · iOS (Apple Shortcuts)</div>
+                        </button>
                         <button type="button" data-dlmode="copy" onclick="setVideoDownloadMode('copy')" class="yt-mode-btn w-full text-left px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                             <div class="font-semibold flex items-center justify-between">
                                 <span>Copy lệnh Terminal</span>
@@ -1055,15 +1062,21 @@
                 <!-- Collapsible Power Options -->
                 <details class="group border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
                     <summary class="px-3 py-2.5 cursor-pointer list-none flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-zinc-500 bg-zinc-50 dark:bg-zinc-800/50">
-                        <span>Tùy chọn nâng cao (yt-dlp)</span>
+                        <span>Tùy chọn nâng cao (yt-dlp &amp; iOS)</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="p-3 space-y-3 bg-white dark:bg-zinc-900">
                         <div class="space-y-1">
+                            <label class="block text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Tên Apple Shortcut (iOS)</label>
+                            <input type="text" id="ytIosShortcutInput" value="WeaT-Download" oninput="saveIosShortcutName(this.value)" placeholder="WeaT-Download" class="w-full text-xs font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none">
+                            <p class="text-[10px] text-zinc-400">Chạy phím tắt iOS nhận text URL qua <code class="font-mono">shortcuts://run-shortcut</code>.</p>
+                        </div>
+
+                        <div class="space-y-1">
                             <label class="block text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Xác thực Cookie (Video riêng tư / 18+)</label>
                             <select id="ytCookieMode" onchange="updateYtCommand()" class="w-full text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5">
                                 <option value="auto">Tự động (Dùng cookies.txt nếu có)</option>
-                                <option value="chrome">Lấy từ Chrome / Edge</option>
+                                <option value="chrome">Lấy từ Chrome / Edge (dễ bị khóa trên Windows, nên dùng Firefox hoặc cookies.txt)</option>
                                 <option value="firefox">Lấy từ Firefox</option>
                                 <option value="bypass">Bypass YouTube (Android VR)</option>
                             </select>
@@ -1079,15 +1092,19 @@
                             </div>
                             <textarea id="ytCliCommand" rows="4" readonly class="w-full p-2 text-[10px] font-mono bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-zinc-700 dark:text-zinc-300 focus:outline-none"></textarea>
                         </div>
+
+                        <button type="button" id="ytAdvScriptBtn" onclick="downloadYtBatchScript()" class="w-full py-1.5 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                            <i data-lucide="file-terminal" class="w-3.5 h-3.5"></i><span>Tải script yt-dlp (.BAT / .SH)</span>
+                        </button>
                     </div>
                 </details>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 pt-4">
+            <div id="ytSidebarBottomActions" class="grid grid-cols-2 gap-2 pt-4">
                 <button type="button" onclick="copyYtCommand()" class="py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>Copy lệnh</span>
                 </button>
-                <button type="button" onclick="downloadYtBatchScript()" class="py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                <button type="button" id="ytBottomScriptBtn" onclick="downloadYtBatchScript()" class="py-2 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
                     <i data-lucide="file-terminal" class="w-3.5 h-3.5"></i><span id="ytScriptBtnLabel">Tải .BAT</span>
                 </button>
             </div>
@@ -3577,14 +3594,27 @@
         const YT_STORAGE = {
             format: 'weat-video-format',
             mode: 'weat-video-dlmode',
-            history: 'weat-video-history'
+            history: 'weat-video-history',
+            iosShortcut: 'weat-ios-shortcut'
         };
+
+        function getDeviceEnv() {
+            const ua = navigator.userAgent || '';
+            const uaData = navigator.userAgentData || null;
+            const plat = uaData?.platform || navigator.platform || '';
+            const isIOS = /iPad|iPhone|iPod/i.test(ua) || (/Mac/i.test(plat) && (navigator.maxTouchPoints || 0) > 1);
+            const isAndroid = /Android/i.test(ua);
+            const isMobile = isIOS || isAndroid || uaData?.mobile === true || /Mobile|Tablet/i.test(ua);
+            const isWin = /Win/i.test(plat) || /Windows/i.test(ua);
+            return { isIOS, isAndroid, isMobile, isWin };
+        }
 
         const ytState = {
             initialized: false,
             format: 'best',
             mode: 'auto',
-            shell: /Mac|Linux|X11/i.test(navigator.platform || '') && !/Win/i.test(navigator.platform || '') ? 'unix' : 'win',
+            shell: getDeviceEnv().isWin ? 'win' : 'unix',
+            iosShortcut: 'WeaT-Download',
             url: '',
             platform: null,
             meta: null,
@@ -3610,15 +3640,43 @@
             { id: 'direct', name: 'Direct Media', icon: 'file-video', badgeCls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400', regex: /\.(?:mp4|webm|mov|m4a|mp3|ogg|wav)(?:\?|$)/i }
         ];
 
+        function saveIosShortcutName(val) {
+            const name = (val || '').trim() || 'WeaT-Download';
+            ytState.iosShortcut = name;
+            try { localStorage.setItem(YT_STORAGE.iosShortcut, name); } catch (e) {}
+        }
+
         function initVideoDownloader() {
+            const env = getDeviceEnv();
+            ytState.shell = env.isWin ? 'win' : 'unix';
+
+            const bottomScriptBtn = document.getElementById('ytBottomScriptBtn');
+            const bottomActions = document.getElementById('ytSidebarBottomActions');
+            if (bottomScriptBtn) bottomScriptBtn.classList.toggle('hidden', env.isMobile);
+            if (bottomActions) {
+                bottomActions.classList.toggle('grid-cols-1', env.isMobile);
+                bottomActions.classList.toggle('grid-cols-2', !env.isMobile);
+            }
+
             if (!ytState.initialized) {
                 ytState.initialized = true;
+                let savedMode = null;
                 try {
                     const savedFmt = localStorage.getItem(YT_STORAGE.format);
                     if (savedFmt) ytState.format = savedFmt;
-                    const savedMode = localStorage.getItem(YT_STORAGE.mode);
+                    savedMode = localStorage.getItem(YT_STORAGE.mode);
                     if (savedMode) ytState.mode = savedMode;
+                    const savedSc = localStorage.getItem(YT_STORAGE.iosShortcut);
+                    if (savedSc) ytState.iosShortcut = savedSc;
                 } catch (e) {}
+
+                const scInput = document.getElementById('ytIosShortcutInput');
+                if (scInput) scInput.value = ytState.iosShortcut;
+
+                if (env.isMobile && (!savedMode || savedMode === 'script' || savedMode === 'auto')) {
+                    ytState.mode = (env.isIOS || typeof navigator.share === 'function') ? 'share' : 'web';
+                }
+
                 setYtFormat(ytState.format, false);
                 setVideoDownloadMode(ytState.mode, false);
                 setYtShell(ytState.shell, false);
@@ -3726,9 +3784,19 @@
                 : `${m}:${String(rem).padStart(2, '0')}`;
         }
 
+        let analyzeReqSeq = 0;
+        let analyzeAbortController = null;
+
         async function analyzeVideoUrl(url) {
             const cleanUrl = extractCleanUrl(url || document.getElementById('ytUrlInput')?.value);
             if (!cleanUrl || !/^https?:\/\//i.test(cleanUrl)) return;
+
+            if (analyzeAbortController) {
+                try { analyzeAbortController.abort(); } catch (e) {}
+            }
+            const controller = new AbortController();
+            analyzeAbortController = controller;
+            const reqId = ++analyzeReqSeq;
 
             const platform = detectVideoPlatform(cleanUrl);
             ytState.url = cleanUrl;
@@ -3770,6 +3838,7 @@
                 thumb: '',
                 idLabel: platform.name.toUpperCase()
             };
+            let tiktokFailed = false;
 
             // 1. Direct media URL (.mp4/.webm/.mp3)
             if (platform.id === 'direct') {
@@ -3785,8 +3854,10 @@
                 document.getElementById('ytVideoTitle').textContent = 'Đang lấy link tải không logo...';
                 document.getElementById('ytChannelName').textContent = 'TikTok Direct Engine';
                 try {
-                    const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}&hd=1`);
+                    const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}&hd=1`, { signal: controller.signal });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const json = await res.json();
+                    if (reqId !== analyzeReqSeq) return;
                     if (json && json.code === 0 && json.data) {
                         const d = json.data;
                         meta.title = d.title || 'TikTok Video';
@@ -3804,8 +3875,14 @@
                             cover: d.cover || d.origin_cover,
                             filename: `tiktok-${d.id || Date.now()}.mp4`
                         };
+                    } else {
+                        tiktokFailed = true;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    if (e?.name === 'AbortError' || reqId !== analyzeReqSeq) return;
+                    tiktokFailed = true;
+                }
+                if (reqId !== analyzeReqSeq) return;
                 showThumb(meta.thumb);
             }
             // 3. YouTube
@@ -3817,11 +3894,14 @@
                     meta.thumbMax = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
                     showThumb(meta.thumb);
                     try {
-                        const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}`);
+                        const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}`, { signal: controller.signal });
                         const data = await res.json();
+                        if (reqId !== analyzeReqSeq) return;
                         if (data.title) meta.title = data.title;
                         if (data.author_name) meta.author = data.author_name;
-                    } catch (e) {}
+                    } catch (e) {
+                        if (e?.name === 'AbortError' || reqId !== analyzeReqSeq) return;
+                    }
                 } else {
                     showThumb('');
                 }
@@ -3830,8 +3910,9 @@
             else {
                 showThumb('');
                 try {
-                    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(cleanUrl)}`);
+                    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(cleanUrl)}`, { signal: controller.signal });
                     const data = await res.json();
+                    if (reqId !== analyzeReqSeq) return;
                     if (data && !data.error) {
                         if (data.title) meta.title = data.title;
                         if (data.author_name) meta.author = data.author_name;
@@ -3840,24 +3921,54 @@
                             showThumb(meta.thumb);
                         }
                     }
-                } catch (e) {}
+                } catch (e) {
+                    if (e?.name === 'AbortError' || reqId !== analyzeReqSeq) return;
+                }
             }
+
+            if (reqId !== analyzeReqSeq) return;
 
             ytState.meta = meta;
             document.getElementById('ytVideoIdBadge').textContent = meta.idLabel;
             document.getElementById('ytVideoTitle').textContent = meta.title;
             document.getElementById('ytChannelName').textContent = meta.author;
             if (statusEl) {
-                statusEl.textContent = ytState.directLinks ? 'Sẵn sàng tải trực tiếp' : 'Sẵn sàng tải 1-chạm';
+                if (tiktokFailed) {
+                    statusEl.textContent = 'Không lấy được luồng trực tiếp · Dùng nút dự phòng bên dưới';
+                } else {
+                    statusEl.textContent = ytState.directLinks ? 'Sẵn sàng tải trực tiếp' : 'Sẵn sàng tải 1-chạm';
+                }
             }
 
             renderDirectActionBar(meta);
             saveVideoHistory(meta);
         }
 
+        function shareToMobileApp(url, title) {
+            const cleanUrl = extractCleanUrl(url || ytState.url);
+            if (!cleanUrl) return showToast('Vui lòng dán link video trước.', 'error');
+            if (typeof navigator.share === 'function') {
+                navigator.share({ title: title || 'Wea-T Video', url: cleanUrl }).catch((err) => {
+                    if (err?.name !== 'AbortError') openWebDownloader();
+                });
+            } else {
+                openWebDownloader();
+            }
+        }
+
+        function runIosShortcut(url) {
+            const cleanUrl = extractCleanUrl(url || ytState.url);
+            if (!cleanUrl) return showToast('Vui lòng dán link video trước.', 'error');
+            const name = encodeURIComponent(ytState.iosShortcut || 'WeaT-Download');
+            const text = encodeURIComponent(cleanUrl);
+            window.location.href = `shortcuts://run-shortcut?name=${name}&input=text&text=${text}`;
+            showToast(`Đang mở Apple Shortcuts (${ytState.iosShortcut || 'WeaT-Download'})...`);
+        }
+
         function renderDirectActionBar(meta) {
             const bar = document.getElementById('ytDirectActionBar');
             if (!bar) return;
+            const env = getDeviceEnv();
 
             const buttons = [];
             if (ytState.directLinks) {
@@ -3873,8 +3984,20 @@
                 if (ytState.directLinks.video) {
                     buttons.push(`<button type="button" onclick="downloadDirectMediaUrl('${escapeHtml(ytState.directLinks.video)}', '${escapeHtml(ytState.directLinks.filename || 'media.mp4')}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i><span>Tải file trực tiếp</span></button>`);
                 }
+                if (env.isMobile && typeof navigator.share === 'function') {
+                    buttons.push(`<button type="button" onclick="shareToMobileApp()" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="share-2" class="w-3.5 h-3.5"></i><span>Chia sẻ</span></button>`);
+                }
             } else {
-                buttons.push(`<button type="button" onclick="downloadYtBatchScript()" class="px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i><span>Tải script 1-nhấp (${ytState.shell === 'win' ? '.BAT' : '.SH'})</span></button>`);
+                if (env.isIOS) {
+                    buttons.push(`<button type="button" onclick="runIosShortcut()" class="px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="zap" class="w-3.5 h-3.5"></i><span>Tải qua Apple Shortcuts</span></button>`);
+                } else if (env.isAndroid || (env.isMobile && typeof navigator.share === 'function')) {
+                    buttons.push(`<button type="button" onclick="shareToMobileApp()" class="px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="share-2" class="w-3.5 h-3.5"></i><span>Gửi sang App tải (Seal / YTDLnis)</span></button>`);
+                } else if (!env.isMobile) {
+                    buttons.push(`<button type="button" onclick="downloadYtBatchScript()" class="px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i><span>Tải script 1-nhấp (${ytState.shell === 'win' ? '.BAT' : '.SH'})</span></button>`);
+                    if (typeof navigator.share === 'function') {
+                        buttons.push(`<button type="button" onclick="shareToMobileApp()" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="share-2" class="w-3.5 h-3.5"></i><span>Gửi sang App tải (Seal / YTDLnis)</span></button>`);
+                    }
+                }
                 buttons.push(`<button type="button" onclick="openWebDownloader()" class="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors"><i data-lucide="external-link" class="w-3.5 h-3.5"></i><span>Tải qua Cobalt Web</span></button>`);
             }
 
@@ -3889,6 +4012,19 @@
 
         async function downloadDirectMediaUrl(mediaUrl, filename) {
             if (!mediaUrl) return;
+            const env = getDeviceEnv();
+            if (env.isMobile) {
+                const a = document.createElement('a');
+                a.href = mediaUrl;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.download = filename || `weat-video-${Date.now()}.mp4`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast('Đang mở luồng tải trực tiếp...');
+                return;
+            }
             showToast('Đang bắt đầu tải trực tiếp...');
             try {
                 const res = await fetch(mediaUrl);
@@ -3897,7 +4033,6 @@
                 triggerBlobDownload(blob, filename || `weat-video-${Date.now()}.mp4`);
                 showToast('Đã tải xong video!');
             } catch (e) {
-                // Fallback: open direct stream URL in new tab so browser downloads/plays natively
                 const a = document.createElement('a');
                 a.href = mediaUrl;
                 a.target = '_blank';
@@ -3958,6 +4093,12 @@
                 }
             }
 
+            if (ytState.mode === 'share') {
+                const env = getDeviceEnv();
+                if (env.isIOS) return runIosShortcut(url);
+                if (typeof navigator.share === 'function') return shareToMobileApp(url, ytState.meta?.title);
+                return openWebDownloader();
+            }
             if (ytState.mode === 'web') {
                 return openWebDownloader();
             }
@@ -3965,7 +4106,13 @@
                 updateYtCommand();
                 return copyYtCommand();
             }
-            // Default ('auto' fallback & 'script'): download 1-click self-bootstrapping .BAT / .SH
+            // Default ('auto' fallback & 'script'): on mobile share/openWeb, on desktop download .BAT/.SH
+            if (ytState.mode === 'auto' && getDeviceEnv().isMobile) {
+                const env = getDeviceEnv();
+                if (env.isIOS) return runIosShortcut(url);
+                if (typeof navigator.share === 'function') return shareToMobileApp(url, ytState.meta?.title);
+                return openWebDownloader();
+            }
             downloadYtBatchScript();
         }
 
@@ -3982,7 +4129,13 @@
             });
             const lbl = document.getElementById('ytPrimaryDlLabel');
             if (lbl) {
-                lbl.textContent = mode === 'web' ? 'Tải qua Web' : mode === 'copy' ? 'Copy lệnh tải' : 'Tải ngay';
+                lbl.textContent = mode === 'web'
+                    ? 'Tải qua Web'
+                    : mode === 'copy'
+                    ? 'Copy lệnh tải'
+                    : mode === 'share'
+                    ? (getDeviceEnv().isIOS ? 'Chạy Shortcut' : 'Gửi sang App tải')
+                    : 'Tải ngay';
             }
         }
 
@@ -4012,8 +4165,8 @@
 
         function getYtDlpFormatArgs() {
             if (ytState.format === 'mp3') return `-x --audio-format mp3 --audio-quality 0`;
-            if (ytState.format === 'best') return `-f "bv*+ba/b" --merge-output-format mp4 --remux-video mp4`;
-            return `-f "bv*[height<=${ytState.format}]+ba/b" --merge-output-format mp4 --remux-video mp4`;
+            if (ytState.format === 'best') return `-f "bv*+ba/b" -S "vcodec:h264,acodec:aac,ext:mp4:m4a" --merge-output-format mp4`;
+            return `-f "bv*[height<=${ytState.format}]+ba/b" -S "vcodec:h264,acodec:aac,ext:mp4:m4a" --merge-output-format mp4`;
         }
 
         function updateYtCommand() {
@@ -4029,7 +4182,7 @@
                     : ckMode === 'bypass'
                     ? `$ck=@('--extractor-args','youtube:player_client=android_vr,tv');`
                     : `$ck=if(Test-Path .\\cookies.txt){@('--cookies','.\\cookies.txt')}else{@()};`;
-                document.getElementById('ytCliCommand').value = `$ProgressPreference='SilentlyContinue'; $dl="$HOME\\Downloads"; cd $dl; if(!(Test-Path .\\yt-dlp.exe)){iwr https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile yt-dlp.exe}; if(!(Test-Path .\\ffmpeg.exe)){iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; rm ff,ff.zip -Recurse -Force}; ${ckVar} .\\yt-dlp.exe @ck --ffmpeg-location . ${fmtArg} -o "$dl\\%(title).120s.%(ext)s" "${url}"`;
+                document.getElementById('ytCliCommand').value = `$ProgressPreference='SilentlyContinue'; $dl="$HOME\\Downloads"; cd $dl; if(!(Test-Path .\\yt-dlp.exe)){iwr https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile yt-dlp.exe}; if(!(Test-Path .\\ffmpeg.exe)){iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; cp ff\\*\\bin\\ffprobe.exe .\\; rm ff,ff.zip -Recurse -Force}; ${ckVar} .\\yt-dlp.exe @ck --ffmpeg-location . ${fmtArg} -o "$dl\\%(title).120s.%(ext)s" "${url}"`;
             } else {
                 const ckFlag = ckMode === 'chrome'
                     ? `CK="--cookies-from-browser chrome"`
@@ -4055,6 +4208,10 @@
             showToast('Đã sao chép lệnh tải video!');
         }
 
+        function escapeBatPercent(str) {
+            return String(str || '').replace(/%/g, '%%');
+        }
+
         function buildDownloaderScript(urls) {
             const fmtArg = getYtDlpFormatArgs();
             const ckMode = document.getElementById('ytCookieMode')?.value || 'auto';
@@ -4068,8 +4225,8 @@
                     : ckMode === 'bypass'
                     ? `set CK=--extractor-args "youtube:player_client=android_vr,tv"`
                     : `if exist cookies.txt (set CK=--cookies cookies.txt) else (set CK=)`;
-                const dlLines = cleanUrls.map(u => `yt-dlp.exe %CK% --ffmpeg-location . ${fmtArg} -o "%%(title).120s.%%(ext)s" "${u}"`).join('\r\n');
-                return `@echo off\r\nchcp 65001 >nul\r\ntitle Wea-T Smart Video Downloader\r\ncd /d "%USERPROFILE%\\Downloads"\r\nif not exist yt-dlp.exe (\r\n  echo [Wea-T] Dang tai yt-dlp lan dau...\r\n  curl -L -s https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -o yt-dlp.exe\r\n)\r\nif not exist ffmpeg.exe (\r\n  echo [Wea-T] Dang cai dat ffmpeg lan dau...\r\n  powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; rm ff,ff.zip -Recurse -Force"\r\n)\r\n${ckLine}\r\necho [Wea-T] Dang tai video vao Downloads...\r\n${dlLines}\r\necho.\r\necho [Wea-T] Hoan tat! Dang mo thu muc Downloads...\r\nexplorer "%USERPROFILE%\\Downloads"\r\ntimeout /t 3 >nul\r\n`;
+                const dlLines = cleanUrls.map(u => `yt-dlp.exe %CK% --ffmpeg-location . ${fmtArg} -o "%%(title).120s.%%(ext)s" "${escapeBatPercent(u)}"\r\nif errorlevel 1 set "DL_ERR=1"`).join('\r\n');
+                return `@echo off\r\nchcp 65001 >nul\r\ntitle Wea-T Smart Video Downloader\r\nset "DL_DIR="\r\nfor /f "tokens=2,*" %%A in ('reg query "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders" /v "{374DE290-123F-4565-9164-39C4925E467B}" 2^>nul ^| find /i "{374DE290"') do set "DL_DIR=%%B"\r\nif not defined DL_DIR set "DL_DIR=%USERPROFILE%\\Downloads"\r\ncall set "DL_DIR=%DL_DIR%"\r\nif not exist "%DL_DIR%" mkdir "%DL_DIR%" 2>nul\r\ncd /d "%DL_DIR%"\r\nif not exist yt-dlp.exe (\r\n  echo [Wea-T] Dang tai yt-dlp lan dau...\r\n  curl -fL --retry 2 --connect-timeout 15 https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -o yt-dlp.exe\r\n  if errorlevel 1 (\r\n    del /f /q yt-dlp.exe 2>nul\r\n    echo.\r\n    echo [Wea-T] Loi: Khong tai duoc yt-dlp.exe. Vui long kiem tra mang hoac tuong lua.\r\n    pause\r\n    exit /b 1\r\n  )\r\n)\r\nif not exist ffmpeg.exe (\r\n  echo [Wea-T] Dang cai dat ffmpeg & ffprobe lan dau...\r\n  powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; iwr https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip; Expand-Archive ff.zip -Force; cp ff\\*\\bin\\ffmpeg.exe .\\; cp ff\\*\\bin\\ffprobe.exe .\\; rm ff,ff.zip -Recurse -Force"\r\n)\r\n${ckLine}\r\nset "DL_ERR=0"\r\necho [Wea-T] Dang tai video vao %DL_DIR%...\r\n${dlLines}\r\necho.\r\nif "%DL_ERR%"=="0" (\r\n  echo [Wea-T] Hoan tat! Dang mo thu muc Downloads...\r\n  explorer "%DL_DIR%"\r\n  timeout /t 3 >nul\r\n) else (\r\n  echo [Wea-T] Co loi khi tai video. Hay kiem tra lai link, thu chay "yt-dlp.exe -U" de cap nhat hoac doi tuy chon Cookie.\r\n  pause\r\n  exit /b 1\r\n)\r\n`;
             } else {
                 const ckLine = ckMode === 'chrome'
                     ? `CK="--cookies-from-browser chrome"`
@@ -4078,8 +4235,8 @@
                     : ckMode === 'bypass'
                     ? `CK="--extractor-args youtube:player_client=android_vr,tv"`
                     : `[ -f ./cookies.txt ] && CK="--cookies ./cookies.txt" || CK=""`;
-                const dlLines = cleanUrls.map(u => `yt-dlp $CK ${fmtArg} -o "~/Downloads/%(title).120s.%(ext)s" "${u}"`).join('\n');
-                return `#!/usr/bin/env bash\nset -e\ncd ~/Downloads\nif ! command -v yt-dlp >/dev/null 2>&1; then\n  echo "[Wea-T] Installing yt-dlp..."\n  curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod +x ./yt-dlp\n  export PATH="$PWD:$PATH"\nfi\n${ckLine}\n${dlLines}\necho "[Wea-T] Done! Saved to ~/Downloads"\n`;
+                const dlLines = cleanUrls.map(u => `yt-dlp $CK ${fmtArg} -o "~/Downloads/%(title).120s.%(ext)s" "${u}" || echo "[Wea-T] Loi tai: ${u}"`).join('\n');
+                return `#!/usr/bin/env bash\ncd ~/Downloads || exit 1\nif ! command -v yt-dlp >/dev/null 2>&1; then\n  echo "[Wea-T] Installing yt-dlp..."\n  curl -fL --retry 2 --connect-timeout 15 https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod +x ./yt-dlp\n  export PATH="$PWD:$PATH"\nfi\nif ! command -v ffmpeg >/dev/null 2>&1; then\n  echo "[Wea-T] Canh bao: May chua co ffmpeg. Cai nhanh: brew install ffmpeg (macOS) hoac sudo apt install ffmpeg (Ubuntu/Debian)"\nfi\n${ckLine}\n${dlLines}\necho "[Wea-T] Done! Saved to ~/Downloads"\n`;
             }
         }
 
@@ -4118,7 +4275,7 @@
             const fmtArg = getYtDlpFormatArgs();
             const quoted = urls.map(u => `"${u}"`).join(' ');
             const cmd = ytState.shell === 'win'
-                ? `cd "$HOME\\Downloads"; .\\yt-dlp.exe --ffmpeg-location . ${fmtArg} -o "%(title).120s.%(ext)s" ${quoted}`
+                ? `$ProgressPreference='SilentlyContinue'; cd "$HOME\\Downloads"; if(!(Test-Path .\\yt-dlp.exe)){iwr https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile yt-dlp.exe}; .\\yt-dlp.exe --ffmpeg-location . ${fmtArg} -o "%(title).120s.%(ext)s" ${quoted}`
                 : `cd ~/Downloads && yt-dlp ${fmtArg} -o "%(title).120s.%(ext)s" ${quoted}`;
             try { await navigator.clipboard.writeText(cmd); } catch (e) {}
             showToast(`Đã copy lệnh tải ${urls.length} video!`);
@@ -4194,6 +4351,9 @@
             try { s.video.pause(); } catch (e) {}
             try { s.audio.pause(); } catch (e) {}
             if (s.stream) s.stream.getTracks().forEach(t => t.stop());
+            if (s.audioCtx && s.audioCtx.state !== 'closed') {
+                s.audioCtx.close().catch(() => {});
+            }
             (s.urls || []).forEach(u => URL.revokeObjectURL(u));
             document.getElementById('btnMuxStart').disabled = false;
             document.getElementById('btnMuxCancel').classList.add('hidden');
@@ -4217,6 +4377,10 @@
             if (activeMuxSession) return showToast('Đang có tiến trình ghép khác chạy.', 'error');
 
             const video = document.createElement('video');
+            if (typeof MediaRecorder === 'undefined' || !(typeof video.captureStream === 'function' || typeof video.mozCaptureStream === 'function')) {
+                return showToast('Trình duyệt này (như Safari) chưa hỗ trợ captureStream để ghép Video + Audio.', 'error');
+            }
+
             const audio = document.createElement('audio');
             const vUrl = URL.createObjectURL(ytState.muxVideo);
             const aUrl = URL.createObjectURL(ytState.muxAudio);
@@ -4237,19 +4401,41 @@
             progWrap.classList.remove('hidden');
             progBar.style.width = '0%';
             progPct.textContent = '0%';
-            progStatus.textContent = 'Đang ghép luồng thời gian thực...';
+            progStatus.textContent = 'Đang ghép luồng thời gian thực (tắt loa)...';
 
-            const session = { video, audio, urls: [vUrl, aUrl], recorder: null, stream: null, raf: null, cancelled: false };
+            let audioCtx = null;
+            let audioDest = null;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) {
+                    audioCtx = new AudioCtx();
+                    const srcNode = audioCtx.createMediaElementSource(audio);
+                    audioDest = audioCtx.createMediaStreamDestination();
+                    srcNode.connect(audioDest);
+                }
+            } catch (e) {}
+
+            const session = { video, audio, audioCtx, urls: [vUrl, aUrl], recorder: null, stream: null, raf: null, cancelled: false };
             activeMuxSession = session;
 
             Promise.all([video.play(), audio.play()]).then(() => {
                 if (session.cancelled) return;
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
                 const vStream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
-                const aStream = audio.captureStream ? audio.captureStream() : audio.mozCaptureStream();
-                const mixed = new MediaStream([...vStream.getVideoTracks(), ...aStream.getAudioTracks()]);
+                const audioTracks = audioDest
+                    ? audioDest.stream.getAudioTracks()
+                    : (audio.captureStream ? audio.captureStream() : audio.mozCaptureStream()).getAudioTracks();
+                const mixed = new MediaStream([...vStream.getVideoTracks(), ...audioTracks]);
                 session.stream = mixed;
 
-                const rec = new MediaRecorder(mixed);
+                const mimeCandidates = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+                const chosenMime = mimeCandidates.find(m => MediaRecorder.isTypeSupported(m)) || '';
+                const recOpts = chosenMime
+                    ? { mimeType: chosenMime, videoBitsPerSecond: 6000000 }
+                    : { videoBitsPerSecond: 6000000 };
+                const rec = new MediaRecorder(mixed, recOpts);
                 session.recorder = rec;
                 const chunks = [];
                 rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
@@ -4257,7 +4443,7 @@
                     const wasCancelled = session.cancelled;
                     cleanupMuxSession();
                     if (!wasCancelled && chunks.length) {
-                        triggerBlobDownload(new Blob(chunks, { type: 'video/webm' }), `merged-${Date.now()}.webm`);
+                        triggerBlobDownload(new Blob(chunks, { type: chosenMime || 'video/webm' }), `merged-${Date.now()}.webm`);
                         showToast('Ghép Video + Audio hoàn tất!');
                     }
                 };
@@ -6087,7 +6273,7 @@
             const rawFmt = (params.get('fmt') || '').toLowerCase();
             const fmt = validFmts.includes(rawFmt) ? rawFmt : null;
 
-            const validModes = ['auto', 'web', 'script', 'copy'];
+            const validModes = ['auto', 'web', 'script', 'copy', 'share'];
             const rawMode = (params.get('mode') || '').toLowerCase();
             const mode = validModes.includes(rawMode) ? rawMode : null;
 
@@ -6137,9 +6323,11 @@
                         highlightYtPrimaryBtn();
                         showToast('Nhấn nút "Copy lệnh tải" bên trên để sao chép lệnh!');
                     }
-                } else if (effMode === 'web') {
+                } else if (effMode === 'web' || effMode === 'share') {
                     highlightYtPrimaryBtn();
-                    showToast('Nhấn nút "Tải qua Web" bên trên để mở trình tải!');
+                    showToast(effMode === 'share'
+                        ? 'Nhấn nút trên để gửi sang App tải / Apple Shortcuts!'
+                        : 'Nhấn nút "Tải qua Web" bên trên để mở trình tải!');
                 }
             }
 
