@@ -16,7 +16,7 @@ Wea-T là trang web gom các công cụ hay dùng hằng ngày vào một chỗ:
 
 ### Cách dùng nhanh
 
-- **Dùng ngay trên mạng:** Mở [https://cheemsgalaxy.github.io/wea-t/](https://cheemsgalaxy.github.io/wea-t/) trên máy tính hoặc điện thoại.
+- **Dùng ngay trực tiếp:** Mở [https://cheemsgalaxy.github.io/wea-t/](https://cheemsgalaxy.github.io/wea-t/) trên máy tính hoặc điện thoại.
 - **Dùng không cần mạng:** Tải file `index.html` về máy rồi nhấp đúp để mở bằng Chrome, Edge, Firefox hoặc Safari. Các công cụ xử lý ảnh, đổi đuôi file và tạo/quét mã QR vẫn chạy bình thường khi mất mạng.
 
 ### Wea-T làm được gì?
