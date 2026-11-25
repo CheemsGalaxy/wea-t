@@ -1147,7 +1147,7 @@
                         <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-medium">Ảnh: PNG · JPG · WEBP · BMP · ICO · SVG · PDF</span>
                         <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-medium">Audio/Video: WAV · WEBM · Tách nhạc/ảnh</span>
                         <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-medium">Dữ liệu: JSON ↔ CSV ↔ XML ↔ YAML</span>
-                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium">Tài liệu: MD · HTML · TXT · PDF · EPUB · ZIP</span>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium">Tài liệu: MD · HTML · TXT · PPTX · PDF · EPUB · ZIP</span>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-center gap-2">
@@ -4489,6 +4489,7 @@
             video: ['wav', 'png', 'jpg', 'webp', 'zip'],
             data:  ['json', 'csv', 'tsv', 'xml', 'yaml', 'html', 'md', 'txt', 'zip'],
             doc:   ['html', 'pdf', 'epub', 'md', 'txt', 'json', 'zip'],
+            slides:['pdf', 'html', 'txt', 'zip'],
             other: ['zip', 'base64', 'txt']
         };
 
@@ -4498,6 +4499,7 @@
             video: { label: 'Video', icon: 'film', badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
             data:  { label: 'Dữ liệu', icon: 'database', badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
             doc:   { label: 'Tài liệu', icon: 'file-text', badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+            slides:{ label: 'Trình chiếu', icon: 'presentation', badge: 'bg-orange-500/10 text-orange-600 dark:text-orange-400' },
             other: { label: 'Tệp', icon: 'file', badge: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400' }
         };
 
@@ -4522,11 +4524,13 @@
             if (mime.startsWith('video/') || ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'].includes(ext)) return 'video';
             if (['json', 'csv', 'tsv', 'xml', 'yaml', 'yml'].includes(ext) || mime.includes('json') || mime.includes('csv') || mime.includes('xml')) return 'data';
             if (['md', 'markdown', 'html', 'htm', 'txt', 'log', 'css', 'js', 'ts'].includes(ext) || mime.startsWith('text/')) return 'doc';
+            if (['pptx', 'ppt'].includes(ext) || mime.includes('presentationml') || mime.includes('ms-powerpoint')) return 'slides';
             return 'other';
         }
 
         function recommendConvertTarget(file, cat) {
             const ext = getFileExt(file.name);
+            if (cat === 'slides') return 'pdf';
             if (cat === 'image') {
                 if (ext === 'webp') return 'png';
                 if (ext === 'svg') return 'png';
@@ -5255,6 +5259,318 @@
             });
         }
 
+        function xmlByLocal(node, localName) {
+            if (!node) return [];
+            const out = [];
+            const all = node.getElementsByTagName('*');
+            for (let i = 0; i < all.length; i++) {
+                if (all[i].localName === localName) out.push(all[i]);
+            }
+            return out;
+        }
+
+        function xmlFirstLocal(node, localName) {
+            if (!node) return null;
+            const all = node.getElementsByTagName('*');
+            for (let i = 0; i < all.length; i++) {
+                if (all[i].localName === localName) return all[i];
+            }
+            return null;
+        }
+
+        function resolvePptxRelPath(baseDir, target) {
+            if (!target) return '';
+            if (target.startsWith('/')) return target.slice(1);
+            const parts = baseDir.split('/').filter(Boolean);
+            for (const seg of target.split('/')) {
+                if (seg === '..') parts.pop();
+                else if (seg && seg !== '.') parts.push(seg);
+            }
+            return parts.join('/');
+        }
+
+        async function loadZipImageElement(zip, path) {
+            const entry = zip.file(path);
+            if (!entry) return null;
+            const blob = await entry.async('blob');
+            const url = URL.createObjectURL(blob);
+            return await new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+                img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+                img.src = url;
+            });
+        }
+
+        function wrapCanvasLines(ctx, text, maxW) {
+            if (!text) return [''];
+            const words = text.split(/(\s+)/);
+            const lines = [];
+            let cur = '';
+            for (const w of words) {
+                const test = cur + w;
+                if (cur && ctx.measureText(test).width > maxW) {
+                    lines.push(cur.trimEnd());
+                    cur = w.trimStart();
+                } else {
+                    cur = test;
+                }
+            }
+            if (cur) lines.push(cur.trimEnd());
+            return lines.length ? lines : [''];
+        }
+
+        async function convertPptxToTarget(file, target, quality = 0.92) {
+            await loadScriptOnce(CDN_LIBS.jszip);
+            let zip;
+            try {
+                zip = await JSZip.loadAsync(await file.arrayBuffer());
+            } catch (e) {
+                throw new Error('Không đọc được tệp .ppt nhị phân cũ (PowerPoint 97-2003). Vui lòng lưu lại thành .pptx rồi chuyển đổi.');
+            }
+
+            const presEntry = zip.file('ppt/presentation.xml');
+            if (!presEntry) {
+                throw new Error('Tệp không phải định dạng .pptx hợp lệ (thiếu ppt/presentation.xml).');
+            }
+
+            const parser = new DOMParser();
+            const presDoc = parser.parseFromString(await presEntry.async('text'), 'application/xml');
+            const sldSz = xmlFirstLocal(presDoc, 'sldSz');
+            const slideEmuW = Number(sldSz?.getAttribute('cx')) || 12192000;
+            const slideEmuH = Number(sldSz?.getAttribute('cy')) || 6858000;
+
+            // Resolve slide order via presentation.xml.rels
+            let slidePaths = [];
+            const presRelsEntry = zip.file('ppt/_rels/presentation.xml.rels');
+            if (presRelsEntry) {
+                const relsDoc = parser.parseFromString(await presRelsEntry.async('text'), 'application/xml');
+                const relMap = {};
+                xmlByLocal(relsDoc, 'Relationship').forEach(rel => {
+                    relMap[rel.getAttribute('Id')] = rel.getAttribute('Target');
+                });
+                xmlByLocal(presDoc, 'sldId').forEach(sid => {
+                    const rId = sid.getAttribute('r:id') || sid.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
+                    const tgt = relMap[rId];
+                    if (tgt) slidePaths.push(resolvePptxRelPath('ppt', tgt));
+                });
+            }
+            if (!slidePaths.length) {
+                slidePaths = Object.keys(zip.files)
+                    .filter(p => /^ppt\/slides\/slide\d+\.xml$/i.test(p))
+                    .sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]));
+            }
+            if (!slidePaths.length) throw new Error('Không tìm thấy slide nào trong tệp .pptx.');
+
+            // Text / HTML export modes
+            if (target === 'txt' || target === 'html') {
+                const slideTexts = [];
+                for (let i = 0; i < slidePaths.length; i++) {
+                    const xmlStr = await zip.file(slidePaths[i])?.async('text');
+                    if (!xmlStr) continue;
+                    const doc = parser.parseFromString(xmlStr, 'application/xml');
+                    const paras = xmlByLocal(doc, 'p').map(p => xmlByLocal(p, 't').map(t => t.textContent).join('')).filter(Boolean);
+                    slideTexts.push({ index: i + 1, lines: paras });
+                }
+                if (target === 'txt') {
+                    const out = slideTexts.map(s => `--- Slide ${s.index} ---\n${s.lines.join('\n')}`).join('\n\n');
+                    return new Blob([out], { type: 'text/plain;charset=utf-8' });
+                }
+                const htmlSlides = slideTexts.map(s => `<section style="border:1px solid #e4e4e7;border-radius:10px;padding:20px;margin-bottom:18px;background:#fff"><div style="font-size:11px;color:#71717a;margin-bottom:8px">SLIDE ${s.index}</div>${s.lines.map(l => `<p style="margin:6px 0">${escapeHtml(l)}</p>`).join('')}</section>`).join('');
+                const htmlDoc = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${escapeHtml(file.name)}</title><style>body{font-family:Inter,sans-serif;max-width:840px;margin:32px auto;padding:0 16px;background:#f4f4f5;color:#18181b;line-height:1.6}</style></head><body><h1>${escapeHtml(file.name.replace(/\.[^.]+$/, ''))}</h1>${htmlSlides}</body></html>`;
+                return new Blob([htmlDoc], { type: 'text/html;charset=utf-8' });
+            }
+
+            // Visual Slide -> JPEG -> PDF rendering
+            const canvasW = 1600;
+            const canvasH = Math.max(600, Math.round(canvasW * (slideEmuH / slideEmuW)));
+            const scaleX = canvasW / slideEmuW;
+            const scaleY = canvasH / slideEmuH;
+            const ptToPx = (canvasW / (slideEmuW / 12700));
+            const pages = [];
+
+            for (let sIdx = 0; sIdx < slidePaths.length; sIdx++) {
+                const sPath = slidePaths[sIdx];
+                const xmlStr = await zip.file(sPath)?.async('text');
+                if (!xmlStr) continue;
+                const doc = parser.parseFromString(xmlStr, 'application/xml');
+
+                // Load slide relationships for embedded media
+                const slideFile = sPath.split('/').pop();
+                const relsPath = sPath.replace(slideFile, `_rels/${slideFile}.rels`);
+                const relMap = {};
+                const relsStr = await zip.file(relsPath)?.async('text');
+                if (relsStr) {
+                    const relsDoc = parser.parseFromString(relsStr, 'application/xml');
+                    xmlByLocal(relsDoc, 'Relationship').forEach(rel => {
+                        relMap[rel.getAttribute('Id')] = resolvePptxRelPath('ppt/slides', rel.getAttribute('Target'));
+                    });
+                }
+
+                const c = document.createElement('canvas');
+                c.width = canvasW;
+                c.height = canvasH;
+                const ctx = c.getContext('2d');
+
+                // Slide background
+                const bgNode = xmlFirstLocal(doc, 'bg');
+                const bgClr = bgNode ? xmlFirstLocal(bgNode, 'srgbClr')?.getAttribute('val') : null;
+                ctx.fillStyle = bgClr ? `#${bgClr}` : '#FFFFFF';
+                ctx.fillRect(0, 0, canvasW, canvasH);
+                if (bgNode) {
+                    const bgBlip = xmlFirstLocal(bgNode, 'blip');
+                    const bgRid = bgBlip?.getAttribute('r:embed') || bgBlip?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'embed');
+                    if (bgRid && relMap[bgRid]) {
+                        const bgImg = await loadZipImageElement(zip, relMap[bgRid]);
+                        if (bgImg) ctx.drawImage(bgImg, 0, 0, canvasW, canvasH);
+                    }
+                }
+
+                const spTree = xmlFirstLocal(doc, 'spTree');
+                const children = spTree ? Array.from(spTree.children || []) : [];
+                let fallbackY = Math.round(canvasH * 0.1);
+
+                for (const node of children) {
+                    const tag = node.localName;
+
+                    // Picture element
+                    if (tag === 'pic') {
+                        const blip = xmlFirstLocal(node, 'blip');
+                        const rId = blip?.getAttribute('r:embed') || blip?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'embed');
+                        const off = xmlFirstLocal(node, 'off');
+                        const ext = xmlFirstLocal(node, 'ext');
+                        if (rId && relMap[rId] && off && ext) {
+                            const img = await loadZipImageElement(zip, relMap[rId]);
+                            if (img) {
+                                const x = Number(off.getAttribute('x') || 0) * scaleX;
+                                const y = Number(off.getAttribute('y') || 0) * scaleY;
+                                const w = Number(ext.getAttribute('cx') || 0) * scaleX;
+                                const h = Number(ext.getAttribute('cy') || 0) * scaleY;
+                                if (w > 0 && h > 0) ctx.drawImage(img, x, y, w, h);
+                            }
+                        }
+                        continue;
+                    }
+
+                    // Table inside graphicFrame
+                    if (tag === 'graphicFrame') {
+                        const tbl = xmlFirstLocal(node, 'tbl');
+                        const off = xmlFirstLocal(node, 'off');
+                        const ext = xmlFirstLocal(node, 'ext');
+                        if (tbl && off && ext) {
+                            const tx = Number(off.getAttribute('x') || 0) * scaleX;
+                            let ty = Number(off.getAttribute('y') || 0) * scaleY;
+                            const tw = Number(ext.getAttribute('cx') || 0) * scaleX;
+                            const rows = xmlByLocal(tbl, 'tr');
+                            const rowH = rows.length ? (Number(ext.getAttribute('cy') || 0) * scaleY) / rows.length : 48;
+                            rows.forEach(tr => {
+                                const cells = xmlByLocal(tr, 'tc');
+                                const cellW = cells.length ? tw / cells.length : tw;
+                                cells.forEach((tc, ci) => {
+                                    const cxPos = tx + ci * cellW;
+                                    ctx.strokeStyle = '#D4D4D8';
+                                    ctx.lineWidth = 1.5;
+                                    ctx.strokeRect(cxPos, ty, cellW, rowH);
+                                    const cellTxt = xmlByLocal(tc, 't').map(t => t.textContent).join(' ').trim();
+                                    if (cellTxt) {
+                                        ctx.fillStyle = '#18181B';
+                                        ctx.font = '500 20px Inter, sans-serif';
+                                        ctx.textAlign = 'left';
+                                        ctx.fillText(cellTxt.slice(0, 60), cxPos + 10, ty + Math.min(rowH * 0.62, 28), Math.max(20, cellW - 20));
+                                    }
+                                });
+                                ty += rowH;
+                            });
+                        }
+                        continue;
+                    }
+
+                    // Shape / Text box
+                    if (tag === 'sp') {
+                        const spPr = xmlFirstLocal(node, 'spPr');
+                        const xfrm = spPr ? xmlFirstLocal(spPr, 'xfrm') : null;
+                        const off = xfrm ? xmlFirstLocal(xfrm, 'off') : null;
+                        const ext = xfrm ? xmlFirstLocal(xfrm, 'ext') : null;
+
+                        let x = off ? Number(off.getAttribute('x') || 0) * scaleX : canvasW * 0.07;
+                        let y = off ? Number(off.getAttribute('y') || 0) * scaleY : fallbackY;
+                        let w = ext ? Number(ext.getAttribute('cx') || 0) * scaleX : canvasW * 0.86;
+                        let h = ext ? Number(ext.getAttribute('cy') || 0) * scaleY : canvasH * 0.2;
+
+                        if (spPr && w > 0 && h > 0) {
+                            const fill = Array.from(spPr.children || []).find(ch => ch.localName === 'solidFill');
+                            const fillHex = fill ? xmlFirstLocal(fill, 'srgbClr')?.getAttribute('val') : null;
+                            if (fillHex) {
+                                ctx.fillStyle = `#${fillHex}`;
+                                ctx.fillRect(x, y, w, h);
+                            }
+                            const ln = Array.from(spPr.children || []).find(ch => ch.localName === 'ln');
+                            const lnHex = ln ? xmlFirstLocal(ln, 'srgbClr')?.getAttribute('val') : null;
+                            if (lnHex) {
+                                ctx.strokeStyle = `#${lnHex}`;
+                                ctx.lineWidth = 2;
+                                ctx.strokeRect(x, y, w, h);
+                            }
+                        }
+
+                        const txBody = xmlFirstLocal(node, 'txBody');
+                        if (!txBody) continue;
+                        const paras = xmlByLocal(txBody, 'p');
+                        let cursorY = y + 12;
+                        const padX = 14;
+                        const maxTextW = Math.max(40, w - padX * 2);
+
+                        for (const p of paras) {
+                            const pPr = xmlFirstLocal(p, 'pPr');
+                            const algn = pPr?.getAttribute('algn') || 'l';
+                            const hasBullet = !!(pPr && (xmlFirstLocal(pPr, 'buChar') || xmlFirstLocal(pPr, 'buAutoNum')));
+                            const buChar = pPr ? (xmlFirstLocal(pPr, 'buChar')?.getAttribute('char') || '•') : '';
+
+                            const runs = xmlByLocal(p, 'r');
+                            const rawText = runs.map(r => xmlByLocal(r, 't').map(t => t.textContent).join('')).join('');
+                            const text = (hasBullet && rawText.trim() ? `${buChar} ` : '') + rawText;
+
+                            const firstRPr = runs.length ? xmlFirstLocal(runs[0], 'rPr') : xmlFirstLocal(p, 'defRPr');
+                            const szHundredths = Number(firstRPr?.getAttribute('sz')) || (y < canvasH * 0.25 ? 3200 : 2000);
+                            const fontPx = Math.max(14, Math.min(96, Math.round((szHundredths / 100) * ptToPx)));
+                            const isBold = firstRPr?.getAttribute('b') === '1';
+                            const isItalic = firstRPr?.getAttribute('i') === '1';
+                            const clrHex = firstRPr ? xmlFirstLocal(firstRPr, 'srgbClr')?.getAttribute('val') : null;
+
+                            ctx.font = `${isItalic ? 'italic ' : ''}${isBold ? '700 ' : '400 '}${fontPx}px Inter, -apple-system, sans-serif`;
+                            ctx.fillStyle = clrHex ? `#${clrHex}` : (bgClr && parseInt(bgClr, 16) < 0x444444 ? '#FAFAFA' : '#18181B');
+                            ctx.textBaseline = 'top';
+                            ctx.textAlign = algn === 'ctr' ? 'center' : algn === 'r' ? 'right' : 'left';
+
+                            const lines = wrapCanvasLines(ctx, text, maxTextW);
+                            const lineH = Math.round(fontPx * 1.28);
+                            for (const line of lines) {
+                                const drawX = algn === 'ctr' ? x + w / 2 : algn === 'r' ? x + w - padX : x + padX;
+                                ctx.fillText(line, drawX, cursorY, maxTextW);
+                                cursorY += lineH;
+                            }
+                            cursorY += Math.round(fontPx * 0.22);
+                        }
+                        if (!off) fallbackY = Math.max(fallbackY + 40, cursorY + 12);
+                    }
+                }
+
+                // Subtle slide number footer
+                ctx.fillStyle = 'rgba(113,113,122,0.75)';
+                ctx.font = '500 16px JetBrains Mono, monospace';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(`${sIdx + 1} / ${slidePaths.length}`, canvasW - 24, canvasH - 16);
+
+                const jpgBlob = await new Promise(res => c.toBlob(res, 'image/jpeg', quality));
+                const jpgBytes = new Uint8Array(await jpgBlob.arrayBuffer());
+                pages.push({ jpegBytes, width: canvasW, height: canvasH });
+            }
+
+            if (!pages.length) throw new Error('Không thể render slide nào từ tệp .pptx này.');
+            return buildPdfFromJpegPages(pages);
+        }
+
         async function convertSingleFile(it) {
             const t = it.target;
             const quality = parseInt(document.getElementById('convertQualitySlider')?.value || '92', 10) / 100;
@@ -5277,6 +5593,11 @@
                     reader.onerror = reject;
                     reader.readAsDataURL(it.file);
                 });
+            }
+
+            // 2b. PowerPoint (.pptx) -> PDF / HTML / TXT
+            if (it.cat === 'slides') {
+                return await convertPptxToTarget(it.file, t, quality);
             }
 
             // 3. Image conversions
