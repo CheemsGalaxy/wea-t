@@ -4519,12 +4519,12 @@
         function detectConvertCategory(file) {
             const ext = getFileExt(file.name);
             const mime = (file.type || '').toLowerCase();
+            if (['pptx', 'ppt'].includes(ext) || mime.includes('presentationml') || mime.includes('ms-powerpoint')) return 'slides';
             if (mime.startsWith('image/') || ['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'bmp', 'svg', 'ico'].includes(ext)) return 'image';
             if (mime.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'opus'].includes(ext)) return 'audio';
             if (mime.startsWith('video/') || ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'].includes(ext)) return 'video';
-            if (['json', 'csv', 'tsv', 'xml', 'yaml', 'yml'].includes(ext) || mime.includes('json') || mime.includes('csv') || mime.includes('xml')) return 'data';
+            if (['json', 'csv', 'tsv', 'xml', 'yaml', 'yml'].includes(ext) || mime.includes('json') || mime.includes('csv') || mime === 'application/xml' || mime === 'text/xml') return 'data';
             if (['md', 'markdown', 'html', 'htm', 'txt', 'log', 'css', 'js', 'ts'].includes(ext) || mime.startsWith('text/')) return 'doc';
-            if (['pptx', 'ppt'].includes(ext) || mime.includes('presentationml') || mime.includes('ms-powerpoint')) return 'slides';
             return 'other';
         }
 
@@ -5564,7 +5564,7 @@
 
                 const jpgBlob = await new Promise(res => c.toBlob(res, 'image/jpeg', quality));
                 const jpgBytes = new Uint8Array(await jpgBlob.arrayBuffer());
-                pages.push({ jpegBytes, width: canvasW, height: canvasH });
+                pages.push({ jpegBytes: jpgBytes, width: canvasW, height: canvasH });
             }
 
             if (!pages.length) throw new Error('Không thể render slide nào từ tệp .pptx này.');
