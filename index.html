@@ -1143,11 +1143,11 @@
                         Tự động nhận diện loại tệp & gợi ý định dạng đích thông minh. Xử lý 100% trên trình duyệt, không tải lên máy chủ.
                     </p>
 
-                    <div class="flex flex-wrap items-center justify-center gap-1.5 mb-6 max-w-xl">
-                        <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-medium">Ảnh: PNG · JPG · WEBP · BMP · ICO · SVG · PDF</span>
-                        <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-medium">Audio/Video: WAV · WEBM · Tách nhạc/ảnh</span>
-                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-medium">Dữ liệu: JSON ↔ CSV ↔ XML ↔ YAML</span>
-                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium">Tài liệu: MD · HTML · TXT · PPTX · PDF · EPUB · ZIP</span>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5 mb-6 max-w-2xl">
+                        <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-medium">Ảnh: HEIC · AVIF · PNG · JPG · WEBP · BMP · Multi-ICO · SVG · PDF</span>
+                        <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-medium">Audio/Video/Sub: MP3 · WAV · WEBM · SRT ↔ VTT</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-medium">Dữ liệu &amp; Bảng: XLSX ↔ JSON ↔ CSV ↔ XML ↔ YAML</span>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium">Văn phòng &amp; PDF: PDF → Ảnh/TXT · DOCX · PPTX · EPUB · ZIP</span>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-center gap-2">
@@ -1197,19 +1197,24 @@
                         <option value="auto">Tự động chọn theo từng loại tệp (Thông minh)</option>
                         <optgroup label="Hình ảnh & Vector">
                             <option value="webp">WEBP (Nhẹ & Nét)</option>
+                            <option value="avif">AVIF (Siêu nén thế hệ mới)</option>
                             <option value="png">PNG (Không nén mất dữ liệu)</option>
                             <option value="jpg">JPG / JPEG (Phổ biến)</option>
                             <option value="bmp">BMP (Bitmap 24-bit)</option>
-                            <option value="ico">ICO (Biểu tượng chuẩn)</option>
+                            <option value="ico">ICO (Multi-size 16–256px)</option>
                             <option value="svg">SVG Vector Wrapper</option>
                             <option value="pdf">PDF Document</option>
                             <option value="base64">Base64 Data URL (.txt)</option>
                         </optgroup>
-                        <optgroup label="Âm thanh (Web Audio)">
+                        <optgroup label="Âm thanh & Phụ đề">
+                            <option value="mp3">MP3 (Phổ biến 128–320kbps)</option>
                             <option value="wav">WAV (PCM 16-bit Lossless)</option>
                             <option value="webm">WEBM Audio (Opus)</option>
+                            <option value="srt">SRT (Phụ đề SubRip)</option>
+                            <option value="vtt">VTT (Phụ đề WebVTT)</option>
                         </optgroup>
-                        <optgroup label="Dữ liệu có cấu trúc">
+                        <optgroup label="Dữ liệu & Bảng tính">
+                            <option value="xlsx">XLSX (Microsoft Excel)</option>
                             <option value="json">JSON (Đẹp & Chuẩn)</option>
                             <option value="csv">CSV (Excel / Bảng tính)</option>
                             <option value="tsv">TSV (Tab-separated)</option>
@@ -1226,12 +1231,12 @@
                     </select>
                 </div>
 
-                <!-- Image Conversion Settings -->
-                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800 space-y-3">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tùy chỉnh Ảnh & PDF</span>
+                <!-- Image & PDF Conversion Settings -->
+                <div id="convertImageSettings" class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800 space-y-3">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tùy chỉnh Ảnh &amp; PDF</span>
                     <div class="space-y-1">
                         <div class="flex items-center justify-between text-xs">
-                            <span class="text-zinc-600 dark:text-zinc-300">Chất lượng nén (JPG/WEBP)</span>
+                            <span class="text-zinc-600 dark:text-zinc-300">Chất lượng nén (JPG/WEBP/PDF)</span>
                             <span id="convertQualityVal" class="font-mono font-semibold">92%</span>
                         </div>
                         <input type="range" id="convertQualitySlider" min="20" max="100" value="92" oninput="document.getElementById('convertQualityVal').textContent = this.value + '%'" class="w-full">
@@ -1249,27 +1254,40 @@
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="block text-[11px] text-zinc-500">Nền khi xuất JPG</label>
-                            <div class="flex items-center gap-1.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1">
-                                <input type="color" id="convertBgColor" value="#ffffff" class="w-5 h-5 rounded cursor-pointer border-0 bg-transparent">
-                                <span class="text-[11px] font-mono text-zinc-500">Nền</span>
-                            </div>
+                            <label class="block text-[11px] text-zinc-500">Khổ giấy PDF</label>
+                            <select id="convertPdfLayout" class="w-full text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
+                                <option value="fit">Vừa khít ảnh</option>
+                                <option value="a4p">A4 Dọc (Portrait)</option>
+                                <option value="a4l">A4 Ngang (Landscape)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[11px] text-zinc-500">Nền khi xuất JPG / PDF</span>
+                        <div class="flex items-center gap-1.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1">
+                            <input type="color" id="convertBgColor" value="#ffffff" class="w-5 h-5 rounded cursor-pointer border-0 bg-transparent">
+                            <span class="text-[11px] font-mono text-zinc-500">Nền</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Audio Settings -->
-                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800 space-y-2">
-                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tùy chỉnh Âm thanh (WAV)</span>
-                    <div class="grid grid-cols-2 gap-2">
+                <div id="convertAudioSettings" class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/70 dark:border-zinc-800 space-y-2">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Tùy chỉnh Âm thanh (MP3 / WAV)</span>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <select id="convertMp3Bitrate" class="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
+                            <option value="192" selected>192 kbps</option>
+                            <option value="320">320 kbps</option>
+                            <option value="128">128 kbps</option>
+                        </select>
                         <select id="convertAudioRate" class="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
-                            <option value="44100">44.1 kHz (CD)</option>
-                            <option value="48000">48 kHz (Studio)</option>
-                            <option value="22050">22 kHz (Nhẹ)</option>
+                            <option value="44100">44.1 kHz</option>
+                            <option value="48000">48 kHz</option>
+                            <option value="22050">22 kHz</option>
                         </select>
                         <select id="convertAudioChannels" class="text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5">
-                            <option value="2">Stereo (2 kênh)</option>
-                            <option value="1">Mono (1 kênh)</option>
+                            <option value="2">Stereo</option>
+                            <option value="1">Mono</option>
                         </select>
                     </div>
                 </div>
@@ -1863,7 +1881,13 @@
             jsbarcode: 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js',
             jsqr: 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js',
             upng: 'https://cdnjs.cloudflare.com/ajax/libs/upng-js/2.1.0/UPNG.min.js',
-            pako: 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js'
+            pako: 'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js',
+            pdfjs: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+            pdfjsWorker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+            mammoth: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js',
+            xlsx: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+            lamejs: 'https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js',
+            heic2any: 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js'
         };
         const _scriptPromises = {};
 
@@ -4484,23 +4508,33 @@
         let convertLastPreviewText = '';
 
         const CONVERT_CATEGORY_TARGETS = {
-            image: ['webp', 'png', 'jpg', 'bmp', 'ico', 'svg', 'pdf', 'base64', 'zip'],
-            audio: ['wav', 'webm', 'base64', 'zip'],
-            video: ['wav', 'png', 'jpg', 'webp', 'zip'],
-            data:  ['json', 'csv', 'tsv', 'xml', 'yaml', 'html', 'md', 'txt', 'zip'],
-            doc:   ['html', 'pdf', 'epub', 'md', 'txt', 'json', 'zip'],
-            slides:['pdf', 'html', 'txt', 'zip'],
-            other: ['zip', 'base64', 'txt']
+            image:   ['webp', 'avif', 'png', 'jpg', 'bmp', 'ico', 'svg', 'pdf', 'base64', 'zip'],
+            audio:   ['mp3', 'wav', 'webm', 'base64', 'zip'],
+            video:   ['mp3', 'wav', 'png', 'jpg', 'webp', 'zip'],
+            data:    ['xlsx', 'json', 'csv', 'tsv', 'xml', 'yaml', 'html', 'md', 'txt', 'zip'],
+            sheet:   ['csv', 'json', 'tsv', 'html', 'md', 'txt', 'xlsx', 'zip'],
+            word:    ['pdf', 'html', 'md', 'epub', 'txt', 'zip'],
+            pdf:     ['png', 'jpg', 'webp', 'txt', 'md', 'zip'],
+            slides:  ['pdf', 'html', 'txt', 'zip'],
+            sub:     ['srt', 'vtt', 'txt', 'zip'],
+            archive: ['inspect', 'pdf', 'webp', 'txt'],
+            doc:     ['html', 'pdf', 'epub', 'md', 'txt', 'json', 'zip'],
+            other:   ['zip', 'base64', 'txt']
         };
 
         const CONVERT_CATEGORY_META = {
-            image: { label: 'Ảnh', icon: 'image', badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
-            audio: { label: 'Âm thanh', icon: 'music', badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400' },
-            video: { label: 'Video', icon: 'film', badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
-            data:  { label: 'Dữ liệu', icon: 'database', badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
-            doc:   { label: 'Tài liệu', icon: 'file-text', badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
-            slides:{ label: 'Trình chiếu', icon: 'presentation', badge: 'bg-orange-500/10 text-orange-600 dark:text-orange-400' },
-            other: { label: 'Tệp', icon: 'file', badge: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400' }
+            image:   { label: 'Ảnh', icon: 'image', badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+            audio:   { label: 'Âm thanh', icon: 'music', badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400' },
+            video:   { label: 'Video', icon: 'film', badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
+            data:    { label: 'Dữ liệu', icon: 'database', badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+            sheet:   { label: 'Bảng tính', icon: 'table', badge: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+            word:    { label: 'Word', icon: 'file-text', badge: 'bg-sky-500/10 text-sky-600 dark:text-sky-400' },
+            pdf:     { label: 'PDF', icon: 'file-type-2', badge: 'bg-red-500/10 text-red-600 dark:text-red-400' },
+            slides:  { label: 'Trình chiếu', icon: 'presentation', badge: 'bg-orange-500/10 text-orange-600 dark:text-orange-400' },
+            sub:     { label: 'Phụ đề', icon: 'captions', badge: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' },
+            archive: { label: 'Kho nén', icon: 'folder-archive', badge: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400' },
+            doc:     { label: 'Tài liệu', icon: 'file-text', badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+            other:   { label: 'Tệp', icon: 'file', badge: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400' }
         };
 
         function getFileExt(name) {
@@ -4520,7 +4554,12 @@
             const ext = getFileExt(file.name);
             const mime = (file.type || '').toLowerCase();
             if (['pptx', 'ppt'].includes(ext) || mime.includes('presentationml') || mime.includes('ms-powerpoint')) return 'slides';
-            if (mime.startsWith('image/') || ['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'bmp', 'svg', 'ico'].includes(ext)) return 'image';
+            if (ext === 'docx' || mime.includes('wordprocessingml')) return 'word';
+            if (['xlsx', 'xls', 'ods'].includes(ext) || mime.includes('spreadsheetml') || mime.includes('ms-excel')) return 'sheet';
+            if (ext === 'pdf' || mime === 'application/pdf') return 'pdf';
+            if (['srt', 'vtt'].includes(ext)) return 'sub';
+            if (ext === 'zip' || mime === 'application/zip' || mime === 'application/x-zip-compressed') return 'archive';
+            if (mime.startsWith('image/') || ['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'bmp', 'svg', 'ico', 'heic', 'heif'].includes(ext)) return 'image';
             if (mime.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac', 'opus'].includes(ext)) return 'audio';
             if (mime.startsWith('video/') || ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'].includes(ext)) return 'video';
             if (['json', 'csv', 'tsv', 'xml', 'yaml', 'yml'].includes(ext) || mime.includes('json') || mime.includes('csv') || mime === 'application/xml' || mime === 'text/xml') return 'data';
@@ -4531,19 +4570,23 @@
         function recommendConvertTarget(file, cat) {
             const ext = getFileExt(file.name);
             if (cat === 'slides') return 'pdf';
+            if (cat === 'word') return 'pdf';
+            if (cat === 'pdf') return 'png';
+            if (cat === 'sheet') return 'csv';
+            if (cat === 'sub') return ext === 'srt' ? 'vtt' : 'srt';
+            if (cat === 'archive') return 'inspect';
             if (cat === 'image') {
-                if (ext === 'webp') return 'png';
-                if (ext === 'svg') return 'png';
-                if (ext === 'ico') return 'png';
-                if (ext === 'png') return 'webp';
-                if (ext === 'jpg' || ext === 'jpeg') return 'webp';
+                if (ext === 'heic' || ext === 'heif') return 'jpg';
+                if (ext === 'webp' || ext === 'avif') return 'png';
+                if (ext === 'svg' || ext === 'ico') return 'png';
+                if (ext === 'png' || ext === 'jpg' || ext === 'jpeg') return 'webp';
                 return 'png';
             }
-            if (cat === 'audio') return ext === 'wav' ? 'webm' : 'wav';
-            if (cat === 'video') return 'wav';
+            if (cat === 'audio') return ext === 'mp3' ? 'wav' : 'mp3';
+            if (cat === 'video') return 'mp3';
             if (cat === 'data') {
-                if (ext === 'json') return 'csv';
-                if (ext === 'csv' || ext === 'tsv') return 'json';
+                if (ext === 'json') return 'xlsx';
+                if (ext === 'csv' || ext === 'tsv') return 'xlsx';
                 if (ext === 'xml') return 'json';
                 if (ext === 'yaml' || ext === 'yml') return 'json';
                 return 'json';
@@ -4630,6 +4673,15 @@
             renderConvertList();
         }
 
+        function moveConvertItem(id, dir) {
+            const idx = convertQueue.findIndex(x => x.id === id);
+            const next = idx + dir;
+            if (idx < 0 || next < 0 || next >= convertQueue.length) return;
+            const [item] = convertQueue.splice(idx, 1);
+            convertQueue.splice(next, 0, item);
+            renderConvertList();
+        }
+
         function removeConvertItem(id) {
             const idx = convertQueue.findIndex(x => x.id === id);
             if (idx >= 0) {
@@ -4662,6 +4714,14 @@
                 mergePdfBtn.classList.toggle('hidden', imgCount < 2);
                 mergePdfBtn.classList.toggle('flex', imgCount >= 2);
             }
+
+            // Contextual sidebar visibility
+            const imgSec = document.getElementById('convertImageSettings');
+            const audSec = document.getElementById('convertAudioSettings');
+            const hasVisual = !has || convertQueue.some(it => ['image', 'pdf', 'slides', 'word', 'archive', 'video'].includes(it.cat));
+            const hasAudio = !has || convertQueue.some(it => ['audio', 'video'].includes(it.cat));
+            if (imgSec) imgSec.classList.toggle('hidden', !hasVisual);
+            if (audSec) audSec.classList.toggle('hidden', !hasAudio);
 
             if (has) {
                 document.getElementById('convertStatCount').textContent = convertQueue.length;
@@ -4717,6 +4777,11 @@
                             <button type="button" onclick="previewConvertedItem('${it.id}')" title="Xem trước kết quả" class="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
                                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                             </button>
+                            ${convertQueue.length > 1 ? `
+                            <div class="inline-flex flex-col">
+                                <button type="button" onclick="moveConvertItem('${it.id}', -1)" title="Đưa lên" class="p-0.5 text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100"><i data-lucide="chevron-up" class="w-3 h-3"></i></button>
+                                <button type="button" onclick="moveConvertItem('${it.id}', 1)" title="Đưa xuống" class="p-0.5 text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100"><i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+                            </div>` : ''}
                             <button type="button" onclick="removeConvertItem('${it.id}')" title="Xóa khỏi danh sách" class="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors">
                                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
                             </button>
@@ -4766,9 +4831,16 @@
             processConvertFiles([file]);
         }
 
+        let convertPreviewUrls = [];
+        function revokeConvertPreviewUrls() {
+            convertPreviewUrls.forEach(u => URL.revokeObjectURL(u));
+            convertPreviewUrls = [];
+        }
+
         function toggleConvertPreviewModal(show) {
             const m = document.getElementById('convertPreviewModal');
             if (!m) return;
+            if (!show) revokeConvertPreviewUrls();
             m.classList.toggle('hidden', !show);
             m.classList.toggle('flex', show);
         }
@@ -4779,11 +4851,44 @@
             showToast('Đã sao chép nội dung chuyển đổi!');
         }
 
+        async function extractZipEntryDownload(itemId, entryPath) {
+            const it = convertQueue.find(x => x.id === itemId);
+            if (!it) return;
+            await loadScriptOnce(CDN_LIBS.jszip);
+            const zip = await JSZip.loadAsync(await it.file.arrayBuffer());
+            const entry = zip.file(entryPath);
+            if (!entry) return showToast('Không tìm thấy tệp trong kho nén.', 'error');
+            const blob = await entry.async('blob');
+            const fname = entryPath.split('/').pop() || 'extracted';
+            triggerBlobDownload(blob, fname);
+            showToast(`Đã giải nén ${fname}!`);
+        }
+
         async function previewConvertedItem(id) {
             const it = convertQueue.find(x => x.id === id);
             if (!it) return;
+            if (it.cat === 'archive' && it.target === 'inspect') {
+                await loadScriptOnce(CDN_LIBS.jszip);
+                const zip = await JSZip.loadAsync(await it.file.arrayBuffer());
+                const entries = Object.values(zip.files).filter(f => !f.dir);
+                const titleEl = document.getElementById('convertPreviewTitle');
+                const bodyEl = document.getElementById('convertPreviewBody');
+                document.getElementById('convertPreviewCopyBtn').classList.add('hidden');
+                titleEl.textContent = `${it.file.name} (${entries.length} tệp bên trong)`;
+                bodyEl.innerHTML = entries.length
+                    ? `<div class="divide-y divide-zinc-100 dark:divide-zinc-800">${entries.map(e => `
+                        <div class="py-2 flex items-center justify-between gap-2 text-xs">
+                            <span class="font-mono truncate text-zinc-800 dark:text-zinc-200">${escapeHtml(e.name)}</span>
+                            <button type="button" onclick="extractZipEntryDownload('${it.id}', '${escapeHtml(e.name).replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-semibold shrink-0">Giải nén</button>
+                        </div>`).join('')}</div>`
+                    : '<div class="p-6 text-center text-xs text-zinc-400">Kho nén trống.</div>';
+                toggleConvertPreviewModal(true);
+                renderIcons();
+                return;
+            }
             if (!it.outBlob) await runSingleConversion(it);
             if (!it.outBlob) return;
+            revokeConvertPreviewUrls();
             const titleEl = document.getElementById('convertPreviewTitle');
             const bodyEl = document.getElementById('convertPreviewBody');
             const copyBtn = document.getElementById('convertPreviewCopyBtn');
@@ -4793,19 +4898,38 @@
 
             if (it.outBlob.type.startsWith('image/') || it.target === 'ico') {
                 const url = URL.createObjectURL(it.outBlob);
+                convertPreviewUrls.push(url);
                 bodyEl.innerHTML = `<div class="flex items-center justify-center bg-checkerboard rounded-xl p-4"><img src="${url}" class="max-w-full max-h-[60vh] object-contain rounded shadow-xs" alt=""></div>`;
             } else if (it.outBlob.type.startsWith('audio/')) {
                 const url = URL.createObjectURL(it.outBlob);
+                convertPreviewUrls.push(url);
                 bodyEl.innerHTML = `<div class="p-6 flex flex-col items-center gap-3"><audio controls src="${url}" class="w-full max-w-md"></audio><p class="text-xs text-zinc-500 font-mono">${escapeHtml(it.outName)}</p></div>`;
-            } else if (it.target === 'pdf') {
+            } else if (it.outBlob.type === 'application/pdf' || it.target === 'pdf') {
                 const url = URL.createObjectURL(it.outBlob);
+                convertPreviewUrls.push(url);
                 bodyEl.innerHTML = `<iframe src="${url}" class="w-full h-[65vh] rounded-lg border border-zinc-200 dark:border-zinc-800"></iframe>`;
-            } else if (it.target === 'zip' || it.target === 'epub') {
-                bodyEl.innerHTML = `<div class="p-8 text-center text-xs text-zinc-500">Tệp nén/ebook nhị phân (.${it.target.toUpperCase()}) đã sẵn sàng tải xuống (${formatBytesSmart(it.outBlob.size)}).</div>`;
+            } else if (it.outBlob.type === 'text/html' || it.target === 'html') {
+                const text = await it.outBlob.text();
+                convertLastPreviewText = text;
+                copyBtn.classList.remove('hidden');
+                const url = URL.createObjectURL(it.outBlob);
+                convertPreviewUrls.push(url);
+                bodyEl.innerHTML = `<iframe src="${url}" sandbox="" class="w-full h-[65vh] rounded-lg bg-white border border-zinc-200 dark:border-zinc-800"></iframe>`;
+            } else if (it.outBlob.type === 'application/zip' || it.target === 'zip' || it.target === 'epub' || it.target === 'xlsx') {
+                bodyEl.innerHTML = `<div class="p-8 text-center text-xs text-zinc-500">Tệp nhị phân (.${it.outName.split('.').pop().toUpperCase()}) đã sẵn sàng tải xuống (${formatBytesSmart(it.outBlob.size)}).</div>`;
             } else {
                 const text = await it.outBlob.text();
                 convertLastPreviewText = text;
                 copyBtn.classList.remove('hidden');
+                if (it.target === 'csv' || it.target === 'tsv') {
+                    const parsed = parseDelimited(text.replace(/^\uFEFF/, ''), it.target === 'tsv' ? '\t' : ',');
+                    if (Array.isArray(parsed) && parsed.length) {
+                        bodyEl.innerHTML = `<div class="overflow-auto max-h-[60vh] text-xs">${dataToHtmlTable(parsed.slice(0, 100))}</div>`;
+                        toggleConvertPreviewModal(true);
+                        renderIcons();
+                        return;
+                    }
+                }
                 bodyEl.innerHTML = `<pre class="text-xs font-mono text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap break-all">${escapeHtml(text.slice(0, 30000))}${text.length > 30000 ? '\n... (đã rút gọn xem trước)' : ''}</pre>`;
             }
             toggleConvertPreviewModal(true);
@@ -5381,7 +5505,35 @@
                 return new Blob([htmlDoc], { type: 'text/html;charset=utf-8' });
             }
 
-            // Visual Slide -> JPEG -> PDF rendering
+            // Visual Slide -> JPEG -> PDF rendering (v2 with Theme Colors & Rounded Rects)
+            const themeColors = {};
+            const themeEntry = zip.file('ppt/theme/theme1.xml');
+            if (themeEntry) {
+                try {
+                    const themeDoc = parser.parseFromString(await themeEntry.async('text'), 'application/xml');
+                    const clrScheme = xmlFirstLocal(themeDoc, 'clrScheme');
+                    if (clrScheme) {
+                        Array.from(clrScheme.children || []).forEach(ch => {
+                            const srgb = xmlFirstLocal(ch, 'srgbClr')?.getAttribute('val');
+                            const sys = xmlFirstLocal(ch, 'sysClr')?.getAttribute('lastClr');
+                            if (srgb || sys) themeColors[ch.localName] = srgb || sys;
+                        });
+                    }
+                } catch (e) {}
+            }
+            const resolvePptxColor = (node) => {
+                if (!node) return null;
+                const srgb = xmlFirstLocal(node, 'srgbClr')?.getAttribute('val');
+                if (srgb) return `#${srgb}`;
+                const sch = xmlFirstLocal(node, 'schemeClr')?.getAttribute('val');
+                if (sch) {
+                    const mapAlias = { bg1: 'lt1', tx1: 'dk1', bg2: 'lt2', tx2: 'dk2' };
+                    const hex = themeColors[sch] || themeColors[mapAlias[sch]];
+                    if (hex) return `#${hex}`;
+                }
+                return null;
+            };
+
             const canvasW = 1600;
             const canvasH = Math.max(600, Math.round(canvasW * (slideEmuH / slideEmuW)));
             const scaleX = canvasW / slideEmuW;
@@ -5414,8 +5566,9 @@
 
                 // Slide background
                 const bgNode = xmlFirstLocal(doc, 'bg');
-                const bgClr = bgNode ? xmlFirstLocal(bgNode, 'srgbClr')?.getAttribute('val') : null;
-                ctx.fillStyle = bgClr ? `#${bgClr}` : '#FFFFFF';
+                const bgColorResolved = bgNode ? resolvePptxColor(bgNode) : null;
+                const bgClr = bgColorResolved ? bgColorResolved.replace('#', '') : null;
+                ctx.fillStyle = bgColorResolved || '#FFFFFF';
                 ctx.fillRect(0, 0, canvasW, canvasH);
                 if (bgNode) {
                     const bgBlip = xmlFirstLocal(bgNode, 'blip');
@@ -5498,18 +5651,27 @@
                         let h = ext ? Number(ext.getAttribute('cy') || 0) * scaleY : canvasH * 0.2;
 
                         if (spPr && w > 0 && h > 0) {
+                            const prst = xmlFirstLocal(spPr, 'prstGeom')?.getAttribute('prst') || '';
+                            const isRound = prst === 'roundRect';
+                            const rRad = isRound ? Math.min(w, h) * 0.14 : 0;
                             const fill = Array.from(spPr.children || []).find(ch => ch.localName === 'solidFill');
-                            const fillHex = fill ? xmlFirstLocal(fill, 'srgbClr')?.getAttribute('val') : null;
-                            if (fillHex) {
-                                ctx.fillStyle = `#${fillHex}`;
-                                ctx.fillRect(x, y, w, h);
+                            const fillCss = fill ? resolvePptxColor(fill) : null;
+                            if (fillCss) {
+                                ctx.fillStyle = fillCss;
+                                ctx.beginPath();
+                                if (isRound && ctx.roundRect) ctx.roundRect(x, y, w, h, rRad);
+                                else ctx.rect(x, y, w, h);
+                                ctx.fill();
                             }
                             const ln = Array.from(spPr.children || []).find(ch => ch.localName === 'ln');
-                            const lnHex = ln ? xmlFirstLocal(ln, 'srgbClr')?.getAttribute('val') : null;
-                            if (lnHex) {
-                                ctx.strokeStyle = `#${lnHex}`;
+                            const lnCss = ln ? resolvePptxColor(ln) : null;
+                            if (lnCss) {
+                                ctx.strokeStyle = lnCss;
                                 ctx.lineWidth = 2;
-                                ctx.strokeRect(x, y, w, h);
+                                ctx.beginPath();
+                                if (isRound && ctx.roundRect) ctx.roundRect(x, y, w, h, rRad);
+                                else ctx.rect(x, y, w, h);
+                                ctx.stroke();
                             }
                         }
 
@@ -5535,10 +5697,10 @@
                             const fontPx = Math.max(14, Math.min(96, Math.round((szHundredths / 100) * ptToPx)));
                             const isBold = firstRPr?.getAttribute('b') === '1';
                             const isItalic = firstRPr?.getAttribute('i') === '1';
-                            const clrHex = firstRPr ? xmlFirstLocal(firstRPr, 'srgbClr')?.getAttribute('val') : null;
+                            const clrCss = firstRPr ? resolvePptxColor(firstRPr) : null;
 
                             ctx.font = `${isItalic ? 'italic ' : ''}${isBold ? '700 ' : '400 '}${fontPx}px Inter, -apple-system, sans-serif`;
-                            ctx.fillStyle = clrHex ? `#${clrHex}` : (bgClr && parseInt(bgClr, 16) < 0x444444 ? '#FAFAFA' : '#18181B');
+                            ctx.fillStyle = clrCss || (bgClr && parseInt(bgClr, 16) < 0x444444 ? '#FAFAFA' : '#18181B');
                             ctx.textBaseline = 'top';
                             ctx.textAlign = algn === 'ctr' ? 'center' : algn === 'r' ? 'right' : 'left';
 
@@ -5571,18 +5733,282 @@
             return buildPdfFromJpegPages(pages);
         }
 
+        // --- Advanced Client-Side Converters: Multi-ICO, HEIC, MP3 (lamejs), Subtitles, PDF.js, DOCX (mammoth), XLSX (SheetJS), ZIP ---
+        async function encodeMultiSizeIco(img) {
+            const sizes = [16, 32, 48, 64, 256];
+            const pngList = [];
+            for (const s of sizes) {
+                const c = document.createElement('canvas');
+                c.width = s; c.height = s;
+                const ctx = c.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, s, s);
+                const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+                pngList.push({ size: s, bytes: new Uint8Array(await blob.arrayBuffer()) });
+            }
+            const headerSize = 6 + pngList.length * 16;
+            const totalSize = headerSize + pngList.reduce((acc, p) => acc + p.bytes.length, 0);
+            const buf = new ArrayBuffer(totalSize);
+            const dv = new DataView(buf);
+            const u8 = new Uint8Array(buf);
+            dv.setUint16(0, 0, true);
+            dv.setUint16(2, 1, true);
+            dv.setUint16(4, pngList.length, true);
+            let dataOffset = headerSize;
+            pngList.forEach((p, idx) => {
+                const off = 6 + idx * 16;
+                u8[off] = p.size >= 256 ? 0 : p.size;
+                u8[off + 1] = p.size >= 256 ? 0 : p.size;
+                u8[off + 2] = 0;
+                u8[off + 3] = 0;
+                dv.setUint16(off + 4, 1, true);
+                dv.setUint16(off + 6, 32, true);
+                dv.setUint32(off + 8, p.bytes.length, true);
+                dv.setUint32(off + 12, dataOffset, true);
+                u8.set(p.bytes, dataOffset);
+                dataOffset += p.bytes.length;
+            });
+            return new Blob([buf], { type: 'image/x-icon' });
+        }
+
+        async function loadImageFromFileWithHeic(file) {
+            const ext = getFileExt(file.name);
+            if (ext === 'heic' || ext === 'heif' || /heic|heif/i.test(file.type || '')) {
+                await loadScriptOnce(CDN_LIBS.heic2any);
+                if (typeof window.heic2any !== 'function') throw new Error('Không tải được bộ giải mã HEIC.');
+                const converted = await window.heic2any({ blob: file, toType: 'image/png', quality: 0.95 });
+                const pngBlob = Array.isArray(converted) ? converted[0] : converted;
+                return await loadImageFromFile(pngBlob);
+            }
+            return await loadImageFromFile(file);
+        }
+
+        async function encodeAudioBufferToMp3(buffer, kbps = 192) {
+            await loadScriptOnce(CDN_LIBS.lamejs);
+            if (typeof window.lamejs === 'undefined') throw new Error('Không tải được bộ mã hóa MP3 (lamejs).');
+            const channels = Math.min(2, buffer.numberOfChannels || 1);
+            const sampleRate = buffer.sampleRate || 44100;
+            const mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, Number(kbps) || 192);
+            const floatToInt16 = (f32) => {
+                const i16 = new Int16Array(f32.length);
+                for (let i = 0; i < f32.length; i++) {
+                    const s = Math.max(-1, Math.min(1, f32[i]));
+                    i16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                }
+                return i16;
+            };
+            const left = floatToInt16(buffer.getChannelData(0));
+            const right = channels === 2 ? floatToInt16(buffer.getChannelData(1)) : left;
+            const chunks = [];
+            const block = 1152;
+            for (let i = 0; i < left.length; i += block) {
+                const lChunk = left.subarray(i, i + block);
+                const rChunk = right.subarray(i, i + block);
+                const encoded = channels === 2 ? mp3enc.encodeBuffer(lChunk, rChunk) : mp3enc.encodeBuffer(lChunk);
+                if (encoded.length > 0) chunks.push(new Int8Array(encoded));
+            }
+            const end = mp3enc.flush();
+            if (end.length > 0) chunks.push(new Int8Array(end));
+            return new Blob(chunks, { type: 'audio/mpeg' });
+        }
+
+        function convertSubtitleText(raw, fromExt, toExt) {
+            const norm = String(raw || '').replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').trim();
+            if (toExt === 'txt') {
+                const clean = norm
+                    .replace(/^WEBVTT[^\n]*\n*/i, '')
+                    .replace(/^\d+\s*$/gm, '')
+                    .replace(/^\d{1,2}:\d{2}:\d{2}[.,]\d{3}\s*-->\s*\d{1,2}:\d{2}:\d{2}[.,]\d{3}.*$/gm, '')
+                    .replace(/^\d{2}:\d{2}[.,]\d{3}\s*-->\s*\d{2}:\d{2}[.,]\d{3}.*$/gm, '')
+                    .replace(/<[^>]+>/g, '')
+                    .replace(/\n{2,}/g, '\n')
+                    .trim();
+                return new Blob([clean], { type: 'text/plain;charset=utf-8' });
+            }
+            if (toExt === 'vtt') {
+                const body = norm
+                    .replace(/^WEBVTT[^\n]*\n*/i, '')
+                    .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
+                return new Blob([`WEBVTT\n\n${body}\n`], { type: 'text/vtt;charset=utf-8' });
+            }
+            // toExt === 'srt'
+            const blocks = norm
+                .replace(/^WEBVTT[^\n]*\n*/i, '')
+                .split(/\n{2,}/)
+                .map(b => b.trim())
+                .filter(Boolean);
+            let idx = 1;
+            const outBlocks = blocks.map(b => {
+                const lines = b.split('\n');
+                const firstTimeIdx = lines.findIndex(l => l.includes('-->'));
+                if (firstTimeIdx < 0) return null;
+                const timeLine = lines[firstTimeIdx]
+                    .replace(/(\d{2}:\d{2}:\d{2})\.(\d{3})/g, '$1,$2')
+                    .replace(/(^|\s)(\d{2}:\d{2})\.(\d{3})/g, '$100:$2,$3')
+                    .replace(/\s+[a-z]+:[^\s]+/gi, '');
+                const textLines = lines.slice(firstTimeIdx + 1).join('\n').trim();
+                return `${idx++}\n${timeLine}\n${textLines}`;
+            }).filter(Boolean);
+            return new Blob([outBlocks.join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' });
+        }
+
+        async function convertPdfToTarget(file, target, quality = 0.92) {
+            await loadScriptOnce(CDN_LIBS.pdfjs);
+            if (!window.pdfjsLib) throw new Error('Không tải được thư viện PDF.js.');
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = CDN_LIBS.pdfjsWorker;
+            const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+
+            if (target === 'txt' || target === 'md') {
+                const out = [];
+                for (let p = 1; p <= pdf.numPages; p++) {
+                    const page = await pdf.getPage(p);
+                    const content = await page.getTextContent();
+                    const text = content.items.map(it => it.str).join(' ').replace(/\s+/g, ' ').trim();
+                    out.push(target === 'md' ? `## Trang ${p}\n\n${text}` : `--- Trang ${p} ---\n${text}`);
+                }
+                const mime = target === 'md' ? 'text/markdown;charset=utf-8' : 'text/plain;charset=utf-8';
+                return new Blob([out.join('\n\n')], { type: mime });
+            }
+
+            const mime = target === 'jpg' ? 'image/jpeg' : target === 'webp' ? 'image/webp' : 'image/png';
+            const baseName = file.name.replace(/\.[^.]+$/, '');
+            const renderPageBlob = async (pageNum) => {
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 2.0 });
+                const c = document.createElement('canvas');
+                c.width = viewport.width;
+                c.height = viewport.height;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, c.width, c.height);
+                await page.render({ canvasContext: ctx, viewport }).promise;
+                return await new Promise(res => c.toBlob(res, mime, quality));
+            };
+
+            if (pdf.numPages === 1) {
+                return await renderPageBlob(1);
+            }
+            await loadScriptOnce(CDN_LIBS.jszip);
+            const zip = new JSZip();
+            for (let p = 1; p <= pdf.numPages; p++) {
+                const blob = await renderPageBlob(p);
+                zip.file(`${baseName}-page-${String(p).padStart(2, '0')}.${target}`, blob);
+            }
+            return await zip.generateAsync({ type: 'blob', mimeType: 'application/zip' });
+        }
+
+        async function convertDocxToTarget(file, target) {
+            await loadScriptOnce(CDN_LIBS.mammoth);
+            if (!window.mammoth) throw new Error('Không tải được thư viện đọc Word (mammoth.js).');
+            const arrayBuffer = await file.arrayBuffer();
+            const baseTitle = file.name.replace(/\.[^.]+$/, '');
+            if (target === 'txt') {
+                const res = await window.mammoth.extractRawText({ arrayBuffer });
+                return new Blob([res.value || ''], { type: 'text/plain;charset=utf-8' });
+            }
+            const res = await window.mammoth.convertToHtml({ arrayBuffer });
+            const bodyHtml = res.value || '';
+            if (target === 'html') {
+                const full = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${escapeHtml(baseTitle)}</title><style>body{font-family:Inter,-apple-system,sans-serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.7;color:#18181b}img{max-width:100%;height:auto}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #d4d4d8;padding:8px 10px;text-align:left}</style></head><body>${bodyHtml}</body></html>`;
+                return new Blob([full], { type: 'text/html;charset=utf-8' });
+            }
+            if (target === 'md') {
+                return new Blob([htmlToMarkdown(bodyHtml)], { type: 'text/markdown;charset=utf-8' });
+            }
+            if (target === 'epub') {
+                return await buildEpubBlob(baseTitle, bodyHtml);
+            }
+            const plain = new DOMParser().parseFromString(bodyHtml, 'text/html').body.textContent || '';
+            return renderTextToPdfPages(baseTitle, plain);
+        }
+
+        async function exportDataToXlsx(parsed, sheetName = 'Sheet1') {
+            await loadScriptOnce(CDN_LIBS.xlsx);
+            if (!window.XLSX) throw new Error('Không tải được thư viện Excel (SheetJS).');
+            const rows = Array.isArray(parsed) ? parsed : [parsed];
+            const ws = window.XLSX.utils.json_to_sheet(rows);
+            const wb = window.XLSX.utils.book_new();
+            window.XLSX.utils.book_append_sheet(wb, ws, sheetName.slice(0, 31));
+            const out = window.XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            return new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        }
+
+        async function convertSheetToTarget(file, target) {
+            await loadScriptOnce(CDN_LIBS.xlsx);
+            if (!window.XLSX) throw new Error('Không tải được thư viện Excel (SheetJS).');
+            const wb = window.XLSX.read(await file.arrayBuffer(), { type: 'array' });
+            const firstSheet = wb.SheetNames[0];
+            if (!firstSheet) throw new Error('Bảng tính không có sheet nào.');
+            const ws = wb.Sheets[firstSheet];
+            if (target === 'xlsx') {
+                const out = window.XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                return new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            }
+            const rows = window.XLSX.utils.sheet_to_json(ws, { defval: '' });
+            if (target === 'json') return new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json;charset=utf-8' });
+            if (target === 'csv') return new Blob(['\uFEFF' + window.XLSX.utils.sheet_to_csv(ws)], { type: 'text/csv;charset=utf-8' });
+            if (target === 'tsv') return new Blob([window.XLSX.utils.sheet_to_csv(ws, { FS: '\t' })], { type: 'text/tab-separated-values;charset=utf-8' });
+            if (target === 'md') return new Blob([dataToMarkdownTable(rows)], { type: 'text/markdown;charset=utf-8' });
+            if (target === 'html') {
+                const tblHtml = window.XLSX.utils.sheet_to_html(ws);
+                const full = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${escapeHtml(file.name)}</title><style>body{font-family:Inter,sans-serif;padding:24px;color:#18181b}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid #d4d4d8;padding:6px 10px;text-align:left}</style></head><body><h2>${escapeHtml(file.name)} (${escapeHtml(firstSheet)})</h2>${tblHtml}</body></html>`;
+                return new Blob([full], { type: 'text/html;charset=utf-8' });
+            }
+            return new Blob([window.XLSX.utils.sheet_to_txt(ws)], { type: 'text/plain;charset=utf-8' });
+        }
+
+        async function convertZipArchive(file, target, quality = 0.92) {
+            await loadScriptOnce(CDN_LIBS.jszip);
+            const zip = await JSZip.loadAsync(await file.arrayBuffer());
+            const entries = Object.values(zip.files).filter(f => !f.dir);
+            if (target === 'inspect' || target === 'txt') {
+                const lines = entries.map((e, i) => `${i + 1}. ${e.name}`);
+                return new Blob([`Kho nén: ${file.name} (${entries.length} tệp)\n\n${lines.join('\n')}`], { type: 'text/plain;charset=utf-8' });
+            }
+            const imgEntries = entries.filter(e => /\.(png|jpe?g|webp|bmp|gif)$/i.test(e.name));
+            if (!imgEntries.length) throw new Error('Không tìm thấy tệp ảnh nào bên trong kho nén .ZIP này.');
+            if (target === 'pdf') {
+                const pages = [];
+                for (const e of imgEntries) {
+                    const b = await e.async('blob');
+                    const img = await loadImageFromFile(b);
+                    const c = document.createElement('canvas');
+                    c.width = img.naturalWidth; c.height = img.naturalHeight;
+                    const ctx = c.getContext('2d');
+                    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, c.width, c.height);
+                    ctx.drawImage(img, 0, 0);
+                    const jpgBlob = await new Promise(res => c.toBlob(res, 'image/jpeg', quality));
+                    pages.push({ jpegBytes: new Uint8Array(await jpgBlob.arrayBuffer()), width: c.width, height: c.height });
+                }
+                return buildPdfFromJpegPages(pages);
+            }
+            const outZip = new JSZip();
+            for (const e of imgEntries) {
+                const b = await e.async('blob');
+                const img = await loadImageFromFile(b);
+                const c = document.createElement('canvas');
+                c.width = img.naturalWidth; c.height = img.naturalHeight;
+                c.getContext('2d').drawImage(img, 0, 0);
+                const wb = await new Promise(res => c.toBlob(res, 'image/webp', quality));
+                outZip.file(e.name.replace(/\.[^.]+$/, '.webp'), wb);
+            }
+            return await outZip.generateAsync({ type: 'blob', mimeType: 'application/zip' });
+        }
+
         async function convertSingleFile(it) {
             const t = it.target;
             const quality = parseInt(document.getElementById('convertQualitySlider')?.value || '92', 10) / 100;
             const maxDim = parseInt(document.getElementById('convertMaxSize')?.value || '0', 10);
             const bgColor = document.getElementById('convertBgColor')?.value || '#ffffff';
+            const mp3Bitrate = parseInt(document.getElementById('convertMp3Bitrate')?.value || '192', 10);
 
-            // 1. ZIP wrap for any file
-            if (t === 'zip') {
+            // 1. ZIP wrap for any file (except archive inspect)
+            if (t === 'zip' && it.cat !== 'archive') {
                 await loadScriptOnce(CDN_LIBS.jszip);
                 const zip = new JSZip();
                 zip.file(it.file.name, it.file);
-                return await zip.generateAsync({ type: 'blob' });
+                return await zip.generateAsync({ type: 'blob', mimeType: 'application/zip' });
             }
 
             // 2. Base64 export for any file
@@ -5595,19 +6021,21 @@
                 });
             }
 
-            // 2b. PowerPoint (.pptx) -> PDF / HTML / TXT
-            if (it.cat === 'slides') {
-                return await convertPptxToTarget(it.file, t, quality);
-            }
+            // 2b. Office, PDF, Subtitles, Archive engines
+            if (it.cat === 'slides') return await convertPptxToTarget(it.file, t, quality);
+            if (it.cat === 'pdf') return await convertPdfToTarget(it.file, t, quality);
+            if (it.cat === 'word') return await convertDocxToTarget(it.file, t);
+            if (it.cat === 'sheet') return await convertSheetToTarget(it.file, t);
+            if (it.cat === 'sub') return convertSubtitleText(await it.file.text(), it.ext, t);
+            if (it.cat === 'archive') return await convertZipArchive(it.file, t, quality);
 
-            // 3. Image conversions
+            // 3. Image conversions (including HEIC, AVIF, Multi-size ICO)
             if (it.cat === 'image') {
-                const img = await loadImageFromFile(it.file);
+                const img = await loadImageFromFileWithHeic(it.file);
+                if (t === 'ico') return await encodeMultiSizeIco(img);
+
                 let w = img.naturalWidth || 512, h = img.naturalHeight || 512;
-                if (t === 'ico') {
-                    const icoDim = maxDim > 0 && maxDim <= 256 ? maxDim : 64;
-                    w = icoDim; h = icoDim;
-                } else if (maxDim > 0 && Math.max(w, h) > maxDim) {
+                if (maxDim > 0 && Math.max(w, h) > maxDim) {
                     const ratio = maxDim / Math.max(w, h);
                     w = Math.round(w * ratio); h = Math.round(h * ratio);
                 }
@@ -5621,11 +6049,6 @@
                 ctx.drawImage(img, 0, 0, w, h);
 
                 if (t === 'bmp') return encodeCanvasToBmp(c);
-                if (t === 'ico') {
-                    const pngBlob = await new Promise(res => c.toBlob(res, 'image/png'));
-                    const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
-                    return encodePngToIco(pngBytes, w, h);
-                }
                 if (t === 'svg') {
                     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><image href="${c.toDataURL('image/png')}" width="${w}" height="${h}"/></svg>`;
                     return new Blob([svg], { type: 'image/svg+xml' });
@@ -5635,12 +6058,23 @@
                     const jpgBytes = new Uint8Array(await jpgBlob.arrayBuffer());
                     return buildPdfFromJpegPages([{ jpegBytes: jpgBytes, width: w, height: h }]);
                 }
+                if (t === 'avif') {
+                    const avifBlob = await new Promise(res => c.toBlob(res, 'image/avif', quality));
+                    if (!avifBlob || avifBlob.type !== 'image/avif') {
+                        throw new Error('Trình duyệt hiện tại chưa hỗ trợ xuất AVIF (hãy dùng WebP).');
+                    }
+                    return avifBlob;
+                }
                 const mime = t === 'jpg' ? 'image/jpeg' : t === 'webp' ? 'image/webp' : 'image/png';
                 return await new Promise(res => c.toBlob(res, mime, quality));
             }
 
-            // 4. Video extractions (Audio WAV or Frame PNG/JPG/WEBP)
+            // 4. Video extractions (Audio MP3 / WAV or Frame PNG/JPG/WEBP)
             if (it.cat === 'video') {
+                if (t === 'mp3') {
+                    const buf = await decodeAndResampleAudio(it.file);
+                    return await encodeAudioBufferToMp3(buf, mp3Bitrate);
+                }
                 if (t === 'wav') {
                     const buf = await decodeAndResampleAudio(it.file);
                     return encodeAudioBufferToWav(buf, parseInt(document.getElementById('convertAudioChannels')?.value || '2', 10));
@@ -5652,9 +6086,10 @@
                 }
             }
 
-            // 5. Audio conversions (WAV PCM / WEBM Opus)
+            // 5. Audio conversions (MP3 / WAV PCM / WEBM Opus)
             if (it.cat === 'audio') {
                 const buf = await decodeAndResampleAudio(it.file);
+                if (t === 'mp3') return await encodeAudioBufferToMp3(buf, mp3Bitrate);
                 if (t === 'wav') {
                     return encodeAudioBufferToWav(buf, parseInt(document.getElementById('convertAudioChannels')?.value || '2', 10));
                 }
@@ -5663,7 +6098,7 @@
                 }
             }
 
-            // 6. Structured Data conversions (JSON <-> CSV <-> TSV <-> XML <-> YAML <-> HTML <-> MD)
+            // 6. Structured Data conversions (XLSX <-> JSON <-> CSV <-> TSV <-> XML <-> YAML <-> HTML <-> MD)
             if (it.cat === 'data') {
                 const raw = await it.file.text();
                 let parsed;
@@ -5676,6 +6111,7 @@
                 } else if (it.ext === 'yaml' || it.ext === 'yml') parsed = parseSimpleYaml(raw);
                 else parsed = { content: raw };
 
+                if (t === 'xlsx') return await exportDataToXlsx(parsed, it.file.name.replace(/\.[^.]+$/, ''));
                 if (t === 'json') return new Blob([JSON.stringify(parsed, null, 2)], { type: 'application/json;charset=utf-8' });
                 if (t === 'csv') return new Blob(['\uFEFF' + serializeDelimited(parsed, ',')], { type: 'text/csv;charset=utf-8' });
                 if (t === 'tsv') return new Blob([serializeDelimited(parsed, '\t')], { type: 'text/tab-separated-values;charset=utf-8' });
@@ -5722,7 +6158,13 @@
             renderConvertList();
             try {
                 const blob = await convertSingleFile(it);
-                const outExt = it.target === 'base64' ? 'base64.txt' : it.target;
+                const outExt = it.target === 'base64'
+                    ? 'base64.txt'
+                    : it.target === 'inspect'
+                    ? 'contents.txt'
+                    : (blob.type === 'application/zip' && it.target !== 'zip' && it.target !== 'epub' && it.target !== 'xlsx')
+                    ? 'zip'
+                    : it.target;
                 it.outBlob = blob;
                 it.outName = `${it.file.name.replace(/\.[^.]+$/, '')}.${outExt}`;
                 it.status = 'done';
@@ -5785,15 +6227,27 @@
             showToast(`Đang gộp ${imgs.length} ảnh thành 1 file PDF...`);
             const quality = parseInt(document.getElementById('convertQualitySlider')?.value || '92', 10) / 100;
             const bgColor = document.getElementById('convertBgColor')?.value || '#ffffff';
+            const layout = document.getElementById('convertPdfLayout')?.value || 'fit';
             const pages = [];
             for (const it of imgs) {
-                const img = await loadImageFromFile(it.file);
+                const img = await loadImageFromFileWithHeic(it.file);
                 const c = document.createElement('canvas');
-                c.width = img.naturalWidth; c.height = img.naturalHeight;
+                let cw = img.naturalWidth, ch = img.naturalHeight;
+                if (layout === 'a4p') { cw = 1240; ch = 1754; }
+                else if (layout === 'a4l') { cw = 1754; ch = 1240; }
+                c.width = cw; c.height = ch;
                 const ctx = c.getContext('2d');
                 ctx.fillStyle = bgColor;
-                ctx.fillRect(0, 0, c.width, c.height);
-                ctx.drawImage(img, 0, 0);
+                ctx.fillRect(0, 0, cw, ch);
+                if (layout === 'fit') {
+                    ctx.drawImage(img, 0, 0, cw, ch);
+                } else {
+                    const pad = 48;
+                    const scale = Math.min((cw - pad * 2) / img.naturalWidth, (ch - pad * 2) / img.naturalHeight);
+                    const dw = Math.round(img.naturalWidth * scale);
+                    const dh = Math.round(img.naturalHeight * scale);
+                    ctx.drawImage(img, Math.round((cw - dw) / 2), Math.round((ch - dh) / 2), dw, dh);
+                }
                 const jpgBlob = await new Promise(res => c.toBlob(res, 'image/jpeg', quality));
                 pages.push({ jpegBytes: new Uint8Array(await jpgBlob.arrayBuffer()), width: c.width, height: c.height });
             }
